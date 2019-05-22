@@ -33,7 +33,7 @@ const connect = (query) => {
             if(err) reject(err);
             resolve({
                 rows: rows,
-                insertId: rows.insertId,
+                insertId: (typeof rows != 'undefined') ? rows.insertId:undefined,
                 fields: fields,
             });
         });

@@ -170,66 +170,148 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     let telephone = (typeof req.body.telephone != 'undefined') ? req.body.userTele:undefined;
     let couponCode = undefined;
     if(typeof req.body.coupon != 'undefined') {
-        couponCode = (req.body.coupon!='') ? req.body.coupon.toUpperCase():undefined;
+        couponCode = (req.body.coupon!='') ? req.body.coupon.toUpperCase():null;
     }
     //identify issuer
     let correctUser = req.user.customerNo == req.body.customerNo;
-    console.log(correctUser,req.user);
 
-    //initialize ticket
+    //initialize reservation
     let reservation = {
         CustomerNo: customerNo,
         ScheduleNo: scheduleNo,
-        CouponUsage: null,
+        CouponUsage: undefined,
         TicketList: []
     };
 
     //validate coupon
-    if(couponCode){
-        let query = "SELECT * FROM `coupon` "
-                    + "WHERE `CouponCode`='"+couponCode+"'";
-        mysql.connect(query)
+    let query = "SELECT * FROM `coupon` "
+                + "WHERE `CouponCode`='"+couponCode+"';";
+    //validate coupon (if found create coupon usage)
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0 || couponCode==null){
+            reservation.CouponUsage = null;
+            return null;
+        }else{
+            let coupon = resp.rows[0];
+            //validate requirement (if not pass return like is null)
+                //check coupon
+                //check coupon schedule
+                //check coupon seatclass
+            //create coupon usage
+            let query1 = "INSERT INTO `couponusage` (`CouponUsageNo`, `ScheduleNo`, `CouponCode`)"
+                            +"VALUES (NULL, '"+reservation.ScheduleNo+"', '"+coupon.CouponCode+"');"
+            return mysql.connect(query1)
+            .then((resp)=>{
+                //read coupon usage no 
+                let couponUsageKey = resp.insertId;
+                return {cuk: couponUsageKey, coupon: coupon};
+            });
+        }
+    })
+    //INSERT Reservation with or without couponUsageKey
+    .then((couponValidation)=>{
+        if(couponValidation == null){
+            reservation.CouponUsage = null;
+            return;
+        }
+        reservation.CouponUsage = couponValidation.cuk;
+        let couponCode = couponValidation.coupon.CouponCode;
+        let noAvailable = couponValidation.coupon.NoAvailable - 1;
+        //decrement coupon NoAvailable
+        let query2 = "UPDATE `coupon` SET `NoAvailable` = '"+noAvailable.toString(10)+"' "
+                        +"WHERE `coupon`.`CouponCode` = '"+couponCode+"';";
+        
+        return mysql.connect(query2)
         .then((resp)=>{
-            if(resp.rows.length <= 0){
-                reservation.CouponUsage = null;
-            }else{
-                let coupon = resp.rows[0];
-                console.log(coupon);
-                //create coupon usage
-                let query1 = "INSERT INTO `couponusage` (`CouponUsageNo`, `ScheduleNo`, `CouponCode`)"
-                                +"VALUES (NULL, '"+reservation.ScheduleNo+"', '"+coupon.CouponCode+"');"
-                mysql.connect(query1)
-                .then((resp, insertId)=>{
-                    console.log(resp);
-                    console.log(insertId);
-                })
-                .catch((err)=>{console.log('error',err);})
-                // //read coupon usage no 
-                // let query2 = "SELECT LAST_INSERT_ID();"
-                // //decrement coupon NoAvailable
-                // let query3 = "UPDATE `coupon` SET `NoAvailable` = '"+(coupon.NoAvailble-1).toString(10)+"'"
-                //                 +"WHERE `coupon`.`CouponCode` = '"+coupon.CouponCode+"';";
-                // //create reservation
-                // let query4 = "INSERT INTO `reservation` (`ReservationNo`, `CustomerNo`, `ScheduleNo`, `DateCreated`, `Approve`, `CouponUsage`)"
-                //                 +"VALUES ('', '"+reservation.customerNo+"', '1', CURRENT_TIMESTAMP, '0', '111')";
-                
-                // //create reservation items
-                // mysql.connect(query1+query2)
-                // .then((resp)=>{
-
-                // });
-                
-            }
-            
-        })
-        .catch((err)=>{
-            console.log('error',err);
+            return;
         });
-    }
-
-    //
+    })
+    .then(()=>{
+        //create reservation
+        let query3 = "INSERT INTO `reservation` (`CustomerNo`, `ScheduleNo`, `DateCreated`, `Approve`, `CouponUsage`) "
+                        +"VALUES("+reservation.CustomerNo+", "+reservation.ScheduleNo+", CURRENT_TIMESTAMP, 0, ";
+        if(reservation.CouponUsage != null){
+            query3 += "'"+reservation.CouponUsage+"');";
+        }else query3 += "NULL);";
+        return mysql.connect(query3)
+        .then((resp)=>{
+            return resp.insertId;
+        });
+    })
+    //Create Reservation Items with reservationKey
+    .then((reservationKey)=>{
+        //get plan by schedule number
+        let query4 = "SELECT p.* FROM `plan` p, `schedule` s, `theatre` t "
+                        +"WHERE s.`ScheduleNo` = "+reservation.ScheduleNo+" "
+                        +"AND t.`TheatreCode` = s.`TheatreCode` "
+                        +"AND p.`PlanName` = t.`PlanName`;"
+        return mysql.connect(query4)
+        .then((resp)=>{
+            if(resp.rows.length > 0){
+                return resp.rows[0];
+            }
+        })
+        .then((plan)=>{
+            //get price for class
+            let query5 = "SELECT * FROM `seatclass` WHERE ";
+            for(let i=1;i<=4;i++){
+                if(plan['SeatClass'+i]!=null) {
+                    if(i>1) query5 += "OR ";
+                    query5 += "ClassName = '"+plan['SeatClass'+i]+"' ";
+                }
+            }
+            query5+=';';
+            return mysql.connect(query5)
+            .then((resp)=>{
+                if(resp.rows.length > 0){
+                    let classInfo = resp.rows;
+                    // seat code to class, row, column
+                    seatList.forEach((seatCode, i)=>{
+                        // console.log(seatCode);
+                        let row = seatCode.match(/[a-zA-Z]+/g)[0].charCodeAt(0)+26*(seatCode.match(/[a-zA-Z]+/g).length-1)-65; //start from 0
+                        let classList = [];
+                        let priceList = {};
+                        for(let i=1;i<=4;i++){
+                            if(plan['SeatClass'+i]!=null) classList = [...classList, ...Array.apply(null, Array(plan['NumberRow'+i])).map(function(){return plan['SeatClass'+i]})];
+                            if(i <= classInfo.length) priceList[classInfo[i-1].ClassName] = classInfo[i-1].Price;
+                        }
+                        // console.log(row,plan,classList);
+                        // console.log(classInfo.length);
+                        // console.log(priceList);
+                        reservation.TicketList.push({
+                            ReservationNo: reservationKey,
+                            ReservationItem: i,
+                            SeatCode: seatCode,
+                            SeatClass: classList[row],
+                            SeatRow: row,
+                            SeatCol: parseInt(seatCode.match(/\d+/g)[0]),
+                            FullPrice: priceList[classList[row]]
+                        });
+                    });
+                    return reservation;
+                }
+            })
+        })
+    })
+    //INSERT reservation item
+    .then((reservations)=>{
+        let query6 = "INSERT INTO reservation_items(`ReservationNo`, `ReservationItem`, `SeatCode`, `SeatClass`, `SeatRow`, `SeatCol`, `FullPrice`) VALUES";
+        reservations.TicketList.forEach((item, i)=>{
+            if(i>0) query6 += ",";
+            query6 += "("+item.ReservationNo+","+item.ReservationItem+",'"+item.SeatCode+"','"+item.SeatClass+"',"+item.SeatRow+","+item.SeatCol+","+item.FullPrice+")";
+        });
+        query6 += ";"
+        return mysql.connect(query6)
+        .then((resp)=>{
+            return resp;
+        });
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
     
-    console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========');
+    //console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========');
     res.redirect('/');
 });
 

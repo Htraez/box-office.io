@@ -199,14 +199,20 @@ class ticketingProcess {
                  
                 this.form.find('#tab2-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
                 if(typeof this.temp.seatClassForPlan != 'undefined'){
-                    let i = 1;
                     let rowNum = 0;
                     
                     let renderarea = this.form.find('#tab2 .seat-renderarea');
                     renderarea.children().remove();
                     renderarea.closest('.popup-window').find('#tab2-class-display').children().remove();
                     renderarea.append('<div class="seat-row"></div>');
-                    this.temp.seatClassForPlan.forEach(seatclass => {
+                    
+                    for(let i=1;i<=this.temp.seatClassForPlan.length;i++){
+                        let seatclass = undefined;
+                        this.temp.seatClassForPlan.forEach(sc=>{
+                            if(sc.ClassName == this.temp.planSelection['SeatClass'+i]){
+                                seatclass = sc;
+                            }
+                        });
                         let nPerRow = Math.floor(this.temp.planSelection.PlanWidth / seatclass.Width);
                         let nRow = this.temp.planSelection['NumberRow'+i];
                         let DOMWidthPercent = 100/nPerRow;
@@ -226,9 +232,8 @@ class ticketingProcess {
                                 renderarea.append('<div class="seat-row"></div>');
                             }
                         }
-                        if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>');
-                        i++; 
-                    });
+                        if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>'); 
+                    };
 
 
                     
