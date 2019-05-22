@@ -33,7 +33,8 @@ const connect = (query) => {
             if(err) reject(err);
             resolve({
                 rows: rows,
-                fields: fields
+                insertId: rows.insertId,
+                fields: fields,
             });
         });
         

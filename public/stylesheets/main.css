@@ -91,15 +91,22 @@ button > i{
     background: white;
     color: black;
 }
-.btn-red{
-    background: transparent;
-    color: var(--color-red);
-    border: 1px solid var(--color-red);
+.btn-red, input.invalid, input.invalid:focus{
+    background: transparent!important;
+    color: var(--color-red)!important;
+    border: 1px solid var(--color-red)!important;
 }
 .btn-red:not([disabled]):hover{
     background: var(--color-red);
     color: black;
 }
+
+input.invalid:hover{
+    background: var(--color-red)!important;
+    color: white!important;
+    border: 1px solid var(--color-red)!important;
+}
+
 .btn-black{
     background: transparent;
     color: black;
@@ -597,6 +604,20 @@ input.hide, form .hide{
     overflow: hidden;
 }
 
+input.holding-input, input.holding-input:focus{
+    background: unset!important;
+    background-image: url("/assets/images/load_placeholder.svg")!important;
+    background-size: 20px 20px!important;
+    background-position:right center!important;
+    background-repeat: no-repeat!important;
+}
+
+input[disabled], input[disabled]:hover{
+    border: 1px dashed white!important;
+    background: gray!important;
+    opacity: .2!important;
+}
+
 .floating{
     animation: float 3s ease-in-out infinite;
 }
@@ -694,6 +715,10 @@ input.hide, form .hide{
     border: 1px dashed #ffffff57;
     border-radius: .25rem;
     margin: 5px 0;
+    -webkit-border-radius: .25rem;
+    -moz-border-radius: .25rem;
+    -ms-border-radius: .25rem;
+    -o-border-radius: .25rem;
 }
 .screen-symbol:before{
     content:'Screen';
@@ -838,4 +863,21 @@ table{
 
 .popup-window #tab0-dropdown-menu{
     transform: translate3d(0px, 25px, 0px)!important;
+}
+
+#tab3-member-widget{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px auto;
+    border: 1px dashed #ffffff40;
+    border-radius: .25rem;
+}
+
+.head-group-highlight{
+    width: 100%;
+    padding: 3px 9px;
+    background: white;
+    color: black;
+    font-weight: 700;
 }

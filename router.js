@@ -119,6 +119,26 @@ router.get('/plan', (req,res)=>{
     });
 });
 
+router.get('/coupon', (req,res)=>{
+    console.log('user sent=>',req.query);
+    let code = req.query.code == '' ? undefined:req.query.code;
+    let query = "SELECT * FROM `coupon` "
+                    + "WHERE `CouponCode`='"+code+"'";
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.status(200).send([]);
+            return;
+        }
+        console.log('found',resp.rows.length,'coupon with code "'+code+'"');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
 router.get('/seatclass', (req,res)=>{
     let classNames = req.query.className == '' ? undefined:req.query.className;
     let query = "SELECT * FROM `seatclass` WHERE "
@@ -143,16 +163,80 @@ router.get('/seatclass', (req,res)=>{
     });
 });
 
-router.post('/tickets', (req,res)=>{
-    console.log(req.body);
+router.post('/tickets', checkAuthentication, (req,res)=>{
     let seatList = req.body.seatCode;
     let movieNo = req.body.movieNo;
+    let customerNo = req.body.customerNo;
     let scheduleNo = req.body.scheduleNo;
     let email = req.body.userEmail;
-    let telephone = req.body.userTele;
+    let telephone = (typeof req.body.telephone != 'undefined') ? req.body.userTele:undefined;
+    let couponCode = undefined;
+    if(typeof req.body.coupon != 'undefined') {
+        couponCode = (req.body.coupon!='') ? req.body.coupon.toUpperCase():undefined;
+    }
+    //identify issuer
+    let correctUser = req.user.customerNo == req.body.customerNo;
+    console.log(correctUser,req.user);
 
+    //initialize ticket
+    let reservation = {
+        CustomerNo: customerNo,
+        ScheduleNo: scheduleNo,
+        CouponUsage: null,
+        TicketList: []
+    };
+
+    //validate coupon
+    if(couponCode){
+        let query = "SELECT * FROM `coupon` "
+                    + "WHERE `CouponCode`='"+couponCode+"'";
+        mysql.connect(query)
+        .then((resp)=>{
+            if(resp.rows.length <= 0){
+                reservation.CouponUsage = null;
+            }else{
+                let coupon = resp.rows[0];
+                console.log(coupon);
+                //create coupon usage
+                let query1 = "INSERT INTO `couponusage` (`CouponUsageNo`, `ScheduleNo`, `CouponCode`)"
+                                +"VALUES (NULL, '"+reservation.ScheduleNo+"', '"+coupon.CouponCode+"');"
+                mysql.connect(query1)
+                .then((resp, insertId)=>{
+                    console.log(resp);
+                    console.log(insertId);
+                })
+                .catch((err)=>{console.log('error',err);})
+                // //read coupon usage no 
+                // let query2 = "SELECT LAST_INSERT_ID();"
+                // //decrement coupon NoAvailable
+                // let query3 = "UPDATE `coupon` SET `NoAvailable` = '"+(coupon.NoAvailble-1).toString(10)+"'"
+                //                 +"WHERE `coupon`.`CouponCode` = '"+coupon.CouponCode+"';";
+                // //create reservation
+                // let query4 = "INSERT INTO `reservation` (`ReservationNo`, `CustomerNo`, `ScheduleNo`, `DateCreated`, `Approve`, `CouponUsage`)"
+                //                 +"VALUES ('', '"+reservation.customerNo+"', '1', CURRENT_TIMESTAMP, '0', '111')";
+                
+                // //create reservation items
+                // mysql.connect(query1+query2)
+                // .then((resp)=>{
+
+                // });
+                
+            }
+            
+        })
+        .catch((err)=>{
+            console.log('error',err);
+        });
+    }
+
+    //
     
+    console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========');
     res.redirect('/');
+});
+
+router.post('/tickets/:ticketId/confirm', (req,res)=>{
+
 });
 
 // v ==== CHANGE ROUTE NAME IMMEDIATELY! PLEASE STRICTLY COMPLY WITH THE REST-API CONVENTION!!! ==== v

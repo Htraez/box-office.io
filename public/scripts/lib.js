@@ -21,6 +21,10 @@ const fetchData = (topic, data, next) => {
     }
 }
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
 class ticketingProcess {
     constructor(formElem, scheduleArray=undefined, movieObj=undefined, auth=false, webState, step=0){
         this.step = step;
@@ -30,6 +34,7 @@ class ticketingProcess {
         this.isGuest = auth;
         this.form = formElem; //Jquery Element Only
         this.temp={};
+        this.allowSubmit = false;
         this.webState = webState;
         if(this.movie) this.showPoster;
 
@@ -60,7 +65,9 @@ class ticketingProcess {
                 userTele:{
                     required: "Your telephone number is needed"
                 },
-                "seatCode[]": ""
+                "seatCode[]": '',
+                customerNo:'',
+                username:''
             },
             ignore: ".inactiveStep"
         });
@@ -107,10 +114,10 @@ class ticketingProcess {
         if(this.step==3){
             this.form.closest('.popup-window').find('.popup-footer :nth-child(2)').hide();
             this.form.closest('.popup-window').find('.popup-footer').append('<button type="submit" class="btn-cornblue submit-btn"><i class="fas fa-cash-register"></i></button>');
-            this.form.closest('.popup-window').find('.popup-footer .submit-btn').attr("disabled", true);
-            
+            this.allowContinue(this.form, this.form.closest('.popup-window').find('.popup-footer .submit-btn').attr("disabled", true));
+            let self = this;
             this.form.closest('.popup-window').find('.popup-footer .submit-btn').off('click').click(function(e){
-                $('#reservation-form-element')[0].submit();
+                if(self.allowSubmit)$('#reservation-form-element')[0].submit();
                 //e.preventDefault();
             });
         }else{
@@ -125,7 +132,7 @@ class ticketingProcess {
             if(button)button.attr("disabled", false);
         }else{
             form.closest('.popup-window').find('.popup-footer :nth-child(2)').attr("disabled", true);
-            if(button)button.attr("disabled", false);
+            if(button)button.attr("disabled", true);
         }
     }
 
@@ -308,19 +315,133 @@ class ticketingProcess {
                 break;
             }
             case 3:{
+                if(this.webState.isAuth){
+                    this.form.find('#tab3-login-widget').hide();
+                    this.form.find('#tab3-member-widget').show();
+                    this.form.find('#tab3 #ticketing-coupon').attr('disabled', false);
+                    this.form.find('#tab3 #tab3-customerNo').val(this.webState.userData.customerNo);
+                    this.form.find('#tab3 #tab3-userName').val(this.webState.userData.username);
+                    this.allowSubmit = true;
+                    this.form.closest('.popup-window').find('.popup-footer .submit-btn').attr('disabled', false);
+                }else{
+                    iziToast.warning({
+                        position: "topCenter", 
+                        icon: 'fas fa-exclamation-circle',
+                        title: 'Member Only', 
+                        message: 'Sorry, please login to book a seat',
+                        close: false
+                    });
+                    this.form.find('#tab3 #tab3-customerNo').val('');
+                    this.form.find('#tab3 #tab3-userName').val('');
+                    this.form.find('#tab3-login-widget').show();
+                    this.form.find('#tab3-member-widget').hide();
+                    this.form.find('#tab3 #ticketing-coupon').attr('disabled', true);
+                }
+
                 $('#tab3-time-period').text(this.temp.scheduleSelection.Time);
                 $('#tab3-branchName').text(this.temp.scheduleSelection.BranchName);
                 $('#tab3-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
                 $('#tab3-seat-table').find('tr:not(:last-child)').remove();
+                this.form.find('#tab3-discount-rate').text('0%');
+                this.form.find('#ticketing-coupon').val('');
+
                 let totalPrice = 0;
                 this.temp.seatList.forEach((seat)=>{
                     totalPrice += parseFloat(seat.fullPrice);
-                    $('#tab3-seat-table').prepend('<tr><td>'+seat.seatCode+'</td><td id="tab3-'+seat.seatCode+'-deduct">-</td><td id="tab3-'+seat.seatCode+'-billing">'+seat.fullPrice+'.-</td></tr>');
+                    $('#tab3-seat-table').prepend('<tr><td>'+seat.seatCode+'</td><td id="tab3-'+seat.seatCode+'-billing">'+seat.fullPrice+'.-</td></tr>');
                 })
                 $('#tab3-total-price').text(totalPrice+'.-');
                 let self = this;
-                this.form.find('#tab3 input').off('change').on('change', function(){
-                    self.allowContinue(self.form, self.form.closest('.popup-window').find('.popup-footer .submit-btn'));
+                let checkToken = false;
+                let checkCount = 0;
+
+                this.form.find('#ticketing-coupon').off('input propertychange').on('input propertychange', function(e){
+                    if(!checkToken){
+                        let usingVal = $(this).val();
+                        //loading and prevent submit
+                        $(this).addClass('holding-input');
+                        self.form.closest('.popup-window').find('.popup-footer .submit-btn').attr("disabled", true);
+                        self.allowSubmit = false;
+
+                        setTimeout(()=>{ 
+                            if(usingVal != $(this).val() || usingVal == '') return;
+                            //use the token and stop altering input
+                            checkToken = !checkToken;
+
+                            //coupon validation & application begin
+                            fetchData('coupon',{code: $(this).val().toUpperCase()},(data,err)=>{
+                                console.log('fetch coupon with code = ', $(this).val());
+                                if(!err){
+                                    console.log('coupon response=>',data);
+                                    if(data.length == 1){
+                                        //calculate criteria result
+                                        let datePass = new Date() > new Date(data[0].EXPDate) ? false:true;
+                                        let minSeatPass = self.temp.seatList.length >= data[0].MinSeat ? true:false;
+                                        let totalSpend = 0;
+                                        self.temp.seatList.forEach((seat)=>{totalSpend += seat.fullPrice});
+                                        let spendPass = totalSpend >= data[0].MinSpend ? true:false;
+                                        let availablePass = data[0].NoAvailable > 0 ? true:false;
+                                        //check all criteria are passed
+                                        if(datePass && minSeatPass && spendPass && availablePass){
+                                            //calculate discount
+                                            let discountPercent = data[0].Discount*100;
+                                            let discountPrice = totalSpend*(1-data[0].Discount);
+                                            
+                                            //confirm on screen
+                                            iziToast.show({
+                                                title: '&#128537; Hooray! ',
+                                                message: 'Coupon "'+data[0].CouponCode+'" Applied',
+                                                position: 'topCenter',
+                                                color: 'green',
+                                                close: false
+                                            });
+                                            
+                                            //apply discount (just show to screen)
+                                            self.form.find('#tab3-discount-rate').text(discountPercent.toString(10)+'%');
+                                            self.form.find('#tab3-total-price').text(discountPrice.toString(10)+'.-');
+                                        }else{
+                                            iziToast.show({
+                                                title: '&#128549; Coupon Not Applied',
+                                                message: 'Coupon Requirement Not Met\t',
+                                                position: 'topCenter',
+                                                color: 'red',
+                                                close: false
+                                            });
+                                            let totalSpend = 0;
+                                            self.temp.seatList.forEach((seat)=>{totalSpend += seat.fullPrice});
+                                            self.form.find('#tab3-discount-rate').text('0%');
+                                            self.form.find('#tab3-total-price').text(totalSpend.toString(10)+'.-');
+                                            $(this).val('');
+                                        }
+                                    }else{
+                                        //prompt not found toast
+                                        iziToast.show({
+                                            title: '&#128551; Oops!',
+                                            message: 'Coupon "'+$(this).val().toUpperCase()+'" Not Found...\t',
+                                            position: 'topCenter',
+                                            color: 'red',
+                                            close: false
+                                        });
+                                        //revert to original price
+                                        let totalSpend = 0;
+                                        self.temp.seatList.forEach((seat)=>{totalSpend += seat.fullPrice});
+                                        self.form.find('#tab3-discount-rate').text('0%');
+                                        self.form.find('#tab3-total-price').text(totalSpend.toString(10)+'.-');
+                                        $(this).val('');
+                                    }
+                                }else{
+                                    console.log(err);
+                                }
+                                //release the token
+                                checkToken = !checkToken;
+                                $(this).removeClass('holding-input');
+                                //allow form submit after coupon application has concluded
+                                self.allowSubmit = true;
+                                self.allowContinue(self.form, self.form.closest('.popup-window').find('.popup-footer .submit-btn'));
+                            }); 
+                        }, 3000);
+                        
+                    }
                 });
                 break;
             }
@@ -343,6 +464,16 @@ class webstate{
         this.isAuth = auth;
         this.role = this.isAuth ? uRole:undefined;
         this.temp = {};
+        iziToast.show({
+            position: "topCenter", 
+            iconUrl: '/assets/images/load_placeholder.svg',
+            title: 'Fetching Data', 
+            color: 'green',
+            message: 'Please Wait',
+            timeout: false,
+            overlay: true,
+            close: false
+        });
         if(typeof this.role!='undefined') this.role = this.role == 2 ? 'admin':'user';
         if(this.isAuth) {
             fetchData('user',['*'], (data,err)=>{
@@ -357,6 +488,7 @@ class webstate{
                 this.showingList = data;
                 this.renderMoviesGrid($('.program-row'), 'index-row');
                 this.renderMoviesGrid($('.reserv-render-area'));
+                iziToast.destroy();
             }else{
                 console.log(err);
             }
@@ -374,6 +506,14 @@ class webstate{
             if(this.role==='admin'){
                 $('#toAdmin-btn').show();
             }
+            console.log(this.userData);
+            let middleName = '';
+            if(this.userData.MidName!=null) middleName = this.userData.MidName;
+            let fullName = this.userData.FirstName.capitalize()
+                            +' '+ middleName.capitalize()
+                            +' '+ this.userData.LastName.capitalize();
+            $('.fetch.userFullName').text(fullName);
+            $('.fetch.userEmail').text(this.userData.Email);
             $('.fetch.username').text(this.userData.username);
             $('.fetch.userpic').attr('src',this.userData.ImageURL);
         };

@@ -4,7 +4,7 @@ $(document).ready(function(){
     webState = new webstate(auth);
 });
 
-$('.popup-area, #popup-close').click(function(e){
+$('.popup-area, #popup-close, .close-key').click(function(e){
     if(e.target != this && e.target != this.children[0]) return;
     $('.web-body').removeClass('overlay');
     $(this).closest('.popup-area').hide();
