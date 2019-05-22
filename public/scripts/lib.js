@@ -526,8 +526,8 @@ class webstate{
 
     renderMoviesGrid = (targetRow=null, mode=undefined) => {
         let i = 0;
+        targetRow.empty();
         this.showingList.forEach(movie => {
-            targetRow.empty();
             let data = {
                 data: movie, 
                 onclick: 'selectMovie('+ i + (mode=='index-row'?',this':'') + ")",
