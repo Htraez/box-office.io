@@ -69,13 +69,28 @@ function saveTheatre(){
             Theatre[nowTH] = data;
             reRenderTHTable();
         }
-        $('#TH-success').fadeTo(2000, 500).slideUp(500, function(){
-            $(this).hide(); 
+        iziToast.show({
+            position: "topCenter", 
+            icon: "far fa-thumbs-up",
+            title: 'Save!', 
+            color: 'green',
+            position: 'bottomLeft',
+            timeout: 2000,
+            message: 'You Theatre is save successfully.',
+        });
+        
+    }
+    else {
+        iziToast.show({
+            position: "topCenter", 
+            icon: "fas fa-exclamation-circle",
+            title: 'Warning!', 
+            color: 'red',
+            position: 'bottomLeft',
+            timeout: 2000,
+            message: 'You should check input in on some of those fields below.',
         });
     }
-    else $('#TH-alert').fadeTo(2000, 500).slideUp(500, function(){
-        $(this).hide(); 
-    });
 }
 
 function addBranchOption(){
@@ -92,7 +107,6 @@ function planH(){
     PlanHeight = parseFloat(document.getElementById("PlanHeight").value);
     $('#showH')[0].childNodes[0].data = 'Plan Height '+PlanHeight+' m.';
     document.getElementById("PlanHeight").value = PlanHeight;
-    //console.log(Height);
 }
 
 function planW(){
@@ -100,7 +114,6 @@ function planW(){
     $('#showW')[0].childNodes[0].data = 'Plan Width '+PlanWidth+' m.';
     document.getElementById("PlanWidth").value = PlanWidth;
     reRenderSeat();
-    //console.log(Width);
 }
 
 function appendSeatClass(number) {
@@ -113,6 +126,7 @@ function getSeatClass(){
     $.get('/fetchData/seatclass/none',(data)=>{
             SeatClass = data;
             appendSeatClass(1);
+            iziToast.destroy();
     });
 }
 
@@ -261,11 +275,21 @@ function LoadDataEditForm(PlanName){
 function cancelPlan() {
     $('.content-view').show();
     $('.content-form').hide();
-    $('#listPlanTable').find('tr').remove();
+    $('#listPlanTable').find('li').remove();
     getPlanList();
 }
 
 function callPlanForm(err,PlanName = null) {
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Fetching Data', 
+        color: 'green',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
     Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
     reRenderTHTable();
     PlanHeight=0;PlanWidth=0;OpSeatCount=1;Thcount=0;nowTH=0;renderCount = [1,1,1,1];
@@ -284,18 +308,40 @@ function callPlanForm(err,PlanName = null) {
     addTable(Theatre);
     addBranchOption();
     getSeatClass();
-    if(PlanName) LoadDataEditForm(PlanName);
+    if(PlanName){
+        LoadDataEditForm(PlanName);
+        console.log(PlanName);
+    }
 }
 
 $(document).on("click","#createPlan", callPlanForm);
 
 function addListPlanTable(data) {
     data.forEach((value, key) => {
-        var tableRowappend = '<tr class="default-mouse" ><th style="border:1px solid white;" class="text-white pl-3 planTable" scope="col">'+value.PlanName+'</th></tr>'
+        //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
+        var tableRowappend = "<li class='planTable'>"+value.PlanName+"</li>";
         $("#listPlanTable").append(tableRowappend);
     });
     //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
 }
+
+$(document).on("click",".planTable",function (){
+    $(this).addClass('selected').siblings().removeClass('selected');
+    $.get('/fetchData/plan/PlanName='+this.innerHTML,(data)=>{
+        $('#viewPlanName').text(data[0].PlanName);
+        $('#viewPlanWidth').text("Width : "+data[0].PlanWidth+" m.");
+        $('#viewPlanHeight').text("Height : "+data[0].PlanHeight+" m.");
+        $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    });
+});
+
+$(document).on("click","#callEditPlanForm",function(){
+    callPlanForm("",$('#viewPlanName').text());
+});
+
+$(document).on("click","#callDeletePlanForm",function(){
+    console.log("Delete");
+});
 
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{

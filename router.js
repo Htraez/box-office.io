@@ -368,10 +368,6 @@ router.get('/fetchData/:table/:condition', (req,res) => {
         });
 });
 
-router.get('/seat', (req,res) => {
-    res.render('partials/seatclass');
-});
-
 router.post('/seat', (req,res) => {
     var data = req.body;
     var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
@@ -383,9 +379,6 @@ router.post('/seat', (req,res) => {
         });
 });
 
-// router.get('/plan', (req,res)=>{
-//     res.render('partials/plan');
-// });
 
 router.post('/plan', (req,res)=>{
     var data = req.body;
