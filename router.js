@@ -366,6 +366,12 @@ router.get('/addSchedule', (req,res) => {
         auth: false
     });
 });
+
+router.get('/addMovie', (req,res) => {
+    res.render('partials/movie', {
+        auth: false
+    });
+});
 router.post('/seatAdd', (req,res) => {
     var data = req.body;
     var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
@@ -485,4 +491,15 @@ router.post('/addSchedule', (req,res) => {
     console.log(sql)
 });
 
+router.post('/AddMovie', (req,res) => {
+    var data = req.body;
+    var sql = "INSERT INTO `movie` (`MovieName`, `Director`, `Casts`, `Desc`, `Duration`, `Rate`, `Genre`, `Studio`, `PosterURL`) VALUES ('"+
+                data.MovieName+"','"+ data.Director+"','"+data.Casts+"','"+data.Desc+"','"+data.Duration+"','"+data.Rate+"','"+data.Genre+"','"+data.Studio+"','"+data.PosterURL+"')";
+    mysql.connect(sql)
+        .then((resp)=>{
+            console.log(resp);
+            res.redirect('/addSchedule');
+        });
+    console.log(sql)
+});
 module.exports = router;
