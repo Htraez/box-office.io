@@ -18,10 +18,25 @@ function BranchOption(){
 
 function ScheduleInfo(data) {
     var payload = { table:"schedule" };
+    $("#Schedule").find('tr').remove()
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
             
             $("#Schedule").append('<tr class="default-mouse clickTable"><th class="text-white movieTable" scope="col"value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'</th></tr>');
+        });
+        console.log(data)
+    });
+    
+}
+
+function showTheater(data) {
+    var payload = { table:"theatre" };
+    console.log(branch.temp)
+    $.post('/fetchData',payload,(data)=>{
+        data.forEach((value,key)=>{
+            if(cl==value.BranchNo)
+            $("#theater").append('<tr class="default-mouse clickTable"><th class="text-white theaterTable" scope="col">'+value.TheatreCode+'</th></tr>');
+            
         });
         console.log(data)
     });
@@ -65,3 +80,4 @@ $(document).on("click","#back", callBackMovieForm);
 $(document).on("click","#backToAdmin", callBackAdmin);
 BranchOption();
 ScheduleInfo();
+$()
