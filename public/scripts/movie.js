@@ -47,7 +47,8 @@ function showTheater(data) {
 }
 
 function sentMovieForm(){
-    var payloadMovie = {
+    var payload = {
+        Movie : {
         MovieName: $('#MovieName').val(),
         Director: $('#Director').val(),
         Casts: $('#Casts').val(),
@@ -56,20 +57,20 @@ function sentMovieForm(){
         Rate: $('#Rate').val(),
         Genre: $('#Genre').val(),
         Studio: $('#Studio').val(),
-        PosterURL: $('#PosterURL').val(),
-    };
-    var payloadSchdule = {
+        PosterURL: $('#PosterURL').val()},
+     Schdule : {
         TheatreCode: theater,
         Date: $('#Date').val(),
         Time: $('#datetime24').val(),
         Audio: $('#Audio').val(),
         Dimension: $('#Dimension').val(),
-        Subtitle: $('#SubTitle').val(),
-
+        Subtitle: $('#SubTitle').val()
+     }
     };
     console.log(payload)
     if(payload.MovieName!='') $.post('/Movies',payload,(res)=>{
         console.log(success)
+        
     });
 }
 
@@ -84,8 +85,6 @@ function theater(){
     console.log(theater)
 
 }
-
-
 
 
 function callMovieForm(){
@@ -116,8 +115,7 @@ function callBackFromMovie(){
 }
 $(document).on('click',".theaterTable",theater);
 $(document).on('click',".clickTable",function(){
-    $(this).addClass('selected').siblings().removeClass('selected');
-})
+    $(this).addClass('selected').siblings().removeClass('selected');})
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 
@@ -125,6 +123,8 @@ $(document).on("click","#next", callScheduleForm);
 $(document).on("click","#back", callBackMovieForm);
 $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click","#Reject", callBackFromMovie);
+$(document).on("click","#createSchedule", sentMovieForm);
+
 BranchOption();
 ScheduleInfo();
 

@@ -527,16 +527,17 @@ router.post('/branch', (req,res) => {
 router.post('/movies', (req,res) => {
     var data = req.body;
     var sql = "INSERT INTO `movie` (`MovieName`, `Director`, `Casts`, `Desc`, `Duration`, `Rate`, `Genre`, `Studio`, `PosterURL`) VALUES ('"+
-                data.MovieName+"','"+ data.Director+"','"+data.Casts+"','"+data.Desc+"','"+data.Duration+"','"+data.Rate+"','"+data.Genre+"','"+data.Studio+"','"+data.PosterURL+"')";
+                data.Movie.MovieName+"','"+ data.Movie.Director+"','"+data.Movie.Casts+"','"+data.Movie.Desc+"','"+data.Movie.Duration+"','"+data.Movie.Rate+"','"+data.Movie.Genre+"','"+data.Movie.Studio+"','"+data.Movie.PosterURL+"')";
     mysql.connect(sql)
         .then((resp)=>{
             console.log(resp);
             // res.redirect('/addSchedule');
                 let MovieNo =resp.insertId;
-                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+"1"+"','"+"EN-01"+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
+                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+MovieNo+"','"+ data.Schdule.TheatreCode+"','"+data.Schdule.Date+"','"+data.Schdule.Time+":00"+"','"+data.Schdule.Audio+"','"+data.Schdule.Dimension+"','"+data.Schdule.SubTitle+"')";
                 console.log(sql2)
                 mysql.connect(sql2)
                     .then((resp)=>{
+                        resp.send(resp)
                         console.log(succress)
                     })
                     .catch((err)=>{
