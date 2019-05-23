@@ -1,6 +1,17 @@
 <%- include('partials/header', {mode: 'admin'});  %>
-        <div class='content-view'>
-            <span class='head-text level0'>Dashboard</span>
-        </div>
-        
+    <div class='content-view'>
+        <span class='head-text level0'>Dashboard</span>
+    </div>
+    <div class="content-view">
+        <h3><span class="head-text">Plan&emsp;</span>
+        <button class="btn btn-outline-light btn-white" id="createPlan">Create</button></h3>
+        <br>
+        <table class="table table-sm table-hover table-dark col-md-4" id="listPlanTable">
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div id="planForm" class="content-form" style="display: none;">
+        <%- include partials/plan %>
+    </div>
 <%- include partials/foot %> 

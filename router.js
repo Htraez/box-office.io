@@ -319,91 +319,91 @@ router.post('/tickets/:ticketId/confirm', (req,res)=>{
 
 });
 
-// v ==== CHANGE ROUTE NAME IMMEDIATELY! PLEASE STRICTLY COMPLY WITH THE REST-API CONVENTION!!! ==== v
-// router.get('/fetchBranchData', (req,res) => {
-//     var sql = "SELECT * FROM `branch`";
-//     mysql.connect(sql)
-//         .then((resp)=>{
-//             //console.log(resp);
-//             res.send(resp.rows);
-//         });
-// });
+//=======================
 
-// v ==== BELOW IS REPEATING AN EXISTING ROUTE! ==== v
-// router.get('/fetchSeatClasshData', (req,res) =>{
-//     var sql = "SELECT * FROM `seatclass`";
-//     mysql.connect(sql)
-//         .then((resp)=>{
-//             //console.log(resp);
-//             res.send(resp.rows);
-//         });
-// });
+router.get('/fetchData/:table/:condition', (req,res) => {
+    //เรียกใช้ด้วย /fetchData/ชื่อตารางที่ต้องการดึงข้อมูล/เงื่อนไข(เช่น PlanName=Branch01 ไม่มีเว้นวรรค)ถ้าไม่มีเงื่อนไขให้ใส่ none
+    var sql = "SELECT * FROM `"+req.params.table+"` ",
+        condition = req.params.condition.split("=");
+    if(condition[0]!="none"){
+        sql += "WHERE `"+condition[0]+"` = '"+condition[1]+"'";
+    }
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            //console.log(resp);
+            res.send(resp.rows);
+        });
+});
 
-// v ==== DO NOT DEFINE YOUR TEST ROUTE WITH THIS NAME! IT'S FOR WORKING ROUTE THIS WILL CREATE CONFLICT ==== v
-// router.get('/seat', (req,res) => {
-//     res.render('partials/seatclass');
-// });
+router.get('/seat', (req,res) => {
+    res.render('partials/seatclass');
+});
 
-// v ==== CHANGE ROUTE NAME IMMEDIATELY! PLEASE STRICTLY COMPLY WITH THE REST-API CONVENTION!!! ==== v
-// router.post('/seatAdd', (req,res) => {
-//     var data = req.body;
-//     var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
-//                 data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
-//     mysql.connect(sql)
-//         .then((resp)=>{
-//             console.log(resp);
-//             res.redirect('/seat');
-//         });
-// });
+router.post('/seat', (req,res) => {
+    var data = req.body;
+    var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
+                data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
+    mysql.connect(sql)
+        .then((resp)=>{
+            console.log(resp);
+            res.redirect('/seat');
+        });
+});
 
-// v ==== DO NOT DEFINE YOUR TEST ROUTE WITH THIS NAME! IT'S FOR WORKING ROUTE ==== v
 // router.get('/plan', (req,res)=>{
 //     res.render('partials/plan');
 // });
 
-// v ==== CHANGE ROUTE NAME IMMEDIATELY! PLEASE STRICTLY COMPLY WITH THE REST-API CONVENTION!!! ==== v
-// router.post('/planAdd', (req,res)=>{
-//     var data = req.body;
-//     console.log(data);
-//     var sql = "INSERT INTO `plan` (`PlanName`, `PlanHeight`, `PlanWidth`, `SeatClass1`, `NumberRol1`, `SeatClass2`, `NumberRol2`, `SeatClass3`, `NumberRol3`, `SeatClass4`, `NumberRol4`) VALUES ('"+
-//                 data.PlanName+"','"+ data.PlanHeight+"','"+data.PlanWidth+"','"+data.SeatClass1+"','"+data.NoRow1+"','"+data.SeatClass2+"','"+data.NoRow2+"','"+data.SeatClass3+"','"+data.NoRow3+"','"+data.SeatClass4+"','"+data.NoRow4+"')";
-//     sql = sql.replace(/'undefined'/g, 'NULL');
-//     console.log(sql);
-//     mysql.connect(sql)
-//         .then((resp)=>{
-//             console.log(resp);
-//             var sql = "INSERT INTO `theatre`(`TheatreCode`, `BranchNo`, `PlanName`) VALUES ";
-//             data.Theatre.forEach((value) => {
-//                 sql += "('"+value.Name+"','"+value.Branch+"','"+data.PlanName+"'),";
-//             });
-//             sql = sql.substring(0, sql.length-1);
-//             mysql.connect(sql)
-//                 .then((resp)=>{
-//                     console.log(resp);
-//                     res.redirect('/plan');
-//                 });
-            
-//        });
-    
-//});
+router.post('/plan', (req,res)=>{
+    var data = req.body;
+    console.log(data);
+    var sql = "INSERT INTO `plan` (`PlanName`, `PlanHeight`, `PlanWidth`, `SeatClass1`, `NumberRow1`, `SeatClass2`, `NumberRow2`, `SeatClass3`, `NumberRow3`, `SeatClass4`, `NumberRow4`) VALUES ('"+
+                data.PlanName+"','"+ data.PlanHeight+"','"+data.PlanWidth+"','"+data.SeatClass1+"','"+data.NoRow1+"','"+data.SeatClass2+"','"+data.NoRow2+"','"+data.SeatClass3+"','"+data.NoRow3+"','"+data.SeatClass4+"','"+data.NoRow4+"')ON DUPLICATE KEY UPDATE PlanName=VALUES(PlanName),PlanName=VALUES(PlanName),PlanHeight=VALUES(PlanHeight),PlanWidth=VALUES(PlanWidth),SeatClass1=VALUES(SeatClass1),NumberRow1=VALUES(NumberRow1),SeatClass2=VALUES(SeatClass2),NumberRow2=VALUES(NumberRow2),SeatClass3=VALUES(SeatClass3),NumberRow3=VALUES(NumberRow3),SeatClass4=VALUES(SeatClass4),NumberRow4=VALUES(NumberRow4)";
+    sql = sql.replace(/'undefined'/g, 'NULL');
+    console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            var TheatreDelete = [];
+            console.log(resp);
+            if(data.Theatre != null){
+                var sqlInsert = "INSERT INTO `theatre`(`TheatreCode`, `BranchNo`, `PlanName`) VALUES ",
+                sqlDelete = "DELETE FROM `theatre` WHERE `TheatreCode` IN (?)",
+                callFunctionSql = [0,0]; //Insert and Update , Delete
+                data.Theatre.forEach((value) => {
+                    switch(value.Detail.Type){
+                        case 'Update' : if(value.Detail.Old != value.Name){ TheatreDelete.push(value.Detail.Old); callFunctionSql[1]=1; } 
+                        case 'Create' : sqlInsert += "('"+value.Name+"','"+value.Branch+"','"+data.PlanName+"'),"; callFunctionSql[0]=1; break;
+                        case 'Delete' : TheatreDelete.push(value.Detail.Old); callFunctionSql[1]=1; break;
+                    }
+                });
+                sqlInsert = sqlInsert.substring(0, sqlInsert.length-1);
+                sqlInsert += "ON DUPLICATE KEY UPDATE TheatreCode=VALUES(TheatreCode), BranchNo=VALUES(BranchNo), PlanName=VALUES(PlanName)";
+                callFunctionSql[1] ? sql = sqlDelete : sql = sqlInsert;
+                if(callFunctionSql[0]||callFunctionSql[1]){
+                    console.log(sql);
+                    mysql.connect(sql,TheatreDelete)
+                        .then((resp)=>{
+                            if(callFunctionSql[0]&&callFunctionSql[1]){
+                                sql = sqlInsert;
+                                mysql.connect(sql).then((resp)=>{
+                                    console.log(resp);
+                                    res.send(resp);
+                                });
+                            }
+                            else{
+                                console.log(resp);
+                                res.send(resp.rows);
+                            }
+                        });
+                }
+                else res.send(resp);
+            }else res.send(resp);
+       });
+});
 
-// v ==== CHANGE ROUTE NAME IMMEDIATELY! PLEASE STRICTLY COMPLY WITH THE REST-API CONVENTION!!! ==== v
-// router.post('/theatreAdd', (req,res)=>{
-//     var data = req.body;
-//     var sql = "INSERT INTO `theatre`(`TheatreCode`, `BranchNo`, `PlanName`) VALUES ";
-//     data.Theatre.forEach((value) => {
-//         sql += "('"+value.Name+"','"+value.Branch+"','"+data.PlanName+"'),";
-//     });
-//     sql = sql.substring(0, sql.length-1);
-//     console.log(sql);
-//     // mysql.connect(sql)
-//     //     .then((resp)=>{
-//     //         console.log(resp);
-//     //         res.redirect('/plan');
-//     //     });
-//     //console.log(data.Theater[0]);
-    
-// })
+
+//=======================
 
 router.all('/', (req, res) => {
     console.log(req.user);
@@ -411,7 +411,7 @@ router.all('/', (req, res) => {
 });
 
 router.get('/admin', checkAuthentication, (req,res) => {
-    res.render('admin');
+    res.render('admin',{auth:true});
 });
 
 router.post('/login', 

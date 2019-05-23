@@ -23,12 +23,18 @@ input[type="text"], input[type="number"], select, textarea {
     border-radius: 1.5rem !important;
 }
 
+.default-mouse {
+    cursor: default !important;
+}
+
+.pointer {cursor: pointer;}
+
 .material-icons, .icon-text {
     vertical-align: middle;
 }
 
 #Create{
-    font-size: 1rem !important;
+    /* font-size: 1rem !important; */
     vertical-align: middle;
 }
 

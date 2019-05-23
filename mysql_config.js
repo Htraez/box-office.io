@@ -27,9 +27,9 @@ const init_connection = () => {
     });
 }
 
-const connect = (query) => {
+const connect = (query,dataArray = null) => {
     return new Promise(function(resolve, reject){
-        connection.query(query, (err, rows, fields)=>{
+        connection.query(query,[dataArray], (err, rows, fields)=>{
             if(err) reject(err);
             resolve({
                 rows: rows,

@@ -1,57 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Box-office.io</title>
-        <link rel="stylesheet" href="/stylesheets/main.css">
-        <link rel="stylesheet" href="/stylesheets/form.css">
-        <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700,900|Biryani:300,400,600,700,900|Prompt:300,300i,400,400i,500,700,800" rel="stylesheet">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</head>
-<body>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+
+    <div id="plan-warning" class="alert alert-warning alert-dismissible fade show" style="display: none;" role="alert">
         <strong>Warning!</strong> You should check input in on some of those fields below.
         <button type="button" class="close " onclick="$('.alert').hide()" >
                 <i class="material-icons" >remove_circle</i>
         </button>
     </div>
-    <form action="/planAdd" method="POST" role="form">
+    <div id="plan-success" class="alert alert-success alert-dismissible fade show" style="display:none" role="alert">
+        <strong>Save!</strong> You Plan is save successfully.
+        <button type="button" class="close " onclick="$('.alert').hide()" >
+                <i class="material-icons" >remove_circle</i>
+        </button>
+    </div>
+    <form id="plan">
         <div class="container-fluid">
             <div class="row">
                 <div class="container col-xl-3 col-lg-4 col-md-5 col-sm-5 col-6 ">    
                     <h3 class='head-text'>Plan</h3>
                     <div class="form-group row mb-3">
-                        <label for="Name" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Name</label>
+                        <label for="PlanName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Name</label>
                         <div class="col-md-10 col-sm-10 col-9">
-                            <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Name" name="Name">
+                            <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="PlanName" name="PlanName">
                         </div>
                     </div>
                     <div class="form-group row mb-3">
-                        <label for="Height" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Height</label>
+                        <label for="PlanHeight" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Height</label>
                         <div class="col-md-8 col-sm-7 col-6 pl-0">
                             <div class="input-group">
-                                <input type="number" onchange="planH()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="Height" name="Height">
+                                <input type="number" onchange="planH()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="PlanHeight" name="PlanHeight">
                                 <div class="input-gruop-append">
-                                    <label class="mt-2 mb-0" for="Height">m.</label>
+                                    <label class="mt-2 mb-0" for="PlanHeight">m.</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group row mb-3">
-                        <label for="Width" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Width</label>
+                        <label for="PlanWidth" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Width</label>
                         <div class="col-md-8 col-sm-7 col-6 pl-0">
                             <div class="input-group">
-                                <input type="number" onchange="planW()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="Width" name="Width">
+                                <input type="number" onchange="planW()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="PlanWidth" name="PlanWidth">
                                 <div class="input-gruop-append">
-                                    <label class="mt-2 mb-0" for="Width">m.</label>
+                                    <label class="mt-2 mb-0" for="PlanWidth">m.</label>
                                 </div>
                             </div>
                         </div>
@@ -59,13 +47,22 @@
                     <div class="container-fluid pl-0 pt-3">
                         <h3 class="head-text">Add Theatre</h3>
                     </div>
-                    <table class="table table-sm table-hover table-dark" id="MyTableTr">
-
+                    <table class="table table-sm table-hover table-dark" id="MyTableTr" style="border:0">
                         <tbody>
-
                         </tbody>
-
                     </table>
+                    <div id="TH-alert" class="alert alert-warning alert-dismissible fade show small" style="display:none" role="alert">
+                        <strong>Warning!</strong> You should check input in on some of those fields below.
+                        <button type="button" class="close " onclick="$('.alert').hide()" >
+                                <i class="material-icons" >remove_circle</i>
+                        </button>
+                    </div>
+                    <div id="TH-success" class="alert alert-success alert-dismissible fade show small pr-2" style="display:none" role="alert">
+                        <strong>Save!</strong> You Theatre is save successfully.
+                        <button type="button" class="close " onclick="$('.alert').hide()" >
+                                <i class="material-icons" >remove_circle</i>
+                        </button>
+                    </div>
                     <div class="form-group row mb-3">
                         <label for="NameTheatre"  class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Name</label>
                         <div class="col-md-10 col-sm-10 col-9">
@@ -73,27 +70,27 @@
                         </div>
                     </div>
                     <div class="form-group row mb-3">
-                        <label for="Branch" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">Branch</label>
+                        <label for="TheatreBranch" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">Branch</label>
                         <div class="col-md-10 col-sm-9 col-9">
-                            <select name="Branch" id="Branch" class="form-control-plaintext text-white"></select>
+                            <select name="TheatreBranch" id="TheatreBranch" class="form-control-plaintext text-white"></select>
                         </div>
                     </div>
                     <div class="mx-auto mt-4 text-center">
-                        <button type="button" class="btn btn-white-rounded" onclick="saveTheatre()">Save Theatre</button>
+                        <button type="button" class="btn btn-outline-light btn-white" onclick="saveTheatre()">Save Theatre</button>
                     </div>
 
                 </div>
                 <div class="container col-xl-9 col-lg-8 col-md-7 col-sm-7 col-6">
                     <div class="mx-auto mt-4 text-center">
-                        <button type="button" style="width:70%" class="btn btn-white-rounded">SCREEN</button>
+                        <button type="button" style="width:70%" class="btn btn-white-rounded default-mouse">SCREEN</button>
                         <div id="render" class="container mt-3 mb-3" >
-                            <div id="render1"></div>
-                            <div id="render2"></div>
-                            <div id="render3"></div>
-                            <div id="render4"></div>
+                            <div id="render1" class="renderSeatPlan"></div>
+                            <div id="render2" class="renderSeatPlan"></div>
+                            <div id="render3" class="renderSeatPlan"></div>
+                            <div id="render4" class="renderSeatPlan"></div>
                         </div>
                         <div class="container-fluid">
-                            <p><span id="showW">Plan Width 0 m.</span><span>&emsp;x&emsp;</span>
+                            <p class="default-mouse"><span id="showW">Plan Width 0 m.</span><span>&emsp;x&emsp;</span>
                             <span id="showH">Plan Height 0 m.</span></p>
                         </div>
                         <div class="container">
@@ -102,10 +99,10 @@
                                     <h3 class="text-left head-text">Seat Class</h3>
                                 </div>
                                 <div class="btn-group mr-2" role="group" aria-label="Second group">
-                                    <div class="btn text-white"><i class="material-icons" onclick="addSeat()">add_circle</i></div>
+                                    <div class="btn text-white" ><i class="material-icons pointer" onclick="addSeat()">add_circle</i></div>
                                 </div>
                                 <div class="btn-group" role="group" aria-label="Third group">
-                                        <div class="btn text-white"><i class="material-icons" onclick="removeSeat()">remove_circle</i></div>
+                                        <div class="btn text-white"><i class="material-icons pointer" onclick="removeSeat()">remove_circle</i></div>
                                 </div>
                             </div>
                         </div>
@@ -129,13 +126,11 @@
             </div>
             <div class="row">
                 <div class="mx-auto mt-3 text-center">
-                    <button type="button" class="btn btn-white-rounded mr-5" onclick="sentForm()" ><i class="material-icons">add_circle</i><span id="Create">  Save Plan</span></button>
-                    <a href="/" class="btn btn-white-rounded" role="button">Reject</a>  
+                    <button type="button" class="btn btn-white mr-5 btn-outline-light" onclick="sentPlanForm()" ><i class="material-icons">add_circle</i><span id="Create">  Save Plan</span></button>
+                    <button type="button" class="btn btn-white btn-outline-light" onclick="cancelPlan()">Cancel</button>  
                 </div>
             </div>
         </div>
     </form>
-    <script src="js/plan.js"></script>
+    <script src="scripts/plan.js"></script>
     
-</body>
-</html>
