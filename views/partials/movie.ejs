@@ -1,5 +1,5 @@
-<%- include('header', {mode: 'admin'});  %>
-        <div class="container-form">
+
+        <div id="movieForm" class="container-form">
             <span class='head-text'>Movie</span>
             <div class="row">
                 <div class="col-sm-3" ></div>
@@ -17,14 +17,17 @@
                         <span class='head-text level3'>branch</span><br>
                             <select name="Branch" id="Branch" class="form-control-plaintext text-white"></select>
                                 <br><br>
-                        <input type="submit" name="create" value="create"class="btn btn-white btn-outline-light">
+                        <button type="button" id="next" class="btn btn-white btn-outline-light">Next</button>
                         <button class="btn btn-white btn-outline-light" role="button">Reject</button>
                     </form>
                 </div>
                 <div class="col-sm-3"></div>
               </div>
+        </div> 
+        <div id="schduleForm" class="content-form" style="display: none;">
+            <%- include schedule %>
         </div>
 
         <script src="scripts/movie.js"></script>
     
-        <%- include foot %>  
+ 

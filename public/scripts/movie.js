@@ -9,4 +9,24 @@ function BranchOption(){
     });
 }
 
+function callMovieForm(){
+    $('#movieAndSchduleForm').show();
+    $('.content-view').hide();
+}
+
+function callScheduleForm(){
+    $('#schduleForm').show();
+    $('#movieForm').hide();
+    
+}
+
+function callBackMovieForm(){
+    $('#schduleForm').hide();
+    $('#movieForm').show();
+}
+
+$(document).on("click","#createMovie", callMovieForm);
+
+$(document).on("click","#next", callScheduleForm);
+$(document).on("click","#back", callBackMovieForm);
 BranchOption();

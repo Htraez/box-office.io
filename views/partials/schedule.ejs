@@ -1,4 +1,4 @@
-<%- include('header', {mode: 'admin'});  %>
+
 
 <form action="/addSchedule" method="post"> 
     <h3 class='head-text'>Plan</h3>
@@ -73,6 +73,7 @@
     </div>
     <div class="mx-auto mt-4 text-center">
         <input type="submit" name="create" value="create"class="btn btn-white btn-outline-light">
+        <button type="button" id="back" class="btn btn-white btn-outline-light">Back</button>
     </div>
     
 
@@ -84,4 +85,3 @@
  </form> 
  <script src="scripts/schedule.js"></script>
     
-<%- include foot %>  
