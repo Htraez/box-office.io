@@ -31,6 +31,26 @@
                 <span class='head-text level2' style='margin-top: 7px; margin-bottom: 0;'>Description <span class='head-text-badge'></span></span>
                 <div id='tab1-movieDesc' class='head-text level3' style='height: 50px; overflow-y: scroll;'></div>
             </div>
+            <div class='col-12 row' style='justify-content: left;'>
+                <div class="col-6" style='padding: 7px; margin-bottom: .5rem'>
+                    <span class='head-text level2'>Select Date</span>
+                    <div class="btn-group btn-group-toggle day-toggle" data-toggle="buttons">
+                        <label class="toggle-item btn btn-green active">
+                            <input type="radio" id="option1" autocomplete="off" checked> 
+                            <div>
+                                <span id='today-num'></span><span id='today-mon'></span>
+                            </div>
+                        </label>
+                        <label class="toggle-item btn btn-green">
+                            <input type="radio" id="option2" autocomplete="off"> 
+                            <div>
+                                <span id='tmr-num'></span><span id='tmr-mon'></span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+            </div>
             <div class='col-12 row'>
                 <div class='col-6' style='padding:7px;'>
                     <span class='head-text level2'>Select Theatre Branch</span>
@@ -246,8 +266,7 @@
     $("#reserv-nshow-branch").on('select-movie',function(e){
         $('.reserv-render-area').empty().append('<img src="/assets/images/load_placeholder.svg" style="margin:20px auto;">');
         $(this).trigger('reset',[false,'wait']);
-        
-        fetchData('schedule',{movieId:webState.temp.movieSelection.MovieNo},(data,err)=>{
+        fetchData('schedule',{movieId:webState.temp.movieSelection.MovieNo, date: new Date().toYMD()},(data,err)=>{
             if(!err){
                 webState.temp.schedulesSelection = data;
                 $('.reserv-render-area').empty();

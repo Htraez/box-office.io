@@ -54,6 +54,7 @@ router.get('/movies', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
     let columns = undefined;
+    let movieDate = req.query.date == '' ? undefined:req.query.date;
     if(typeof req.query.columns != 'undefined'){
         columns = req.query.columns.length > 0 ? '`'+req.query.columns.join().replace(/,/g,'`,`')+'`':undefined;
     }
@@ -62,7 +63,7 @@ router.get('/movies', (req,res)=>{
                     + (status||movieId ? 'WHERE':'') 
                     + (movieId ? '`MovieNo`='+movieId:'') 
                     + (status&&movieId ? 'AND':'') 
-                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule`)':'') + ';';
+                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDate+'")':'') + ';';
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){
@@ -80,10 +81,14 @@ router.get('/movies', (req,res)=>{
 router.get('/schedule', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
+    let date = req.query.date == '' ? undefined:req.query.date;
     let query = 'SELECT s.*,t.BranchNo,t.PlanName, b.BranchName, b.BranchAddress FROM `schedule` s '
                     + 'JOIN (SELECT * FROM theatre) AS t ON s.TheatreCode = t.TheatreCode '
                     + 'JOIN (SELECT * FROM branch) AS b ON t.BranchNo = b.BranchNo '
-                    + 'WHERE `MovieNo`='+movieId;
+                    + 'WHERE `MovieNo`='+movieId+' ';
+    if(date){
+        query += "AND `Date` >= '"+date+"'";
+    }
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){
