@@ -1,0 +1,102 @@
+<div class="container-fluid">
+    <h3 class='head-text'>Staff</h3>
+        <div class="container" >
+            <form action="/staff" method="post">
+                <div class="form-group row justify-content-md-center">
+                    <label for="firstName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">First Name</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="firstName" name="firstName">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="middleName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Middle Name</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="middleName" name="middleName">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="lastName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Last Name</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="lastName" name="lastName">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="birthday" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Birth Day</label>
+                    <div class="col-6">
+                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="birthday" name="birthday" style="width: 150px">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="citizenID" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Citizen ID</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="citizenID" name="citizenID">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="gender" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Gender</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="gender" name="gender">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="highestEdu" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Highest Education</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="highestEdu" name="highestEdu">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="dateEmployed" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Date Employed</label>
+                    <div class="col-6">
+                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="dateEmployed" name="dateEmployed" style="width: 150px">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="address" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Address</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="address" name="address">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="phone" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Phone Number</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="phone" name="phone">
+                    </div>
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="marital" class="col-md-2 col-sm-2 col-3 mt-2 mb-0" >Marital</label>
+                    <select name="marital" id="marital" class="col-md-2 col-sm-2 col-3 mt-2 mb-0 form-control-plaintext text-white pb-0 text-center">
+                        <option class="form-control-plaintext" value="1">Single</option>
+                        <option class="form-control-plaintext" value="2">Engaged</option>
+                        <option class="form-control-plaintext" value="3">Married</option>
+                        <option class="form-control-plaintext" value="4">Divorced</option>
+                    </select>
+                    <div class="col-4"></div> 
+                </div>
+
+                <div class="form-group row justify-content-md-center">
+                    <label for="position" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Position</label>
+                    <div class="col-6">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="position" name="position">
+                    </div>
+                </div>
+
+                <div class="row justify-content-around">
+                        <button type="button" id="next" class="btn btn-white btn-outline-light ">Next</button>
+                        <button type="button" id="cancelStaff" class="btn btn-white btn-outline-light ">Cancel</button>
+                </div>
+                
+            </form>
+</div>
+
+
+<script src="scripts/staff.js"></script>
