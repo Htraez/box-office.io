@@ -52,10 +52,16 @@ function callBackMovieForm(){
     $('#movieForm').show();
 }
 
+function callBackAdmin(){
+    $('#ShowMovieAll').hide();
+    $('.content-view').show();
+}
+
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 
 $(document).on("click","#next", callScheduleForm);
 $(document).on("click","#back", callBackMovieForm);
+$(document).on("click","#backToAdmin", callBackAdmin);
 BranchOption();
 ScheduleInfo();
