@@ -108,8 +108,29 @@ router.get('/plan', (req,res)=>{
         if(resp.rows.length <= 0){
             //return
             res.sendStatus(404);
+            return;
         }
         console.log('found',resp.rows.length,'theatre plan(s)');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
+router.get('/reservation/:scheduleNo', (req,res)=>{
+    let scheduleNo = req.params.scheduleNo;
+    let query = "SELECT i.SeatClass, i.SeatCode, i.SeatRow, i.SeatCol FROM `reservation` r, `reservation_items` i "
+                    +"WHERE r.`ReservationNo` = i.`ReservationNo` "
+                    +"AND r.`ScheduleNo` = "+scheduleNo+";"
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.send(null);
+            return;
+        }
+        console.log('found',resp.rows.length,'reservation(s)');
         res.send(resp.rows);
     })
     .catch((err)=>{

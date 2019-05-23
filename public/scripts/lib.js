@@ -66,7 +66,10 @@ class ticketingProcess {
                 userTele:{
                     required: "Your telephone number is needed"
                 },
-                "seatCode[]": '',
+                "seatCode[]":{
+                    required: '',
+                    minlength: ''
+                },
                 customerNo:'',
                 username:''
             },
@@ -237,127 +240,143 @@ class ticketingProcess {
                 break;
             }
             case 2: {
-                 
-                this.form.find('#tab2-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
-                if(typeof this.temp.seatClassForPlan != 'undefined'){
-                    let rowNum = 0;
-                    
-                    let renderarea = this.form.find('#tab2 .seat-renderarea');
-                    renderarea.children().remove();
-                    renderarea.closest('.popup-window').find('#tab2-class-display').children().remove();
-                    renderarea.append('<div class="seat-row"></div>');
-                    
-                    for(let i=1;i<=this.temp.seatClassForPlan.length;i++){
-                        let seatclass = undefined;
-                        this.temp.seatClassForPlan.forEach(sc=>{
-                            if(sc.ClassName == this.temp.planSelection['SeatClass'+i]){
-                                seatclass = sc;
-                            }
-                        });
-                        let nPerRow = Math.floor(this.temp.planSelection.PlanWidth / seatclass.Width);
-                        let nRow = this.temp.planSelection['NumberRow'+i];
-                        let DOMWidthPercent = 100/nPerRow;
-                        let price = seatclass.Price;
-                        let isCouple = !!seatclass.Couple;
+                this.fetchReserved(this.temp.scheduleSelection)
+                .then((reserved)=>{
 
-                        for(let seatNum=0; seatNum<nPerRow*nRow; seatNum++){
-                            let seatNumForThisRow = seatNum%(nPerRow)+1;
-                            let seatChar = rowNum==0? String.fromCharCode(65 + rowNum%26).repeat(1) : String.fromCharCode(65 + rowNum%26).repeat(Math.ceil(rowNum/rowNum));
-                            let seatCode = seatChar+seatNumForThisRow;
-                            
-                            renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'">');
-                            renderarea.children().last().append('<label for="'+seatCode+'" class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'" data-seatcode="'+seatCode+'"></label>');
-                            
-                            if(seatNumForThisRow==nPerRow){
-                                rowNum++;
-                                renderarea.append('<div class="seat-row"></div>');
-                            }
-                        }
-                        if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>'); 
-                    };
+                    let markedSeat = {}
+                    if(typeof reserved!='undefined' && reserved!='') reserved.forEach((entry)=>{
+                        markedSeat[entry.SeatCode] = entry;
+                    });
 
-
-                    
-                    renderarea[0].scrollLeft = renderarea.children().first().width() / 2 - renderarea.width()/2;
-                    if(this.step==2){
-                        renderarea.closest('.popup-window').find('#tab2-price-display').children().remove();
-                        renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2"><span id="tab2-seat-selection">0</span> Seat(s) Selected</div>');
-                        renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2">(Total Price:<span id="tab2-price-selection">0</span> Baht)</div>');
+                    this.form.find('.seat-row .error').css('position','absolute');
+                    this.form.find('#tab2-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
+                    if(typeof this.temp.seatClassForPlan != 'undefined'){
+                        let rowNum = 0;
                         
-                    }
-                    this.temp.seatSelection = 0;
-                    this.temp.rawPrice = 0;
-                    this.temp.seatList = [];
-                    let temp = this.temp;
-                    let self = this;
-                    renderarea.find('input[type=checkbox].seat-dot-checkbox').change(function(e){
-                        let numberTarget = renderarea.closest('.popup-window').find('#tab2-seat-selection');
-                        let priceTarget = renderarea.closest('.popup-window').find('#tab2-price-selection');
-                        if($(this)[0].checked){
-                            numberTarget.text(++temp.seatSelection);
-                            temp.rawPrice += parseFloat($(this).data('seatprice'));
-                            priceTarget.text(temp.rawPrice);
-                            temp.seatList.push({
-                                seatCode: $(this).data('seatcode'),
-                                fullPrice: $(this).data('seatprice')
-                            });
-                        }else{
-                            numberTarget.text(--temp.seatSelection);
-                            temp.rawPrice -= parseFloat($(this).data('seatprice'));
-                            priceTarget.text(temp.rawPrice);
-                            let newSeatList = [];
-                            temp.seatList.forEach((seat)=>{
-                                if(seat.seatCode != $(this).data('seatcode')){
-                                    newSeatList.push(seat);
+                        let renderarea = this.form.find('#tab2 .seat-renderarea');
+                        renderarea.children().remove();
+                        renderarea.closest('.popup-window').find('#tab2-class-display').children().remove();
+                        renderarea.append('<div class="seat-row"></div>');
+                        
+                        for(let i=1;i<=this.temp.seatClassForPlan.length;i++){
+                            let seatclass = undefined;
+                            this.temp.seatClassForPlan.forEach(sc=>{
+                                if(sc.ClassName == this.temp.planSelection['SeatClass'+i]){
+                                    seatclass = sc;
                                 }
                             });
-                            temp.seatList = newSeatList;
-                            
-                        }
-                        self.allowContinue(self.form);
-                    });
-                    let ticketprocess = this;
-                    let enableDrag = false;
-                    let dragstartX = 0;
-                    let dragstartY = 0;
-                    let power = 0.1;
-                    renderarea.off('mousedown').mousedown(function(e){
-                        if(ticketprocess.step == 2){
-                            enableDrag = true; 
-                            dragstartX=e.pageX;
-                            dragstartY=e.pageY;
-                        }
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseup').mouseup(function(e){
-                        enableDrag = false;
-                        e.preventDefault();
-                    });
-                    renderarea.off('mousemove').mousemove(function(e){ 
-                        if(typeof enableDrag != 'undefined'){
-                            if(enableDrag && ticketprocess.step == 2) {
-                                let deltaX=e.pageX - dragstartX; 
-                                let deltaY=e.pageY - dragstartY; 
-                                $(this)[0].scrollLeft -= (deltaX*power);
-                                $(this)[0].scrollTop -= (deltaY*power);
+                            let nPerRow = Math.floor(this.temp.planSelection.PlanWidth / seatclass.Width);
+                            let nRow = this.temp.planSelection['NumberRow'+i];
+                            let DOMWidthPercent = 100/nPerRow;
+                            let price = seatclass.Price;
+                            let isCouple = !!seatclass.Couple;
+
+                            for(let seatNum=0; seatNum<nPerRow*nRow; seatNum++){
+                                let seatNumForThisRow = seatNum%(nPerRow)+1;
+                                let seatChar = rowNum==0? String.fromCharCode(65 + rowNum%26).repeat(1) : String.fromCharCode(65 + rowNum%26).repeat(Math.ceil(rowNum/rowNum));
+                                let seatCode = seatChar+seatNumForThisRow;
+                                
+                                if(typeof markedSeat[seatCode]=='undefined'){renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'">');}
+                                else{renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'"disabled>');}
+                                renderarea.children().last().append('<label for="'+seatCode+'" class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'" data-seatcode="'+seatCode+'"></label>');
+                                
+                                if(seatNumForThisRow==nPerRow){
+                                    rowNum++;
+                                    renderarea.append('<div class="seat-row"></div>');
+                                }
                             }
+                            if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>'); 
+                        };
+
+                        renderarea[0].scrollLeft = renderarea.children().first().width() / 2 - renderarea.width()/2;
+                        if(this.step==2){
+                            renderarea.closest('.popup-window').find('#tab2-price-display').children().remove();
+                            renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2"><span id="tab2-seat-selection">0</span> Seat(s) Selected</div>');
+                            renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2">(Total Price:<span id="tab2-price-selection">0</span> Baht)</div>');
                         }
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseleave').mouseleave(function(e){
-                        power = 0;
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseover').mouseover(function(e){
-                        power = 0.1;
-                        e.preventDefault();
-                    });
-                }
+                        this.temp.seatSelection = 0;
+                        this.temp.rawPrice = 0;
+                        this.temp.seatList = [];
+                        let temp = this.temp;
+                        let self = this;
+                        renderarea.find('input[type=checkbox].seat-dot-checkbox').change(function(e){
+                            let numberTarget = renderarea.closest('.popup-window').find('#tab2-seat-selection');
+                            let priceTarget = renderarea.closest('.popup-window').find('#tab2-price-selection');
+                            if($(this)[0].checked){
+                                numberTarget.text(++temp.seatSelection);
+                                temp.rawPrice += parseFloat($(this).data('seatprice'));
+                                priceTarget.text(temp.rawPrice);
+                                temp.seatList.push({
+                                    seatCode: $(this).data('seatcode'),
+                                    fullPrice: $(this).data('seatprice')
+                                });
+                            }else{
+                                numberTarget.text(--temp.seatSelection);
+                                temp.rawPrice -= parseFloat($(this).data('seatprice'));
+                                priceTarget.text(temp.rawPrice);
+                                let newSeatList = [];
+                                temp.seatList.forEach((seat)=>{
+                                    if(seat.seatCode != $(this).data('seatcode')){
+                                        newSeatList.push(seat);
+                                    }
+                                });
+                                temp.seatList = newSeatList;
+                                
+                            }
+                            self.allowContinue(self.form);
+                        });
+                        let ticketprocess = this;
+                        let enableDrag = false;
+                        let dragstartX = 0;
+                        let dragstartY = 0;
+                        let power = 0.1;
+                        renderarea.off('mousedown').mousedown(function(e){
+                            if(ticketprocess.step == 2){
+                                enableDrag = true; 
+                                dragstartX=e.pageX;
+                                dragstartY=e.pageY;
+                            }
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseup').mouseup(function(e){
+                            enableDrag = false;
+                            e.preventDefault();
+                        });
+                        renderarea.off('mousemove').mousemove(function(e){ 
+                            if(typeof enableDrag != 'undefined'){
+                                if(enableDrag && ticketprocess.step == 2) {
+                                    let deltaX=e.pageX - dragstartX; 
+                                    let deltaY=e.pageY - dragstartY; 
+                                    $(this)[0].scrollLeft -= (deltaX*power);
+                                    $(this)[0].scrollTop -= (deltaY*power);
+                                }
+                            }
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseleave').mouseleave(function(e){
+                            power = 0;
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseover').mouseover(function(e){
+                            power = 0.1;
+                            e.preventDefault();
+                        });
+                    }
 
-                if(this.step==2){
-                    this.form.find("#tab2 input.inactiveStep").removeClass('inactiveStep');
-                }
-
+                    if(this.step==2){
+                        this.form.find("#tab2 input.inactiveStep").removeClass('inactiveStep');
+                    }
+                })
+                .catch(err=>{
+                    iziToast.show({
+                        title: 'Bummer! ',
+                        icon: 'fas fa-bug',
+                        message: 'Theatre Seat API Failed, \n('+err+')',
+                        position: 'topCenter',
+                        color: 'red',
+                        close: false
+                    });
+                })
                 break;
             }
             case 3:{
@@ -508,6 +527,21 @@ class ticketingProcess {
                 break;
             }
         }
+    }
+
+    fetchReserved(schedule){
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            let scheduleNo = schedule.ScheduleNo;
+            fetchData('reservation/'+scheduleNo, null, (data, err)=>{
+                if(!err){
+                    self.temp.reservedSeat = data;
+                    resolve(data);
+                }else {
+                    reject(err);
+                }
+            });
+        });
     }
 
     kill(){

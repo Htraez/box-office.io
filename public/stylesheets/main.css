@@ -880,3 +880,8 @@ table{
     color: black;
     font-weight: 700;
 }
+
+.seat-row .error{
+    position: absolute;
+    display: none;
+}
