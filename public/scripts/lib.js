@@ -598,7 +598,7 @@ class ticketingProcess {
                 form.find('#tab1 #tab1-schedule-list li[data-branch="'+$(this).data('branch')+'"]').show();
             });
             this.temp.branchSchedule[branchName].forEach((schedule)=>{
-                this.form.find('#tab1 #tab1-schedule-list').append('<li data-branch="'+branchName+'">'+schedule.Time+'<span class="badge" style="margin-left: 1rem;">'+schedule.Dimension+'</span></li>');
+                this.form.find('#tab1 #tab1-schedule-list').append('<li data-branch="'+branchName+'"> <strong>Theatre</strong> '+schedule.TheatreCode+'  |  <i class="fas fa-clock"></i>  '+schedule.Time+'<span class="badge" style="margin-left: 1rem;">'+schedule.Dimension+'</span></li>');
                 if(this.webState.temp.branchSelection.name != branchName){this.form.find('#tab1 #tab1-schedule-list').children().last().hide();}
                 else this.form.find('#tab1 #tab1-branch-list').children().last().addClass('selected');
                 let origin = this;
