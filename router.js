@@ -542,7 +542,17 @@ router.post('/movies', (req,res) => {
                     .catch((err)=>{
                          console.log('error',err);
                      });
-                     res.redirect('/Admin');
+                
+                var sql3 = ""
+                console.log(sql3)
+                mysql.connect(sql2)
+                     .then((resp)=>{
+                         console.log("success")
+                    })
+                    .catch((err)=>{
+                         console.log('error',err);
+                     });
+                    
             });
 
 });
