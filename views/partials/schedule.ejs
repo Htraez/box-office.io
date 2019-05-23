@@ -2,23 +2,8 @@
 
 <form action="/addSchedule" method="post"> 
     <h3 class='head-text'>Schedule</h3>
-    <!-- <div class="row">
-        <div class="col-sm-3" >
-            <table class="table table-sm table-hover table-dark" id="Movie">
-            </table>
-        </div>
-        <div class="col-sm-3" >
-            <table class="table table-sm table-hover table-dark" id="Branch">
-            </table>
-        </div>
-        <div class="col-sm-3" >
-            <table class="table table-sm table-hover table-dark" id="theater">
-            </table>
-        </div>
-    </div> -->
     <div class='col-12 row'>
-        <div class='col-3' style='padding:2px;'>
-            
+        <div class='col-6' style='padding:2px;'>
             <span class='head-text level2'>Select theater</span>
             <ul class='open-list' id='theater'></ul>
         </div>
@@ -36,9 +21,6 @@
         <div class="col-sm-3">
             <label >Start Time</label>
             <input type="text" id="datetime24"class="form-control-plaintext text-white " data-format="HH:mm" data-template="HH : mm" name="StartTime" value="10:30">
-            <label >End Time</label>
-            <input type="text" id="datetime24"class="form-control-plaintext text-white " data-format="HH:mm" data-template="HH : mm" name="EndTime" value="20:30">
-               
             <label >Subtitle</label>
             <select name="SubTitle" class="form-control-plaintext text-white ">
                 <option class="form-control-plaintext" value="Thai">Thai</option>
@@ -46,18 +28,10 @@
             </select>
         </div>
         <div class="col-sm-3">
-            <label >Ad Duration</label>
-            <select class="form-control-plaintext text-white" id="AdDuration"  name="AdDuration">
+            <label >Duration</label>
+            <select class="form-control-plaintext text-white" id="Duration"  name="AdDuration">
                 <option class="form-control-plaintext" value="2D">2D</option>
                 <option class="form-control-plaintext" value="3D">3D</option>
-            </select>
-            <label >(Movie Duration: 2Hr 30Min)</label>
-            <label >Strescopic</label>
-            <select name="Strescopic" class="form-control-plaintext text-white ">
-                <option class="form-control-plaintext" value="2.1">2.1</option>
-                <option class="form-control-plaintext" value="5.1">5.1</option>
-                <option class="form-control-plaintext" value="7.1">7.1</option>
-                <option class="form-control-plaintext" value="9.1">9.1</option> 
             </select>
         </div>
     </div>

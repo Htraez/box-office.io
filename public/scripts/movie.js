@@ -1,3 +1,4 @@
+
 var theater
 var branch
 
@@ -85,8 +86,12 @@ function callBackMovieForm(){
     $('#movieForm').show();
 }
 
-function callBackAdmin(){
+function callBackFromShow(){
     $('#ShowMovieAll').hide();
+    $('.content-view').show();
+}
+function callBackFromMovie(){
+    $('#movieForm').hide();
     $('.content-view').show();
 }
 
@@ -95,7 +100,8 @@ $(document).on("click","#ShowMovie", ShowMovieForm);
 
 $(document).on("click","#next", callScheduleForm);
 $(document).on("click","#back", callBackMovieForm);
-$(document).on("click","#backToAdmin", callBackAdmin);
+$(document).on("click","#backToAdmin", callBackFromShow);
+$(document).on("click","#Reject", callBackFromMovie);
 BranchOption();
 ScheduleInfo();
 
