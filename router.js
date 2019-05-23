@@ -449,7 +449,7 @@ router.all('/', (req, res) => {
 });
 
 router.get('/admin', checkAuthentication, (req,res) => {
-    res.render('admin');
+    res.render('admin',{auth:true});
 });
 
 router.post('/login', 
