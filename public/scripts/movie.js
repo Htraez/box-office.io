@@ -47,7 +47,7 @@ function showTheater(data) {
 }
 
 function sentMovieForm(){
-    var payload = {
+    var payloadMovie = {
         MovieName: $('#MovieName').val(),
         Director: $('#Director').val(),
         Casts: $('#Casts').val(),
@@ -58,11 +58,7 @@ function sentMovieForm(){
         Studio: $('#Studio').val(),
         PosterURL: $('#PosterURL').val(),
     };
-    console.log(payload)
-}
-
-function sentScheduleForm(){
-    var payload = {
+    var payloadSchdule = {
         TheatreCode: theater,
         Date: $('#Date').val(),
         Time: $('#datetime24').val(),
@@ -72,7 +68,12 @@ function sentScheduleForm(){
 
     };
     console.log(payload)
+    if(payload.MovieName!='') $.post('/Movies',payload,(res)=>{
+        console.log(success)
+    });
 }
+
+
 function datetime(){
     $('#datetime24').combodate();  
 }
@@ -99,7 +100,7 @@ function callScheduleForm(){
     $('#schduleForm').show();
     $('#movieForm').hide();
     branch = $('#Branch').val()
-    showTheater() 
+    showTheater();
 }
 function callBackMovieForm(){
     $('#schduleForm').hide();

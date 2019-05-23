@@ -509,29 +509,43 @@ router.post('/branch', (req,res) => {
     console.log(sql)
 });
 
-router.post('/addSchedule', (req,res) => {
-    var data = req.body;
+// router.post('/addSchedule', (req,res) => {
+//     var data = req.body;
     // var sql = "INSERT INTO `schedule` (`MovieNo`, `TheatherCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+
     // data.movie+"','"+data.theater+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
-    var sql = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+"1"+"','"+"EN-01"+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
-    console.log(sql)
-    mysql.connect(sql)
-        .then((resp)=>{
-            console.log(resp);
-            res.redirect('/addSchedule');
-        });
-    console.log(sql)
-});
+    //ดึงข้อมูลMovie
+//     var sql = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+"1"+"','"+"EN-01"+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
+//     console.log(sql)
+//     mysql.connect(sql)
+//         .then((resp)=>{
+//             console.log(resp);
+//             res.redirect('/addSchedule');
+//         });
+//     console.log(sql)
+// });
 
-router.post('/AddMovie', (req,res) => {
+router.post('/movies', (req,res) => {
     var data = req.body;
     var sql = "INSERT INTO `movie` (`MovieName`, `Director`, `Casts`, `Desc`, `Duration`, `Rate`, `Genre`, `Studio`, `PosterURL`) VALUES ('"+
                 data.MovieName+"','"+ data.Director+"','"+data.Casts+"','"+data.Desc+"','"+data.Duration+"','"+data.Rate+"','"+data.Genre+"','"+data.Studio+"','"+data.PosterURL+"')";
     mysql.connect(sql)
         .then((resp)=>{
             console.log(resp);
-            res.redirect('/addSchedule');
-        });
+            // res.redirect('/addSchedule');
+                let MovieNo =resp.insertId;
+                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+"1"+"','"+"EN-01"+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
+                console.log(sql2)
+                mysql.connect(sql2)
+                    .then((resp)=>{
+                        console.log(succress)
+                    })
+                    .catch((err)=>{
+                        console.log('error',err);
+                    });
+                    res.redirect('/Admin');
+            });
     console.log(sql)
+    console.log(sql2)
+
 });
 module.exports = router;
