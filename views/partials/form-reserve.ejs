@@ -1,5 +1,5 @@
 <div class='content-form' id='reservation-form'>
-    <form action="/tickets" method="POST" id='reservation-form-element'>
+    <form class='preventEnter' id='reservation-form-element'>
         <div class="form-tab row" id='tab0'>
             <input type="text" id='movieName' name='movieName' class="hide" required>
             <input type="number" id='movieNo' name='movieNo' class="hide" required>
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div class='col-sm-5 col-xs-12' style='padding: 0 5px;'>
-                <div class="col-12" style="padding:0;max-height:24vh;overflow-y: scroll;">
+                <div class="col-12" style="padding:0;max-height: 42vh;overflow-y: scroll;">
                     <table class='table'>
                         <thead>
                             <tr>
@@ -126,9 +126,14 @@
                             </tr>
                         </thead>
                         <tbody id='tab3-seat-table'>
-                            <tr>
-                                <th class='table-foot' style='background:white;position: sticky;bottom: 0;'>Discount Rate ( <span id='tab3-discount-rate'>0%</span> )</th>
-                                <th class='table-foot' style='text-align: end;background:white; position: sticky;bottom: 0;'>Total: <span id='tab3-total-price'></span></th>
+                            <tr class='protect'>
+                                <th class='table-foot' style='vertical-align: middle;white-space: nowrap;background:white;position: sticky;bottom: 0;'>Discount Rate ( <span id='tab3-discount-rate'>0%</span> )</th>
+                                <th class='table-foot' style='text-align: -webkit-center;background:white; position: sticky;bottom: 0;'>
+                                    <div class='row' style='width: 100;text-align: right;'>
+                                        <div class="col-12" style='font-size: .75rem;font-weight: 500;border-bottom: 1px solid darkgray;padding: 1px;'>Subtotal: <span id='tab3-subtotal-price'></span></div>
+                                        <div class="col-12" style='padding: 1px;'>Total: <span id='tab3-total-price'></span></div>
+                                    </div>
+                                </th>
                             </tr>
                         </tbody>
                     </table>

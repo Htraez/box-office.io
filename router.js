@@ -179,67 +179,20 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
 
     //initialize reservation
     let reservation = {
+        ReservationKey: undefined,
         CustomerNo: customerNo,
         ScheduleNo: scheduleNo,
         CouponUsage: undefined,
         TicketList: []
     };
 
-    //validate coupon
-    let query = "SELECT * FROM `coupon` "
-                + "WHERE `CouponCode`='"+couponCode+"';";
-    //validate coupon (if found create coupon usage)
-    mysql.connect(query)
+    //create reservation
+    let query3 = "INSERT INTO `reservation` (`CustomerNo`, `ScheduleNo`, `DateCreated`) "
+                    +"VALUES("+reservation.CustomerNo+", "+reservation.ScheduleNo+", CURRENT_TIMESTAMP);";
+    
+    mysql.connect(query3)
     .then((resp)=>{
-        if(resp.rows.length <= 0 || couponCode==null){
-            reservation.CouponUsage = null;
-            return null;
-        }else{
-            let coupon = resp.rows[0];
-            //validate requirement (if not pass return like is null)
-                //check coupon
-                //check coupon schedule
-                //check coupon seatclass
-            //create coupon usage
-            let query1 = "INSERT INTO `couponusage` (`CouponUsageNo`, `ScheduleNo`, `CouponCode`)"
-                            +"VALUES (NULL, '"+reservation.ScheduleNo+"', '"+coupon.CouponCode+"');"
-            return mysql.connect(query1)
-            .then((resp)=>{
-                //read coupon usage no 
-                let couponUsageKey = resp.insertId;
-                return {cuk: couponUsageKey, coupon: coupon};
-            });
-        }
-    })
-    //INSERT Reservation with or without couponUsageKey
-    .then((couponValidation)=>{
-        if(couponValidation == null){
-            reservation.CouponUsage = null;
-            return;
-        }
-        reservation.CouponUsage = couponValidation.cuk;
-        let couponCode = couponValidation.coupon.CouponCode;
-        let noAvailable = couponValidation.coupon.NoAvailable - 1;
-        //decrement coupon NoAvailable
-        let query2 = "UPDATE `coupon` SET `NoAvailable` = '"+noAvailable.toString(10)+"' "
-                        +"WHERE `coupon`.`CouponCode` = '"+couponCode+"';";
-        
-        return mysql.connect(query2)
-        .then((resp)=>{
-            return;
-        });
-    })
-    .then(()=>{
-        //create reservation
-        let query3 = "INSERT INTO `reservation` (`CustomerNo`, `ScheduleNo`, `DateCreated`, `Approve`, `CouponUsage`) "
-                        +"VALUES("+reservation.CustomerNo+", "+reservation.ScheduleNo+", CURRENT_TIMESTAMP, 0, ";
-        if(reservation.CouponUsage != null){
-            query3 += "'"+reservation.CouponUsage+"');";
-        }else query3 += "NULL);";
-        return mysql.connect(query3)
-        .then((resp)=>{
-            return resp.insertId;
-        });
+        return resp.insertId;
     })
     //Create Reservation Items with reservationKey
     .then((reservationKey)=>{
@@ -266,6 +219,9 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
             query5+=';';
             return mysql.connect(query5)
             .then((resp)=>{
+                let reservationObj = reservation;
+                reservationObj.ReservationKey = reservationKey;
+                
                 if(resp.rows.length > 0){
                     let classInfo = resp.rows;
                     // seat code to class, row, column
@@ -278,10 +234,9 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                             if(plan['SeatClass'+i]!=null) classList = [...classList, ...Array.apply(null, Array(plan['NumberRow'+i])).map(function(){return plan['SeatClass'+i]})];
                             if(i <= classInfo.length) priceList[classInfo[i-1].ClassName] = classInfo[i-1].Price;
                         }
-                        // console.log(row,plan,classList);
-                        // console.log(classInfo.length);
-                        // console.log(priceList);
-                        reservation.TicketList.push({
+
+                        //reservationObj.reservationKey = reservationKey;
+                        reservationObj.TicketList.push({
                             ReservationNo: reservationKey,
                             ReservationItem: i,
                             SeatCode: seatCode,
@@ -291,8 +246,10 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                             FullPrice: priceList[classList[row]]
                         });
                     });
-                    return reservation;
+                    
+                    return reservationObj;
                 }
+                //else throw error invalid seat class
             })
         })
     })
@@ -306,15 +263,90 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
         query6 += ";"
         return mysql.connect(query6)
         .then((resp)=>{
-            return resp;
+            return {ticketItemResp:resp, reservationKey:reservations.reservationKey, reservationObj: reservations};
         });
     })
+    //validate coupon
+    .then((resp)=>{
+        let reservationObj = resp.reservationObj;
+        let query = "SELECT * FROM `coupon` "
+                    + "WHERE `CouponCode`='"+couponCode+"';";
+        //validate coupon (if found create coupon usage)
+        return mysql.connect(query)
+        .then((resp)=>{
+            if(resp.rows.length <= 0 || couponCode==null){
+                reservationObj.CouponUsage = null;
+                // return null;
+            }else{
+                //console.log(reservationObj);
+                let totalPrice = 0;
+                reservationObj.TicketList.forEach((ticket)=>{
+                    totalPrice+=ticket.FullPrice;
+                });
+                let coupon = resp.rows[0];
+                let deduction = totalPrice*coupon.Discount;
+                if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) deduction = coupon.MaxDiscount;
+                //validate requirement (if not pass return like is null)
+                    //check coupon
+                    let todayDate = new Date();
+                    let expDate = new Date(coupon.EXPDate);
+                    let expPass = todayDate < expDate;
+
+                    let spendPass = totalPrice >= coupon.MinSpend;
+                    let minSeatPass = reservationObj.TicketList.length >= coupon.MinSeat;
+                    let availablePass = coupon.NoAvailable > 0;
+                    //check coupon schedule
+                    let schedulePass = true;
+                    //check coupon seatclass
+                    let seatClassPass = true;
+
+                if(!(expPass && spendPass && minSeatPass && availablePass && schedulePass && seatClassPass)){
+                    reservationObj.CouponUsage = null;
+                }else{
+                    //create coupon usage
+                    let query1 = "INSERT INTO `couponusage` (`CouponUsageNo`, `ReservationNo`, `CouponCode`, `Deduction`)"
+                                    +"VALUES (NULL, '"+reservationObj.ReservationKey+"', '"+coupon.CouponCode+"', "+deduction+");"
+                    return mysql.connect(query1)
+                    .then((resp)=>{
+                        //read coupon usage no 
+                        let couponUsageKey = resp.insertId;
+                        reservationObj.CouponUsage = couponUsageKey;
+                        reservationObj.Coupon = coupon;
+                        return reservationObj;
+                    });
+                }
+            }
+            return reservationObj;
+        })
+    })
+    //update coupon's NoAvailable
+    .then((reservationObj)=>{
+        if(typeof reservationObj.CouponUsage != 'undefined'){
+            if(reservationObj.CouponUsage != null){
+                let couponCode = reservationObj.Coupon.CouponCode;
+                let noAvailable = reservationObj.Coupon.NoAvailable - 1;
+                //decrement coupon NoAvailable
+                let query2 = "UPDATE `coupon` SET `NoAvailable` = '"+noAvailable.toString(10)+"' "
+                                +"WHERE `coupon`.`CouponCode` = '"+couponCode+"';";
+                
+                return mysql.connect(query2)
+                .then((resp)=>{
+                    return reservationObj;
+                });
+            }
+        }
+        return reservationObj;
+    })
+    //get ticketing result for user
+    .then((ticketObj)=>{
+        console.log('ticketing ALL SUCCESS')
+        res.status(200).send(ticketObj);
+    })
     .catch((err)=>{
-        console.log('error',err);
+        console.log('ticketing ERROR',err);
+        res.sendStatus(500);
     });
-    
-    //console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========');
-    res.redirect('/');
+    console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========\n');
 });
 
 router.post('/tickets/:ticketId/confirm', (req,res)=>{

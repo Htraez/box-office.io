@@ -846,7 +846,7 @@ table{
 
 .table tbody td{
     padding: .3rem;
-    font-size: .3rem;
+    font-size: .75rem;
 }
 @media screen and (max-width: 767px) {
     #buy-ticket-popup .floating{
