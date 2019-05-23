@@ -80,6 +80,7 @@ function datetime(){
 }
 
 function theater(){
+    $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.innerHTML);
     theater = this.innerHTML;
     console.log(theater)
@@ -113,9 +114,10 @@ function callBackFromMovie(){
     $('#movieForm').hide();
     $('.content-view').show();
 }
-$(document).on('click',".theaterTable",theater);
-$(document).on('click',".clickTable",function(){
-    $(this).addClass('selected').siblings().removeClass('selected');})
+//  $(document).on('click',".theaterTable",theater);
+$(document).on('click',".clickTable", theater);
+
+
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 

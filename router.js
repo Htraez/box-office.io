@@ -533,20 +533,17 @@ router.post('/movies', (req,res) => {
             console.log(resp);
             // res.redirect('/addSchedule');
                 let MovieNo =resp.insertId;
-                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+MovieNo+"','"+ data.Schdule.TheatreCode+"','"+data.Schdule.Date+"','"+data.Schdule.Time+":00"+"','"+data.Schdule.Audio+"','"+data.Schdule.Dimension+"','"+data.Schdule.SubTitle+"')";
+                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+MovieNo+"','"+ data.Schdule.TheatreCode+"','"+data.Schdule.Date+"','"+data.Schdule.Time+":00"+"','"+data.Schdule.Audio+"','"+data.Schdule.Dimension+"','"+data.Schdule.Subtitle+"')";
                 console.log(sql2)
-                mysql.connect(sql2)
-                    .then((resp)=>{
-                        resp.send(resp)
-                        console.log(succress)
+                 mysql.connect(sql2)
+                     .then((resp)=>{
+                         console.log("success")
                     })
                     .catch((err)=>{
-                        console.log('error',err);
-                    });
-                    res.redirect('/Admin');
+                         console.log('error',err);
+                     });
+                     res.redirect('/Admin');
             });
-    console.log(sql)
-    console.log(sql2)
 
 });
 module.exports = router;
