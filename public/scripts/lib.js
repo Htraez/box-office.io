@@ -39,6 +39,7 @@ class ticketingProcess {
         if(this.movie) this.showPoster;
 
         this.form.find('input').addClass('inactiveStep');
+        this.form.find('input').off('keypress');
         this.validator = this.form.validate({
             rules: { 
                 "seatCode[]": { 
@@ -117,8 +118,48 @@ class ticketingProcess {
             this.allowContinue(this.form, this.form.closest('.popup-window').find('.popup-footer .submit-btn').attr("disabled", true));
             let self = this;
             this.form.closest('.popup-window').find('.popup-footer .submit-btn').off('click').click(function(e){
-                if(self.allowSubmit)$('#reservation-form-element')[0].submit();
-                //e.preventDefault();
+                if(self.allowSubmit){
+                    //prompt loading
+                    iziToast.show({
+                        position: "topCenter", 
+                        iconUrl: '/assets/images/load_placeholder.svg',
+                        title: 'Processing', 
+                        color: 'yellow',
+                        message: 'Please Wait',
+                        timeout: false,
+                        overlay: true,
+                        close: false
+                    });
+                    //send form wait for status and tickets
+                    $.ajax({
+                        url: '/tickets',
+                        type: 'POST',
+                        data: self.form.serialize(),
+                        success:function(ticketData){
+                            iziToast.destroy();
+                            iziToast.show({
+                                title: 'Congrats! ',
+                                icon: 'fas fa-ticket-alt',
+                                message: 'Your Ticket(s) Is Here',
+                                position: 'topCenter',
+                                color: 'green',
+                                close: false
+                            });
+                            console.log(ticketData);
+                        },
+                        error:function(jqXhr, textStatus){
+                            iziToast.destroy();
+                            iziToast.show({
+                                title: 'Incomplete! ',
+                                icon: 'fas fa-bug',
+                                message: 'Ticket Reservation Failed ('+textStatus+')',
+                                position: 'topCenter',
+                                color: 'red',
+                                close: false
+                            });
+                        }
+                    });
+                }
             });
         }else{
             this.form.closest('.popup-window').find('.popup-footer .submit-btn').remove();
@@ -346,7 +387,7 @@ class ticketingProcess {
                 $('#tab3-time-period').text(this.temp.scheduleSelection.Time);
                 $('#tab3-branchName').text(this.temp.scheduleSelection.BranchName);
                 $('#tab3-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
-                $('#tab3-seat-table').find('tr:not(:last-child)').remove();
+                $('#tab3-seat-table').find('tr:not(.protect)').remove();
                 this.form.find('#tab3-discount-rate').text('0%');
                 this.form.find('#ticketing-coupon').val('');
 
@@ -356,6 +397,7 @@ class ticketingProcess {
                     $('#tab3-seat-table').prepend('<tr><td>'+seat.seatCode+'</td><td id="tab3-'+seat.seatCode+'-billing">'+seat.fullPrice+'.-</td></tr>');
                 })
                 $('#tab3-total-price').text(totalPrice+'.-');
+                $('#tab3-subtotal-price').text(totalPrice+'.-');
                 let self = this;
                 let checkToken = false;
                 let checkCount = 0;
@@ -380,22 +422,36 @@ class ticketingProcess {
                                     console.log('coupon response=>',data);
                                     if(data.length == 1){
                                         //calculate criteria result
-                                        let datePass = new Date() > new Date(data[0].EXPDate) ? false:true;
-                                        let minSeatPass = self.temp.seatList.length >= data[0].MinSeat ? true:false;
-                                        let totalSpend = 0;
-                                        self.temp.seatList.forEach((seat)=>{totalSpend += seat.fullPrice});
-                                        let spendPass = totalSpend >= data[0].MinSpend ? true:false;
-                                        let availablePass = data[0].NoAvailable > 0 ? true:false;
-                                        //check all criteria are passed
-                                        if(datePass && minSeatPass && spendPass && availablePass){
+                                        let coupon = data[0];
+                                        console.log('this is coupon data', coupon);
+                                        //validate requirement (if not pass return like is null)
+                                            //check coupon
+                                            let todayDate = new Date();
+                                            let expDate = new Date(coupon.EXPDate);
+                                            let expPass = todayDate < expDate;
+
+                                            let totalPrice = 0;
+                                            self.temp.seatList.forEach((seat)=>{totalPrice += seat.fullPrice});
+                                            let spendPass = totalPrice >= coupon.MinSpend;
+                                            let minSeatPass = self.temp.seatList.length >= coupon.MinSeat;
+                                            let availablePass = coupon.NoAvailable > 0;
+                                            //check coupon schedule
+                                            let schedulePass = true;
+                                            //check coupon seatclass
+                                            let seatClassPass = true;
+                                        
+                                            console.log(expPass ,spendPass,minSeatPass,availablePass,schedulePass,seatClassPass);
+                                        if(expPass && spendPass && minSeatPass && availablePass && schedulePass && seatClassPass){
+                                            
                                             //calculate discount
                                             let discountPercent = data[0].Discount*100;
-                                            let discountPrice = totalSpend*(1-data[0].Discount);
-                                            
+                                            let deduction = totalPrice*coupon.Discount;
+                                            if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) deduction = coupon.MaxDiscount;
+                                            let discountPrice = totalPrice-deduction;
                                             //confirm on screen
                                             iziToast.show({
                                                 title: '&#128537; Hooray! ',
-                                                message: 'Coupon "'+data[0].CouponCode+'" Applied',
+                                                message: 'Coupon "'+data[0].CouponCode+'" Applied (Deducted'+deduction+'.-)',
                                                 position: 'topCenter',
                                                 color: 'green',
                                                 close: false
@@ -403,6 +459,7 @@ class ticketingProcess {
                                             
                                             //apply discount (just show to screen)
                                             self.form.find('#tab3-discount-rate').text(discountPercent.toString(10)+'%');
+                                            if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) self.form.find('#tab3-discount-rate').text(deduction.toString(10)+'.-');
                                             self.form.find('#tab3-total-price').text(discountPrice.toString(10)+'.-');
                                         }else{
                                             iziToast.show({

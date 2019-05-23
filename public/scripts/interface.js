@@ -4,6 +4,11 @@ $(document).ready(function(){
     webState = new webstate(auth);
 });
 
+$(document).on("keydown", "form.preventEnter", function(event) { 
+    return event.key != "Enter";
+    //prevent hitting enter in form
+});
+
 $('.popup-area, #popup-close, .close-key').click(function(e){
     if(e.target != this && e.target != this.children[0]) return;
     $('.web-body').removeClass('overlay');
