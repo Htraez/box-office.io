@@ -1,0 +1,62 @@
+<div class="container-fluid">
+    <h1 class='head-text'>Add Shift</h1>
+    <div class="row justify-content-center" style="height: 300px;">
+        <div class="col-4">
+            <ul class="open-list ">
+                <li style="font-size: 18; padding-left: 30;">Date: 05-23-2019</li>
+                <li style="font-size: 18; padding-left: 30;">Date: 05-24-2019</li>
+                <li style="font-size: 18; padding-left: 30;">Date: 05-25-2019</li>
+                <li style="font-size: 18; padding-left: 30;">Date: 05-26-2019</li>
+                <li style="font-size: 18; padding-left: 30;">Date: 05-27-2019</li>
+                <li style="font-size: 18; padding-left: 30;">Date: 05-28-2019</li>
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul class="open-list ">
+                <li style="font-size: 18; padding-left: 30;">Start: 09.00 End: 17.00</li>
+                <li style="font-size: 18; padding-left: 30;">Start: 13.00 End: 21.00</li>
+                <li style="font-size: 18; padding-left: 30;">Start: 09.00 End: 13.00</li>
+                <li style="font-size: 18; padding-left: 30;">Start: 13.00 End: 17.00</li>
+                <li style="font-size: 18; padding-left: 30;">Start: 13.00 End: 17.00</li>
+                <li style="font-size: 18; padding-left: 30;">Start: 13.00 End: 17.00</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="container" >
+        <div class="form-group row justify-content-md-center">
+            <label for="date"  class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Date</label>
+            <div class="col-6">
+                <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="date" name="date">
+            </div>
+        </div>
+
+        <div class="form-group row justify-content-md-center">
+            <label for="startTime" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Start time</label>
+            <div class="col-6">
+                <input type="time" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="startTime" name="startTime">
+            </div>
+        </div>
+
+        <div class="form-group row justify-content-md-center">
+            <label for="endTime" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">End time</label>
+            <div class="col-6">
+                <input type="time" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="endTime" name="endTime">
+            </div>
+        </div>
+        
+        <div class="row justify-content-around" style="padding-top: 50px; width: 600px;">
+            <button type="button" id="back" class="btn btn-white btn-outline-light ">Back</button>
+            <button type="button" id="assignShift" class="btn btn-white btn-outline-light ">Assign</button>
+        </div>
+        <div class="row justify-content-end">
+                <div class="col-4">
+                    <button type="button" id="savedata" class="btn btn-white mr-5 btn-outline-light" >Save</button>
+                </div>
+                <div class="col-4"></div>
+            </div>
+    </div>
+</div>
+
+<script src="scripts/staff.js"></script>
