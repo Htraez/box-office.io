@@ -38,14 +38,28 @@ function showTheater(data) {
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
             if(branch==value.BranchNo)
-            $("#theater").append('<tr class="default-mouse clickTable"><th class="text-white theaterTable" scope="col">'+value.TheatreCode+'</th></tr>');
-            
+            $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');  
         });
         console.log(data)
     });
     
 }
 
+function datetime(){
+    $('#datetime24').combodate();  
+}
+
+function theater(){
+    console.log(this.innerHTML);
+    theater = this.innerHTML;
+    console.log(theater)
+
+}
+
+$(document).on('click',".theaterTable",theater);
+$(document).on('click',".clickTable",function(){
+    $(this).addClass('selected').siblings().removeClass('selected');
+})
 
 
 function callMovieForm(){
