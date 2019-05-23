@@ -46,6 +46,33 @@ function showTheater(data) {
     
 }
 
+function sentMovieForm(){
+    var payload = {
+        MovieName: $('#MovieName').val(),
+        Director: $('#Director').val(),
+        Casts: $('#Casts').val(),
+        Desc: $('#Desc').val(),
+        Duration: $('#Duration').val(),
+        Rate: $('#Rate').val(),
+        Genre: $('#Genre').val(),
+        Studio: $('#Studio').val(),
+        PosterURL: $('#PosterURL').val(),
+    };
+    console.log(payload)
+}
+
+function sentScheduleForm(){
+    var payload = {
+        TheatreCode: theater,
+        Date: $('#Date').val(),
+        Time: $('#datetime24').val(),
+        Audio: $('#Audio').val(),
+        Dimension: $('#Dimension').val(),
+        Subtitle: $('#SubTitle').val(),
+
+    };
+    console.log(payload)
+}
 function datetime(){
     $('#datetime24').combodate();  
 }
@@ -57,35 +84,27 @@ function theater(){
 
 }
 
-$(document).on('click',".theaterTable",theater);
-$(document).on('click',".clickTable",function(){
-    $(this).addClass('selected').siblings().removeClass('selected');
-})
+
 
 
 function callMovieForm(){
     $('#movieAndSchduleForm').show();
     $('.content-view').hide();
 }
-
 function ShowMovieForm(){
     $('#ShowMovieAll').show();
     $('.content-view').hide();
 }
-
 function callScheduleForm(){
     $('#schduleForm').show();
     $('#movieForm').hide();
     branch = $('#Branch').val()
-    showTheater()
-    
+    showTheater() 
 }
-
 function callBackMovieForm(){
     $('#schduleForm').hide();
     $('#movieForm').show();
 }
-
 function callBackFromShow(){
     $('#ShowMovieAll').hide();
     $('.content-view').show();
@@ -94,7 +113,10 @@ function callBackFromMovie(){
     $('#movieForm').hide();
     $('.content-view').show();
 }
-
+$(document).on('click',".theaterTable",theater);
+$(document).on('click',".clickTable",function(){
+    $(this).addClass('selected').siblings().removeClass('selected');
+})
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 
@@ -104,4 +126,5 @@ $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click","#Reject", callBackFromMovie);
 BranchOption();
 ScheduleInfo();
+
 
