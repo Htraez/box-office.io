@@ -1,6 +1,7 @@
 
-var theater
-var branchName
+var theater;
+var branchName;
+var schedule_list =[];
 
 function ScheduleInfo(data) {
     var payload = { table:"schedule" };
@@ -40,6 +41,20 @@ function showTheater(cl,data) {
     
 }
 
+function addScheduleTable(){
+    console.log("func ok")
+    var temp = {
+        TheatreCode: theater,
+        Date: $('#Date').val(),
+        Time: $('#datetime24').val(),
+        Audio: $('#Audio').val(),
+        Dimension: $('#Dimension').val(),
+        Subtitle: $('#SubTitle').val()
+    }
+    schedule_list.push(temp);
+    $("#schedule-list").append('<li class="clickSchedule">'+schedule_list[0].TheatreCode+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Date+'&emsp;&emsp;'+schedule_list[0].Audio+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Time+'&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Subtitle+'&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Dimension+'</li>');
+
+}
 function sentMovieForm(){
     var payload = {
         Movie : {
@@ -121,8 +136,7 @@ function callBackFromShow(){
 
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
-
-// $(document).on("click","#next", callScheduleForm);
+$(document).on('click',"#addSchedule",addScheduleTable);
 // $(document).on("click","#back", callBackMovieForm);
 $(document).on("click","#backToAdmin", callBackFromShow);
 // $(document).on("click","#Reject", callBackFromMovie);
@@ -130,4 +144,3 @@ $(document).on("click","#backToAdmin", callBackFromShow);
 
 ScheduleInfo();
 showbranch();
-
