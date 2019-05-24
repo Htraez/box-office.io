@@ -481,13 +481,35 @@ router.post("/staff", (req, res) =>{
     var data = req.body;
     var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
                 data.staff.FirstName+"','"+ data.staff.MidName+"','"+data.staff.LastName+"','"+data.staff.BirthDay+"','"+data.staff.CitizenID+"','"+data.staff.Gender+"','"+data.staff.HighestEdu+"','"+data.staff.ImageURL+"','"+data.staff.DateEmployed+"','"+data.staff.Address+"','"+data.staff.PhoneNumber+"','"+data.staff.Marital+"','"+data.staff.Position+"','"+data.staff.BranchNo+"')";
-    
     mysql.connect(sql)
         .then((resp)=>{
-             
-    })
-    console.log(data);
-})
+            var insertID  = { staffid : resp.insertId , shiftid:""}
+            var sql = "INSERT INTO `shift` (`Day`,`StartTime`,`EndTime`) VALUE";
+                data.shift.forEach((value)=>{
+                    var timestart = value.StartHH+":"+value.StartMM+":"+value.StartSS;
+                    var timeend = value.EndHH+":"+value.EndMM+":"+value.EndSS;
+                    sql += " ('"+value.Date+"','"+timestart+"','"+timeend+"'),";
+                });
+            sql = sql.substring(0,sql.length-1);
+            console.log(sql);
+            mysql.connect(sql)
+            .then((resp)=>{
+                    //console.log(resp);
+                    insertID.shiftid = parseInt(resp.insertId);
+                    var sql = "INSERT INTO `shiftapplies`(`StaffNo`, `ShiftNo`) VALUE";
+                    for(var i=0; i<resp.rows.affectedRows;i++){
+                        var real = insertID.shiftid+i;
+                        sql += "('"+insertID.staffid+"','"+real+"'),"
+                    }
+                    sql = sql.substring(0,sql.length-1);
+                    console.log(sql);
+                    mysql.connect(sql)
+                    .then((resp)=>{
+
+                    })
+                })
+        })
+    });
 
 router.all('/', (req, res) => {
     console.log(req.user);

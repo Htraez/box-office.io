@@ -39,9 +39,7 @@ function savedata(){
             Position:$("#position").val(),
             BranchNo:$("#branchNo").val(),
         },
-        shift:[
-            
-        ]
+        shift: [...addshiftshow]
     }
     if(payload.staff.FirstName&&payload.staff.LastName&&payload.staff.BirthDay&&payload.staff.CitizenID&&payload.staff.Gender&&payload.staff.HighestEdu&&payload.staff.ImageURL&&payload.staff.DateEmployed&&payload.staff.Address&&payload.staff.PhoneNumber&&payload.staff.Marital&&payload.staff.Position&&payload.staff.BranchNo){
         console.log(payload);
@@ -63,17 +61,39 @@ function fetchbranchforstaff(){
 }
 
 function assignshiftforstaff(){
+    
     var temp = {
         Date: $('#date').val(),
         StartHH: $('#HHstartTime').val(),
-        StartHH: $('#HHstartTime').val(),
-        StartHH: $('#HHstartTime').val(),
+        StartMM: $('#MMstartTime').val(),
+        StartSS: $('#SSstartTime').val(),
         EndHH: $('#HHendTime').val(),
-        EndMM: $('#endTime').val(),
-        EndSS: $('#endTime').val(),  
+        EndMM: $('#MMendTime').val(),
+        EndSS: $('#SSendTime').val()
     }
-    console.log("OK");
-    addshiftshow.push(temp);
+    if(temp.Date!=""&&temp.StartHH!=""&&temp.StartMM!=""&&temp.StartSS!=""&&temp.EndHH!=""&&temp.EndMM!=""&&temp.EndSS!=""){
+        if(temp.StartHH<0||temp.StartHH>24||temp.StartMM<0||temp.StartMM>60||temp.StartSS<0||temp.StartSS>60||temp.EndHH<0||temp.EndHH>24||temp.EndMM<0||temp.EndMM>60||temp.EndSS<0||temp.EndSS>60){
+        console.log("ERROR");
+        }
+        else{
+        console.log("OK");
+        addshiftshow.push(temp);
+        }
+    }
+    else{
+        console.log("No data");
+    }
+    
+    addtotable()
+}
+
+function addtotable(){
+    $('#showdatetime').find("li").remove();
+    addshiftshow.forEach((value)=>{
+        var addshifttable = "<li><span>Date: '' </span>"+value.Date+" ''&emsp;&emsp;<span>Start : "+value.StartHH+":"+value.StartMM+":"+value.StartSS+" </span>&emsp; End : "+value.EndHH+":"+value.EndMM+":"+value.EndSS+"</li>"
+        $('#showdatetime').append(addshifttable)   
+    })
+    
 }
 
 $(document).on("click","#createStaff",staffForm);
