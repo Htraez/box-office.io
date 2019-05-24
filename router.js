@@ -541,7 +541,7 @@ router.post('/movies', (req,res) => {
     var planWithSchedule =[];
     var SeatClass =[];
     var data = req.body;
-    var total;
+    var total=0;
     var sql = "INSERT INTO `movie` (`MovieName`, `Director`, `Casts`, `Desc`, `Duration`, `Rate`, `Genre`, `Studio`, `PosterURL`) VALUES ('"+
                 data.Movie.MovieName+"','"+ data.Movie.Director+"','"+data.Movie.Casts+"','"+data.Movie.Desc+"','"+data.Movie.Duration+"','"+data.Movie.Rate+"','"+data.Movie.Genre+"','"+data.Movie.Studio+"','"+data.Movie.PosterURL+"')";
     mysql.connect(sql)
@@ -565,7 +565,7 @@ router.post('/movies', (req,res) => {
                  mysql.connect(sql3)
                         .then((resp)=>{
                             resp.rows.forEach((value,key)=>{
-                                planWithSchedule ={
+                                planWithSchedule.push( {
                                 scheduleNo :value.scheduleNo,
                                 PlanHeight: value.PlanHeight,
                                 PlanWidth:  value.PlanWidth,
@@ -577,7 +577,7 @@ router.post('/movies', (req,res) => {
                                 NumberRow3: value.NumberRow3,
                                 SeatClass4: value.SeatClass4,
                                 NumberRow4: value.NumberRow4
-                                }
+                                })
                             });
                             console.log(planWithSchedule)
                             var sql4 ="SELECT ClassName,Price,Width FROM seatclass";
@@ -592,17 +592,20 @@ router.post('/movies', (req,res) => {
                                             })
                                              });
                                              console.log(SeatClass)
-                                            total = SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass1).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass1).Width))*planWithSchedule.NumberRow1
+                                            planWithSchedule.forEach((value,key)=>{
+                                            total = SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Width))*value.NumberRow1
                                             console.log("1",total)
                                             if(planWithSchedule.SeatClass2!=null)
-                                                {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass2).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass2).Width))*planWithSchedule.NumberRow2
+                                                {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Width))*value.NumberRow2
                                                 console.log("2",total)}
                                             if(planWithSchedule.SeatClass3!=null)
-                                                { total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass3).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass3).Width))*planWithSchedule.NumberRow3
+                                                { total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass3).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass3).Width))*value.NumberRow3
                                                 console.log("3",total)}
                                             if(planWithSchedule.SeatClass4!=null)
-                                                 {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass4).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass4).Width))*planWithSchedule.NumberRow4
+                                                 {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass4).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass4).Width))*value.NumberRow4
                                                     console.log("4",total)}
+                                            
+                                            });
                                             var sql5 ="INSERT INTO `movie_revenue` (`MovieNo`, `ExpectRevenue`) VALUES ('"+MovieNo+"','"+total+"')";
                                             mysql.connect(sql5)
                                             console.log(sql5)
@@ -614,10 +617,6 @@ router.post('/movies', (req,res) => {
                     .catch((err)=>{
                          console.log('error',err);
                      });
-                
-                
-
-
 });
 });
 
