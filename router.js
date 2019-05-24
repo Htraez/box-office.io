@@ -54,6 +54,7 @@ router.get('/movies', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
     let columns = undefined;
+    let movieDate = req.query.date == '' ? undefined:req.query.date;
     if(typeof req.query.columns != 'undefined'){
         columns = req.query.columns.length > 0 ? '`'+req.query.columns.join().replace(/,/g,'`,`')+'`':undefined;
     }
@@ -64,7 +65,7 @@ router.get('/movies', (req,res)=>{
                     + (status||movieId ? 'WHERE':'') 
                     + (movieId!=undefined ? '`MovieNo`='+movieId:'') 
                     + (status&&movieId ? 'AND':'') 
-                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule`)':'') + ';';
+                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDate+'")':'') + ';';
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){
@@ -82,10 +83,14 @@ router.get('/movies', (req,res)=>{
 router.get('/schedule', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
+    let date = req.query.date == '' ? undefined:req.query.date;
     let query = 'SELECT s.*,t.BranchNo,t.PlanName, b.BranchName, b.BranchAddress FROM `schedule` s '
                     + 'JOIN (SELECT * FROM theatre) AS t ON s.TheatreCode = t.TheatreCode '
                     + 'JOIN (SELECT * FROM branch) AS b ON t.BranchNo = b.BranchNo '
-                    + 'WHERE `MovieNo`='+movieId;
+                    + 'WHERE `MovieNo`='+movieId+' ';
+    if(date){
+        query += "AND `Date` >= '"+date+"'";
+    }
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){
@@ -110,8 +115,29 @@ router.get('/plan', (req,res)=>{
         if(resp.rows.length <= 0){
             //return
             res.sendStatus(404);
+            return;
         }
         console.log('found',resp.rows.length,'theatre plan(s)');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
+router.get('/reservation/:scheduleNo', (req,res)=>{
+    let scheduleNo = req.params.scheduleNo;
+    let query = "SELECT i.SeatClass, i.SeatCode, i.SeatRow, i.SeatCol FROM `reservation` r, `reservation_items` i "
+                    +"WHERE r.`ReservationNo` = i.`ReservationNo` "
+                    +"AND r.`ScheduleNo` = "+scheduleNo+";"
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.send(null);
+            return;
+        }
+        console.log('found',resp.rows.length,'reservation(s)');
         res.send(resp.rows);
     })
     .catch((err)=>{

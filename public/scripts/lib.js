@@ -21,6 +21,29 @@ const fetchData = (topic, data, next) => {
     }
 }
 
+(function() {
+    Date.prototype.toYMD = Date_toYMD;
+    Date.prototype.withoutTime = wot;
+    function Date_toYMD() {
+        var year, month, day;
+        year = String(this.getFullYear());
+        month = String(this.getMonth() + 1);
+        if (month.length == 1) {
+            month = "0" + month;
+        }
+        day = String(this.getDate());
+        if (day.length == 1) {
+            day = "0" + day;
+        }
+        return year + "-" + month + "-" + day;
+    }
+    function wot(){
+        var d = new Date(this);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }
+})();
+
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -37,6 +60,20 @@ class ticketingProcess {
         this.allowSubmit = false;
         this.webState = webState;
         if(this.movie) this.showPoster;
+
+        let s = this;
+        this.form.find('.day-toggle .toggle-item').click(function(e){
+            iziToast.destroy();
+            iziToast.show({
+                title: 'Status ',
+                icon: 'fas fa-info',
+                message: 'Select Schedule On Date: '+$(this).data('selectDate'),
+                position: 'topCenter',
+                color: 'blue',
+                close: false
+            });
+            s.processSchedule($(this).data('selectDate'));
+        });
 
         this.form.find('input').addClass('inactiveStep');
         this.form.find('input').off('keypress');
@@ -66,7 +103,10 @@ class ticketingProcess {
                 userTele:{
                     required: "Your telephone number is needed"
                 },
-                "seatCode[]": '',
+                "seatCode[]":{
+                    required: '',
+                    minlength: ''
+                },
                 customerNo:'',
                 username:''
             },
@@ -185,7 +225,23 @@ class ticketingProcess {
                 break;
             }
             case 1:{
+                let mon_template = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                let today = new Date();
+                let today_num = today.getDate();
+                let today_mon = mon_template[today.getMonth()];
+                let tmr = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                let tmr_num = tmr.getDate();
+                let tmr_mon = mon_template[tmr.getMonth()];
+
+                this.form.find('#today-num').text(today_num);
+                this.form.find('#today-num').closest('.toggle-item').data('selectDate', today);
+                this.form.find('#today-mon').text(today_mon);
+                this.form.find('#tmr-num').text(tmr_num)
+                this.form.find('#tmr-num').closest('.toggle-item').data('selectDate', tmr);
+                this.form.find('#tmr-mon').text(tmr_mon);
+
                 if(typeof this.webState.temp.branchSelection != 'undefined'){
+                    //add selecting branch to input
                     this.form.find('#tab1-branchNo').val(this.webState.temp.branchSelection);
                 }
                 this.form.closest('.popup-window').find('.popup-footer').children().remove();
@@ -199,165 +255,150 @@ class ticketingProcess {
                 this.form.find('#tab1 #tab1-movieName+span .head-text-badge, #tab3-badge').children().remove();
                 this.form.find('#tab1 #tab1-movieName+span .head-text-badge, #tab3-badge').append("<span class='badge'>"+this.movie.Genre+"</span>");
                 this.form.find('#tab1 #tab1-movieName+span .head-text-badge, #tab3-badge').append("<span class='badge'>"+this.movie.Rate+"</span>");
-                
-                this.temp.branchSchedule = {}
-                this.schedules.forEach((schedule) => {
-                    if(typeof this.temp.branchSchedule[schedule.BranchName] == 'undefined') this.temp.branchSchedule[schedule.BranchName] = [];
-                    this.temp.branchSchedule[schedule.BranchName].push(schedule);
-                });
 
-                this.form.find('#tab1 #tab1-branch-list').children().remove();
-                this.form.find('#tab1 #tab1-schedule-list').children().remove();
-                Object.keys(this.temp.branchSchedule).forEach((branchName)=>{
-                    this.form.find('#tab1 #tab1-branch-list').append('<li data-branch="'+branchName+'">'+branchName+'</li>');
-                    let form = this.form;
-                    let ws = this.webState;
-                    this.form.find('#tab1 #tab1-branch-list').children().last().click(function(e){
-                        $(this).addClass('selected');
-                        $(this).siblings().removeClass('selected');
-                        form.find('#tab1 #tab1-schedule-list li').hide();
-                        form.find('#tab1 #tab1-schedule-list li[data-branch="'+$(this).data('branch')+'"]').show();
-                    });
-                    this.temp.branchSchedule[branchName].forEach((schedule)=>{
-                        this.form.find('#tab1 #tab1-schedule-list').append('<li data-branch="'+branchName+'">'+schedule.Time+'<span class="badge" style="margin-left: 1rem;">'+schedule.Dimension+'</span></li>');
-                        if(this.webState.temp.branchSelection.name != branchName){this.form.find('#tab1 #tab1-schedule-list').children().last().hide();}
-                        else this.form.find('#tab1 #tab1-branch-list').children().last().addClass('selected');
-                        let origin = this;
-                        this.form.find('#tab1 #tab1-schedule-list').children().last().click(function(){
-                            form.find('#tab1-branchNo').val(schedule.BranchNo);
-                            form.find('#tab1-scheduleNo').val(schedule.ScheduleNo);
-                            $('#buy-ticket-popup').trigger('get-theatre-plan', [schedule]);
-                            origin.temp.scheduleSelection = schedule;
-                            $(this).addClass('selected');
-                            $(this).siblings().removeClass('selected');
-                            origin.allowContinue(origin.form);
-                        });
-                    });
-                });
+                let dateFromToggle = this.form.find('.day-toggle .toggle-item.active').data('selectDate');
+                this.processSchedule(dateFromToggle);
+
                 break;
             }
             case 2: {
-                 
-                this.form.find('#tab2-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
-                if(typeof this.temp.seatClassForPlan != 'undefined'){
-                    let rowNum = 0;
-                    
-                    let renderarea = this.form.find('#tab2 .seat-renderarea');
-                    renderarea.children().remove();
-                    renderarea.closest('.popup-window').find('#tab2-class-display').children().remove();
-                    renderarea.append('<div class="seat-row"></div>');
-                    
-                    for(let i=1;i<=this.temp.seatClassForPlan.length;i++){
-                        let seatclass = undefined;
-                        this.temp.seatClassForPlan.forEach(sc=>{
-                            if(sc.ClassName == this.temp.planSelection['SeatClass'+i]){
-                                seatclass = sc;
-                            }
-                        });
-                        let nPerRow = Math.floor(this.temp.planSelection.PlanWidth / seatclass.Width);
-                        let nRow = this.temp.planSelection['NumberRow'+i];
-                        let DOMWidthPercent = 100/nPerRow;
-                        let price = seatclass.Price;
-                        let isCouple = !!seatclass.Couple;
+                this.fetchReserved(this.temp.scheduleSelection)
+                .then((reserved)=>{
 
-                        for(let seatNum=0; seatNum<nPerRow*nRow; seatNum++){
-                            let seatNumForThisRow = seatNum%(nPerRow)+1;
-                            let seatChar = rowNum==0? String.fromCharCode(65 + rowNum%26).repeat(1) : String.fromCharCode(65 + rowNum%26).repeat(Math.ceil(rowNum/rowNum));
-                            let seatCode = seatChar+seatNumForThisRow;
-                            
-                            renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'">');
-                            renderarea.children().last().append('<label for="'+seatCode+'" class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'" data-seatcode="'+seatCode+'"></label>');
-                            
-                            if(seatNumForThisRow==nPerRow){
-                                rowNum++;
-                                renderarea.append('<div class="seat-row"></div>');
-                            }
-                        }
-                        if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>'); 
-                    };
+                    let markedSeat = {}
+                    if(typeof reserved!='undefined' && reserved!='') reserved.forEach((entry)=>{
+                        markedSeat[entry.SeatCode] = entry;
+                    });
 
-
-                    
-                    renderarea[0].scrollLeft = renderarea.children().first().width() / 2 - renderarea.width()/2;
-                    if(this.step==2){
-                        renderarea.closest('.popup-window').find('#tab2-price-display').children().remove();
-                        renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2"><span id="tab2-seat-selection">0</span> Seat(s) Selected</div>');
-                        renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2">(Total Price:<span id="tab2-price-selection">0</span> Baht)</div>');
+                    this.form.find('.seat-row .error').css('position','absolute');
+                    this.form.find('#tab2-theatreCode').text(this.temp.scheduleSelection.TheatreCode);
+                    if(typeof this.temp.seatClassForPlan != 'undefined'){
+                        let rowNum = 0;
                         
-                    }
-                    this.temp.seatSelection = 0;
-                    this.temp.rawPrice = 0;
-                    this.temp.seatList = [];
-                    let temp = this.temp;
-                    let self = this;
-                    renderarea.find('input[type=checkbox].seat-dot-checkbox').change(function(e){
-                        let numberTarget = renderarea.closest('.popup-window').find('#tab2-seat-selection');
-                        let priceTarget = renderarea.closest('.popup-window').find('#tab2-price-selection');
-                        if($(this)[0].checked){
-                            numberTarget.text(++temp.seatSelection);
-                            temp.rawPrice += parseFloat($(this).data('seatprice'));
-                            priceTarget.text(temp.rawPrice);
-                            temp.seatList.push({
-                                seatCode: $(this).data('seatcode'),
-                                fullPrice: $(this).data('seatprice')
-                            });
-                        }else{
-                            numberTarget.text(--temp.seatSelection);
-                            temp.rawPrice -= parseFloat($(this).data('seatprice'));
-                            priceTarget.text(temp.rawPrice);
-                            let newSeatList = [];
-                            temp.seatList.forEach((seat)=>{
-                                if(seat.seatCode != $(this).data('seatcode')){
-                                    newSeatList.push(seat);
+                        let renderarea = this.form.find('#tab2 .seat-renderarea');
+                        renderarea.children().remove();
+                        renderarea.closest('.popup-window').find('#tab2-class-display').children().remove();
+                        renderarea.append('<div class="seat-row"></div>');
+                        
+                        for(let i=1;i<=this.temp.seatClassForPlan.length;i++){
+                            let seatclass = undefined;
+                            this.temp.seatClassForPlan.forEach(sc=>{
+                                if(sc.ClassName == this.temp.planSelection['SeatClass'+i]){
+                                    seatclass = sc;
                                 }
                             });
-                            temp.seatList = newSeatList;
-                            
-                        }
-                        self.allowContinue(self.form);
-                    });
-                    let ticketprocess = this;
-                    let enableDrag = false;
-                    let dragstartX = 0;
-                    let dragstartY = 0;
-                    let power = 0.1;
-                    renderarea.off('mousedown').mousedown(function(e){
-                        if(ticketprocess.step == 2){
-                            enableDrag = true; 
-                            dragstartX=e.pageX;
-                            dragstartY=e.pageY;
-                        }
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseup').mouseup(function(e){
-                        enableDrag = false;
-                        e.preventDefault();
-                    });
-                    renderarea.off('mousemove').mousemove(function(e){ 
-                        if(typeof enableDrag != 'undefined'){
-                            if(enableDrag && ticketprocess.step == 2) {
-                                let deltaX=e.pageX - dragstartX; 
-                                let deltaY=e.pageY - dragstartY; 
-                                $(this)[0].scrollLeft -= (deltaX*power);
-                                $(this)[0].scrollTop -= (deltaY*power);
+                            let nPerRow = Math.floor(this.temp.planSelection.PlanWidth / seatclass.Width);
+                            let nRow = this.temp.planSelection['NumberRow'+i];
+                            let DOMWidthPercent = 100/nPerRow;
+                            let price = seatclass.Price;
+                            let isCouple = !!seatclass.Couple;
+
+                            for(let seatNum=0; seatNum<nPerRow*nRow; seatNum++){
+                                let seatNumForThisRow = seatNum%(nPerRow)+1;
+                                let seatChar = rowNum==0? String.fromCharCode(65 + rowNum%26).repeat(1) : String.fromCharCode(65 + rowNum%26).repeat(Math.ceil(rowNum/rowNum));
+                                let seatCode = seatChar+seatNumForThisRow;
+                                
+                                if(typeof markedSeat[seatCode]=='undefined'){renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'">');}
+                                else{renderarea.children().last().append('<input type="checkbox" class="seat-dot-checkbox inactiveStep" id="'+seatCode+'" name="seatCode[]" value='+seatCode+' data-seatcode="'+seatCode+'" data-seatprice="'+price+'"disabled>');}
+                                renderarea.children().last().append('<label for="'+seatCode+'" class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'" data-seatcode="'+seatCode+'"></label>');
+                                
+                                if(seatNumForThisRow==nPerRow){
+                                    rowNum++;
+                                    renderarea.append('<div class="seat-row"></div>');
+                                }
                             }
+                            if(this.step==2) renderarea.closest('.popup-window').find('#tab2-class-display').append('<span><label class="seat-dot available '+(isCouple ? 'couple':'')+' class-order-'+i+'"></label> '+seatclass.ClassName+(isCouple ? ' [Couple Seat]':'')+'</br>('+seatclass.Price+' .-)</span>'); 
+                        };
+
+                        renderarea[0].scrollLeft = renderarea.children().first().width() / 2 - renderarea.width()/2;
+                        if(this.step==2){
+                            renderarea.closest('.popup-window').find('#tab2-price-display').children().remove();
+                            renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2"><span id="tab2-seat-selection">0</span> Seat(s) Selected</div>');
+                            renderarea.closest('.popup-window').find('#tab2-price-display').append('<div class="level2">(Total Price:<span id="tab2-price-selection">0</span> Baht)</div>');
                         }
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseleave').mouseleave(function(e){
-                        power = 0;
-                        e.preventDefault();
-                    });
-                    renderarea.off('mouseover').mouseover(function(e){
-                        power = 0.1;
-                        e.preventDefault();
-                    });
-                }
+                        this.temp.seatSelection = 0;
+                        this.temp.rawPrice = 0;
+                        this.temp.seatList = [];
+                        let temp = this.temp;
+                        let self = this;
+                        renderarea.find('input[type=checkbox].seat-dot-checkbox').change(function(e){
+                            let numberTarget = renderarea.closest('.popup-window').find('#tab2-seat-selection');
+                            let priceTarget = renderarea.closest('.popup-window').find('#tab2-price-selection');
+                            if($(this)[0].checked){
+                                numberTarget.text(++temp.seatSelection);
+                                temp.rawPrice += parseFloat($(this).data('seatprice'));
+                                priceTarget.text(temp.rawPrice);
+                                temp.seatList.push({
+                                    seatCode: $(this).data('seatcode'),
+                                    fullPrice: $(this).data('seatprice')
+                                });
+                            }else{
+                                numberTarget.text(--temp.seatSelection);
+                                temp.rawPrice -= parseFloat($(this).data('seatprice'));
+                                priceTarget.text(temp.rawPrice);
+                                let newSeatList = [];
+                                temp.seatList.forEach((seat)=>{
+                                    if(seat.seatCode != $(this).data('seatcode')){
+                                        newSeatList.push(seat);
+                                    }
+                                });
+                                temp.seatList = newSeatList;
+                                
+                            }
+                            self.allowContinue(self.form);
+                        });
+                        let ticketprocess = this;
+                        let enableDrag = false;
+                        let dragstartX = 0;
+                        let dragstartY = 0;
+                        let power = 0.1;
+                        renderarea.off('mousedown').mousedown(function(e){
+                            if(ticketprocess.step == 2){
+                                enableDrag = true; 
+                                dragstartX=e.pageX;
+                                dragstartY=e.pageY;
+                            }
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseup').mouseup(function(e){
+                            enableDrag = false;
+                            e.preventDefault();
+                        });
+                        renderarea.off('mousemove').mousemove(function(e){ 
+                            if(typeof enableDrag != 'undefined'){
+                                if(enableDrag && ticketprocess.step == 2) {
+                                    let deltaX=e.pageX - dragstartX; 
+                                    let deltaY=e.pageY - dragstartY; 
+                                    $(this)[0].scrollLeft -= (deltaX*power);
+                                    $(this)[0].scrollTop -= (deltaY*power);
+                                }
+                            }
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseleave').mouseleave(function(e){
+                            power = 0;
+                            e.preventDefault();
+                        });
+                        renderarea.off('mouseover').mouseover(function(e){
+                            power = 0.1;
+                            e.preventDefault();
+                        });
+                    }
 
-                if(this.step==2){
-                    this.form.find("#tab2 input.inactiveStep").removeClass('inactiveStep');
-                }
-
+                    if(this.step==2){
+                        this.form.find("#tab2 input.inactiveStep").removeClass('inactiveStep');
+                    }
+                })
+                .catch(err=>{
+                    iziToast.show({
+                        title: 'Bummer! ',
+                        icon: 'fas fa-bug',
+                        message: 'Theatre Seat API Failed, \n('+err+')',
+                        position: 'topCenter',
+                        color: 'red',
+                        close: false
+                    });
+                })
                 break;
             }
             case 3:{
@@ -510,6 +551,21 @@ class ticketingProcess {
         }
     }
 
+    fetchReserved(schedule){
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            let scheduleNo = schedule.ScheduleNo;
+            fetchData('reservation/'+scheduleNo, null, (data, err)=>{
+                if(!err){
+                    self.temp.reservedSeat = data;
+                    resolve(data);
+                }else {
+                    reject(err);
+                }
+            });
+        });
+    }
+
     kill(){
         console.log('kill');
         this.step = 0;
@@ -518,6 +574,45 @@ class ticketingProcess {
         this.form.closest('.popup-window').find('.popup-footer').children().remove();
         this.form.closest('.popup-area').removeClass('row');
         this.form.closest('.popup-window').removeClass('col-8 plain');
+    }
+
+    processSchedule = (date) => {
+        this.temp.branchSchedule = {}
+        this.schedules.forEach((schedule) => {
+            if(new Date(schedule.Date).withoutTime()-date.withoutTime()==0){
+                if(typeof this.temp.branchSchedule[schedule.BranchName] == 'undefined') this.temp.branchSchedule[schedule.BranchName] = [];
+                this.temp.branchSchedule[schedule.BranchName].push(schedule);
+            }
+        });
+
+        this.form.find('#tab1 #tab1-branch-list').children().remove();
+        this.form.find('#tab1 #tab1-schedule-list').children().remove();
+        Object.keys(this.temp.branchSchedule).forEach((branchName)=>{
+            this.form.find('#tab1 #tab1-branch-list').append('<li data-branch="'+branchName+'">'+branchName+'</li>');
+            let form = this.form;
+            let ws = this.webState;
+            this.form.find('#tab1 #tab1-branch-list').children().last().click(function(e){
+                $(this).addClass('selected');
+                $(this).siblings().removeClass('selected');
+                form.find('#tab1 #tab1-schedule-list li').hide();
+                form.find('#tab1 #tab1-schedule-list li[data-branch="'+$(this).data('branch')+'"]').show();
+            });
+            this.temp.branchSchedule[branchName].forEach((schedule)=>{
+                this.form.find('#tab1 #tab1-schedule-list').append('<li data-branch="'+branchName+'"> <strong>Theatre</strong> '+schedule.TheatreCode+'  |  <i class="fas fa-clock"></i>  '+schedule.Time+'<span class="badge" style="margin-left: 1rem;">'+schedule.Dimension+'</span></li>');
+                if(this.webState.temp.branchSelection.name != branchName){this.form.find('#tab1 #tab1-schedule-list').children().last().hide();}
+                else this.form.find('#tab1 #tab1-branch-list').children().last().addClass('selected');
+                let origin = this;
+                this.form.find('#tab1 #tab1-schedule-list').children().last().click(function(){
+                    form.find('#tab1-branchNo').val(schedule.BranchNo);
+                    form.find('#tab1-scheduleNo').val(schedule.ScheduleNo);
+                    $('#buy-ticket-popup').trigger('get-theatre-plan', [schedule]);
+                    origin.temp.scheduleSelection = schedule;
+                    $(this).addClass('selected');
+                    $(this).siblings().removeClass('selected');
+                    origin.allowContinue(origin.form);
+                });
+            });
+        });
     }
 }
 
@@ -545,7 +640,7 @@ class webstate{
                 }
             });
         }
-        fetchData('movies',{status: 'show'},(data,err)=>{
+        fetchData('movies',{status: 'show', date: new Date().toYMD()},(data,err)=>{
             if(!err){
                 this.showingList = data;
                 this.renderMoviesGrid($('.program-row'), 'index-row');
