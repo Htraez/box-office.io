@@ -535,20 +535,7 @@ router.post('/branch', (req,res) => {
     console.log(sql)
 });
 
-// router.post('/addSchedule', (req,res) => {
-//     var data = req.body;
-    // var sql = "INSERT INTO `schedule` (`MovieNo`, `TheatherCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+
-    // data.movie+"','"+data.theater+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
-    //ดึงข้อมูลMovie
-//     var sql = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+"1"+"','"+"EN-01"+"','"+data.Date+"','"+data.StartTime+":00"+"','"+data.Audio+"','"+data.AdDuration+"','"+data.SubTitle+"')";
-//     console.log(sql)
-//     mysql.connect(sql)
-//         .then((resp)=>{
-//             console.log(resp);
-//             res.redirect('/addSchedule');
-//         });
-//     console.log(sql)
-// });
+
 
 router.post('/movies', (req,res) => {
     var data = req.body;
