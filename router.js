@@ -378,8 +378,7 @@ router.post('/seat', (req,res) => {
                 data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
     mysql.connect(sql)
         .then((resp)=>{
-            console.log(resp);
-            res.redirect('/seat');
+            
         });
 });
 
@@ -436,6 +435,11 @@ router.post('/plan', (req,res)=>{
 
 
 //=======================
+
+router.post("/staff", (req, res) =>{
+    var data = req.body;
+    console.log(data);
+})
 
 router.all('/', (req, res) => {
     console.log(req.user);
