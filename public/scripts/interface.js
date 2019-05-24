@@ -9,6 +9,10 @@ $(document).on("keydown", "form.preventEnter", function(event) {
     //prevent hitting enter in form
 });
 
+$(document).on("click", "#signup",function () {
+    $("#login-popup > div").closest('.popup-area').hide();
+});
+
 $('.popup-area, #popup-close, .close-key').click(function(e){
     if(e.target != this && e.target != this.children[0]) return;
     $('.web-body').removeClass('overlay');

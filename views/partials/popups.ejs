@@ -19,7 +19,7 @@
             </form>
         </div>
         <div class="popup-footer">
-            <button class="btn-center btn-white" data-popup='signup-popup' style="height:25px; padding-top:0; padding-bottom:0;">Sign-up</button>
+            <button id="signup" class="btn-center btn-white" data-popup='signup-popup' style="height:25px; padding-top:0; padding-bottom:0;">Sign-up</button>
         </div>
     </div>    
 </div>
@@ -67,8 +67,19 @@
     </div>    
 </div>
 
-<div class="popup-area" id="signup-popup" style="display: none;">
-
+<div class='popup-area' id='signup-popup' style='display: none;'>
+    <div class="popup-window col-xs-12 col-md-10">
+        <div class="popup-head">
+            <span id='popup-head-text'>Register</span>
+            <span id='popup-close'><i class="fas fa-times"></i></span>
+        </div>
+        <div class="popup-body">
+            <%- include register %>
+        </div>
+        <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+            
+        </div>
+    </div>
 </div>
 <!-- You can write your own popup by copying the boilerplate below and add your data as you wish -->
 <!-- =======================
