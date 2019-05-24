@@ -200,8 +200,19 @@
             let popupId = target.dataset.popup;
             if(typeof popupId != 'undefined'){
                 //$('.web-body').trigger('popup-closeAll');
-                $('.web-body').addClass('overlay');
-                $('#'+popupId).show();
+                if(popupId=='buy-ticket-popup'&&webState.role == 'admin'){
+                    iziToast.show({
+                        position: "topCenter", 
+                        icon: 'fas fa-ban',
+                        title: 'Prohibited!', 
+                        color: 'yellow',
+                        message: 'Admin can\'t book a seat',
+                        close: false
+                    });
+                }else{
+                    $('.web-body').addClass('overlay');
+                    $('#'+popupId).show();
+                }
             }
         }
         webState.temp.movieSelection = movie;

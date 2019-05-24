@@ -26,6 +26,11 @@
             <script>
                 let auth = !!<%=auth%>;
                 let uRole = <%=auth%>;
+                let data = undefined;
+                <%if(typeof data != 'undefined'){%>
+                    data = <%- JSON.stringify(data) %>;
+                <%}%>
+                console.log(data);
             </script>
         <div class="web-body">
             <div id='top-bar' class="container-fluid">
