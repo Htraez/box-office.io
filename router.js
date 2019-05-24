@@ -651,13 +651,13 @@ router.post('/movies', (req,res) => {
                                             planWithSchedule.forEach((value,key)=>{
                                             total = SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Width))*value.NumberRow1
                                             console.log("1",total)
-                                            if(planWithSchedule.SeatClass2!=null)
+                                            if(value.SeatClass2!=null)
                                                 {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Width))*value.NumberRow2
                                                 console.log("2",total)}
-                                            if(planWithSchedule.SeatClass3!=null)
+                                            if(value.SeatClass3!=null)
                                                 { total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass3).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass3).Width))*value.NumberRow3
                                                 console.log("3",total)}
-                                            if(planWithSchedule.SeatClass4!=null)
+                                            if(value.SeatClass4!=null)
                                                  {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass4).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass4).Width))*value.NumberRow4
                                                     console.log("4",total)}
                                             
