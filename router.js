@@ -368,35 +368,55 @@ router.get('/fetchData/:table/:condition', (req,res) => {
         });
 });
 
-router.get('/seat', (req,res) => {
-    res.render('partials/seatclass');
-});
-
-router.post('/seat', (req,res) => {
+router.post('/seatclass', (req,res) => {
     var data = req.body;
-    var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
+    var use = 0;
+    var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES";
+    //console.log(data);
+    //res.send(data);
+    data.SeatClassData.forEach((value)=>{
+        if(value.Detail){
+            if(value.Detail=='Create') console.log(value);
+            sql += "('"+value.ClassName+"','"+ value.Price+"','"+value.Couple+"','"+value.FreeFood+"','"+value.Width/100+"','"+value.Height/100+"'),";
+            use = 1;
+        }
+        
+    })
+    sql = sql.substring(0, sql.length-1);
+    if(use){
+        mysql.connect(sql)
+        .then((resp)=>{
+            console.log(resp);
+            res.sendStatus(200);
+        });
+    }
+    
+    /*var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
                 data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
     mysql.connect(sql)
         .then((resp)=>{
+<<<<<<< HEAD
             
         });
+=======
+            console.log(resp);
+            res.redirect('/seat');
+        });*/
+>>>>>>> 9bd4e775c47d7dd1e13a9b97f6d1a625e8f4a1f3
 });
 
-// router.get('/plan', (req,res)=>{
-//     res.render('partials/plan');
-// });
 
 router.post('/plan', (req,res)=>{
     var data = req.body;
-    console.log(data);
+    //console.log(data);
     var sql = "INSERT INTO `plan` (`PlanName`, `PlanHeight`, `PlanWidth`, `SeatClass1`, `NumberRow1`, `SeatClass2`, `NumberRow2`, `SeatClass3`, `NumberRow3`, `SeatClass4`, `NumberRow4`) VALUES ('"+
                 data.PlanName+"','"+ data.PlanHeight+"','"+data.PlanWidth+"','"+data.SeatClass1+"','"+data.NoRow1+"','"+data.SeatClass2+"','"+data.NoRow2+"','"+data.SeatClass3+"','"+data.NoRow3+"','"+data.SeatClass4+"','"+data.NoRow4+"')ON DUPLICATE KEY UPDATE PlanName=VALUES(PlanName),PlanName=VALUES(PlanName),PlanHeight=VALUES(PlanHeight),PlanWidth=VALUES(PlanWidth),SeatClass1=VALUES(SeatClass1),NumberRow1=VALUES(NumberRow1),SeatClass2=VALUES(SeatClass2),NumberRow2=VALUES(NumberRow2),SeatClass3=VALUES(SeatClass3),NumberRow3=VALUES(NumberRow3),SeatClass4=VALUES(SeatClass4),NumberRow4=VALUES(NumberRow4)";
     sql = sql.replace(/'undefined'/g, 'NULL');
-    console.log(sql);
+    //console.log(sql);
     mysql.connect(sql)
         .then((resp)=>{
             var TheatreDelete = [];
-            console.log(resp);
+            //console.log(resp);
             if(data.Theatre != null){
                 var sqlInsert = "INSERT INTO `theatre`(`TheatreCode`, `BranchNo`, `PlanName`) VALUES ",
                 sqlDelete = "DELETE FROM `theatre` WHERE `TheatreCode` IN (?)",
@@ -412,18 +432,18 @@ router.post('/plan', (req,res)=>{
                 sqlInsert += "ON DUPLICATE KEY UPDATE TheatreCode=VALUES(TheatreCode), BranchNo=VALUES(BranchNo), PlanName=VALUES(PlanName)";
                 callFunctionSql[1] ? sql = sqlDelete : sql = sqlInsert;
                 if(callFunctionSql[0]||callFunctionSql[1]){
-                    console.log(sql);
+                    //console.log(sql);
                     mysql.connect(sql,TheatreDelete)
                         .then((resp)=>{
                             if(callFunctionSql[0]&&callFunctionSql[1]){
                                 sql = sqlInsert;
                                 mysql.connect(sql).then((resp)=>{
-                                    console.log(resp);
+                                    //console.log(resp);
                                     res.send(resp);
                                 });
                             }
                             else{
-                                console.log(resp);
+                                //console.log(resp);
                                 res.send(resp.rows);
                             }
                         });

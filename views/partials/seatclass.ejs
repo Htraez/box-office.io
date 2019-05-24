@@ -1,33 +1,21 @@
-<html>
-    <head>
-        <title>Project Box-office.io</title>
-        <link rel="stylesheet" href="/stylesheets/main.css">
-        <link rel="stylesheet" href="/stylesheets/form.css">
-        <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,700,900|Biryani:300,400,600,700,900|Prompt:300,300i,400,400i,500,700,800" rel="stylesheet">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    </head>
-
-    <body>
-        <div class="container-fluid">
-            <h3 class='head-text'>Seat Class</h3>
-            <div class="container ">
-                <form action="/seatAdd" method="post">
+<h3 class='head-text'>Seat Class</h3>
+<div class="row justify-content-start align-items-center">
+    <div class="col-4 ml-2">
+        <ul class="open-list" id="listSeatClassTable"></ul>
+    </div>
+    <div class="col-4">
+        <div style="width: 245%">
+            <div class="container-fluid">
+                <form id="SeatClassForm">
                     <div class="form-group row mb-3">
                         <label for="Name" class="col-sm-2 mt-2 mb-0">Name</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <input type="text" class="form-control-plaintext text-white pb-0" id="Name" name="Name">
                         </div>
                     </div>
                     <div class="form-group row mb-3">
                         <label for="Price" class="col-sm-2 mt-2 mb-0">Price</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" class="form-control-plaintext text-white pb-0" value="0" min="0" id="Price" name="Price"/>
                                 <div class="input-gruop-append">
@@ -38,7 +26,7 @@
                     </div>
                     <div class="form-group row mb-3">
                         <label for="Width" class="col-sm-2 mt-2 mb-0">Width</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" class="form-control-plaintext text-white pb-0" value="0" min="0" id="Width" name="Width">
                                 <div class="input-gruop-append">
@@ -49,7 +37,7 @@
                     </div>
                     <div class="form-group row mb-3">
                         <label for="Height" class="col-sm-2 mt-2 mb-0">Height</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <div class="input-group">
                                 <input type="number" class="form-control-plaintext text-white pb-0" value="0" min="0" id="Height" name="Height">
                                 <div class="input-gruop-append">
@@ -60,40 +48,40 @@
                     </div>
                     <div class="form-group row mb-3">
                         <label for="Couple" class="col-sm-2 mt-2 mb-0">Couple</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <div class="btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-secondary btn-outline-success ml-2">
-                                        <input type="radio" name="Couple" id="option1" value="1" autocomplete="off"> Yes
+                                        <input type="radio" name="Couple" value="1" autocomplete="off"/> Yes
                                 </label>
-                                <label class="btn btn-secondary btn-outline-danger ml-2">
-                                        <input type="radio" name="Couple" id="option2" value="0" autocomplete="off"> No
+                                <label class="btn btn-secondary btn-outline-danger ml-2 active">
+                                        <input type="radio" name="Couple" value="0" autocomplete="yes" checked/> No
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="form-group row mb-3">
                         <label for="FreeFood" class="col-sm-2 mt-2 mb-0">FreeFood</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <div class="btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-secondary btn-outline-success ml-2">
-                                        <input type="radio" name="FreeFood" id="option1" value="1" autocomplete="off"> Yes
+                                        <input type="radio" name="FreeFood" value="1" autocomplete="off"/> Yes
                                 </label>
-                                <label class="btn btn-secondary btn-outline-danger ml-2">
-                                        <input type="radio" name="FreeFood" id="option2" value="0" autocomplete="off"> No
+                                <label class="btn btn-secondary btn-outline-danger ml-2 active">
+                                        <input type="radio" name="FreeFood" value="0" autocomplete="yes" checked/> No
                                 </label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="mx-auto mt-5 text-center">
-                            <button type="submit" class="btn btn-white-rounded mr-5"><i class="material-icons">add_circle</i><span id="Create">  Create</span></button>
-                            <a href="/" class="btn btn-white-rounded" role="button">Reject</a>  
-                        </div>
-                    </div>
                 </form>
             </div>
-
         </div>
-    </body>
-</html>
+    </div>
+</div>
+<div class="row justify-content-md-center mt-5">
+    <div class="col-2">
+        <button id="CreateSeatClass" type="button" class="btn btn-white btn-outline-light" style="border-radius: 0 !important;"><i class="material-icons">add_circle</i><span>  Create</span></button>
+    </div>
+    <div class="col-2">
+        <button id="popup-close" class="btn btn-white btn-outline-light" style="border-radius: 0 !important;" type="button">Cancle</button>  
+    </div>
+</div>

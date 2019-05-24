@@ -1,4 +1,3 @@
-//var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}},{Name:'TH01',Branch:'1',Detail:{Type:'Load',Old:''}},{Name:'TH02',Branch:'2',Detail:{Type:'Load',Old:''}},{Name:'TH03',Branch:'3',Detail:{Type:'Load',Old:''}},{Name:'TH04',Branch:'4',Detail:{Type:'Load',Old:''}}];
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
@@ -69,13 +68,26 @@ function saveTheatre(){
             Theatre[nowTH] = data;
             reRenderTHTable();
         }
-        $('#TH-success').fadeTo(2000, 500).slideUp(500, function(){
-            $(this).hide(); 
+        iziToast.show({
+            icon: "far fa-thumbs-up",
+            title: 'Save!', 
+            color: 'green',
+            position: 'bottomLeft',
+            timeout: 2000,
+            message: 'You Theatre is save successfully.',
+        });
+        
+    }
+    else {
+        iziToast.show({
+            icon: "fas fa-exclamation-circle",
+            title: 'Warning!', 
+            color: 'red',
+            position: 'bottomLeft',
+            timeout: 2000,
+            message: 'You should check input in on some of those fields below.',
         });
     }
-    else $('#TH-alert').fadeTo(2000, 500).slideUp(500, function(){
-        $(this).hide(); 
-    });
 }
 
 function addBranchOption(){
@@ -92,7 +104,6 @@ function planH(){
     PlanHeight = parseFloat(document.getElementById("PlanHeight").value);
     $('#showH')[0].childNodes[0].data = 'Plan Height '+PlanHeight+' m.';
     document.getElementById("PlanHeight").value = PlanHeight;
-    //console.log(Height);
 }
 
 function planW(){
@@ -100,7 +111,6 @@ function planW(){
     $('#showW')[0].childNodes[0].data = 'Plan Width '+PlanWidth+' m.';
     document.getElementById("PlanWidth").value = PlanWidth;
     reRenderSeat();
-    //console.log(Width);
 }
 
 function appendSeatClass(number) {
@@ -113,6 +123,8 @@ function getSeatClass(){
     $.get('/fetchData/seatclass/none',(data)=>{
             SeatClass = data;
             appendSeatClass(1);
+            iziToast.destroy();
+            addListSeatClassTable(SeatClass);
     });
 }
 
@@ -201,6 +213,16 @@ function pageRedirect() {
 } 
 
 function sentPlanForm() {
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Saving Data', 
+        color: 'blue',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
     var temp = [...Theatre];
     //temp.shift();
     var payload = {
@@ -217,16 +239,38 @@ function sentPlanForm() {
         NoRow4: $('#NoRow4').val(),
         Theatre: temp.slice(1,temp.length)
     };
-    if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0) $.post('/plan',payload,(res)=>{
-        $('#plan-success').fadeTo(2000, 500).slideUp(500, function(){
-            $(this).hide();
-            cancelPlan();
+    var testP = {SeatClassData : [...SeatClass]};
+    if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0){
+        $.post('/seatclass',testP,(res)=>{
+            console.log(res);
+            $.post('/plan',payload,(res)=>{
+                iziToast.destroy();
+                iziToast.show({
+                    position: "topCenter", 
+                    icon: "far fa-thumbs-up",
+                    title: 'Save!', 
+                    color: 'green',
+                    timeout: 2000,
+                    message: 'You Plan is save successfully.',
+                });
+                cancelPlan();
+            })
+        });            
+    } 
+    else{
+        iziToast.destroy();
+        iziToast.show({
+            position: "topCenter", 
+            icon: "fas fa-exclamation-triangle",
+            title: 'Warning!', 
+            color: 'orange',
+            timeout: 2000,
+            message: 'You should check input in on some of those fields below.',
         });
-        //pageRedirect();
-    });
-    else $('#plan-warning').fadeTo(2000, 500).slideUp(500, function(){
-        $(this).hide(); 
-    });
+        /*$('#plan-warning').fadeTo(2000, 500).slideUp(500, function(){
+            $(this).hide(); 
+        });*/
+    }
 }
 
 function LoadDataEditForm(PlanName){
@@ -249,7 +293,7 @@ function LoadDataEditForm(PlanName){
         }
     });
     $.get('/fetchData/theatre/PlanName='+PlanName,(data)=>{
-        console.log(data);
+        //console.log(data);
         Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
         data.forEach((value)=>{
             Theatre.push({Name: value.TheatreCode, Branch: ''+value.BranchNo+'', Detail:{Type:'Load',Old:''}});
@@ -259,13 +303,27 @@ function LoadDataEditForm(PlanName){
 }
 
 function cancelPlan() {
+    getPlanList();
     $('.content-view').show();
     $('.content-form').hide();
-    $('#listPlanTable').find('tr').remove();
-    getPlanList();
+    $('#listPlanTable').find('li').remove();
+    $("#listSeatClassTable").find('li').remove();
+    $('#viewPlanName').text('');
+    $('#viewPlanWidth').text("Width :  m.");
+    $('#viewPlanHeight').text("Height :  m.");
 }
 
-function callPlanForm(err,PlanName = null) {
+function callPlanForm(event,PlanName = null) {
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Fetch Data', 
+        color: 'green',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
     Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
     reRenderTHTable();
     PlanHeight=0;PlanWidth=0;OpSeatCount=1;Thcount=0;nowTH=0;renderCount = [1,1,1,1];
@@ -284,18 +342,89 @@ function callPlanForm(err,PlanName = null) {
     addTable(Theatre);
     addBranchOption();
     getSeatClass();
-    if(PlanName) LoadDataEditForm(PlanName);
+    event.stopPropagation();
+    if(PlanName){
+        LoadDataEditForm(PlanName);
+        //console.log(PlanName);
+    }
 }
 
 $(document).on("click","#createPlan", callPlanForm);
 
 function addListPlanTable(data) {
     data.forEach((value, key) => {
-        var tableRowappend = '<tr class="default-mouse" ><th style="border:1px solid white;" class="text-white pl-3 planTable" scope="col">'+value.PlanName+'</th></tr>'
+        //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
+        var tableRowappend = "<li class='planTable'>"+value.PlanName+"</li>";
         $("#listPlanTable").append(tableRowappend);
     });
     //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
 }
+
+function reRenderSeatClassOption() {
+    for(var i = OpSeatCount-1; i>0 ; i--){
+        $("#SeatClass"+i).find('option').remove();
+        appendSeatClass(i)
+    }
+}
+
+function addNewSeat() {
+    var SeatData = {
+        ClassName : $("#SeatClassForm")[0][0].value,
+        Couple: parseInt($('input[name=Couple]:checked', '#SeatClassForm').val()),
+        FreeFood: parseInt($('input[name=FreeFood]:checked', '#SeatClassForm').val()),
+        Height: parseFloat($("#SeatClassForm")[0][3].value)/100,
+        Price: parseFloat($("#SeatClassForm")[0][1].value),
+        Width: parseFloat($("#SeatClassForm")[0][2].value)/100,
+        Detail: "Create"
+    }
+    SeatClass.push(SeatData);
+    $("#SeatClassForm")[0][0].value = '';
+    $("#listSeatClassTable").find('li').remove();
+    $("#SeatClassForm")[0][3].value=0;
+    $("#SeatClassForm")[0][2].value=0;
+    $("#SeatClassForm")[0][1].value=0;
+    addListSeatClassTable(SeatClass);
+    reRenderSeatClassOption()
+    //console.log(SeatData);
+}
+
+function addListSeatClassTable(data) {
+    data.forEach((value, key) => {
+        //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
+        var tableRowappend = "<li class='seatClassTable'>"+value.ClassName+"</li>";
+        $("#listSeatClassTable").append(tableRowappend);
+    });
+}
+
+$(document).on("click",".seatClassTable", function(){
+    $(this).addClass('selected').siblings().removeClass('selected');
+})
+
+
+$(document).on("click",".planTable",function (event){
+    event.stopPropagation();
+    $('#viewPlanName').text('');
+    $('#viewPlanWidth').text("Width :  m.");
+    $('#viewPlanHeight').text("Height :  m.");
+    $('#detailPlan').show();
+    $(this).addClass('selected').siblings().removeClass('selected');
+    $.get('/fetchData/plan/PlanName='+this.innerHTML,(data)=>{
+        $('#viewPlanName').text(data[0].PlanName);
+        $('#viewPlanWidth').text("Width : "+data[0].PlanWidth+" m.");
+        $('#viewPlanHeight').text("Height : "+data[0].PlanHeight+" m.");
+        $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    });
+});
+
+$(document).on("click","#callEditPlanForm",function(event){
+    callPlanForm(event,$('#viewPlanName').text());
+});
+
+$(document).on("click","#callDeletePlanForm",function(){
+    console.log("Delete");
+});
+
+$(document).on("click","#CreateSeatClass", addNewSeat)
 
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{
@@ -303,3 +432,8 @@ function getPlanList(){
     });
 }
 getPlanList();
+
+$(window).click(function() {
+    $('#detailPlan').hide();
+    $('.planTable').removeClass('selected bg-secondary');
+});
