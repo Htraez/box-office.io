@@ -10,7 +10,7 @@ function ScheduleInfo(data) {
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
             
-            $("#Schedule").append('<tr class="default-mouse clickTable"><th class="text-white movieTable" scope="col"value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'</th></tr>');
+            $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'</li>');
         });
         console.log(data)
     });
@@ -42,7 +42,6 @@ function showTheater(cl,data) {
 }
 
 function addScheduleTable(){
-    console.log("func ok")
     var temp = {
         TheatreCode: theater,
         Date: $('#Date').val(),
@@ -52,9 +51,26 @@ function addScheduleTable(){
         Subtitle: $('#SubTitle').val()
     }
     schedule_list.push(temp);
-    $("#schedule-list").append('<li class="clickSchedule">'+schedule_list[0].TheatreCode+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Date+'&emsp;&emsp;'+schedule_list[0].Audio+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Time+'&emsp;&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Subtitle+'&emsp;&emsp;&emsp;&emsp;'+schedule_list[0].Dimension+'</li>');
-
+    updateSchedule_list(schedule_list);
 }
+
+function deleteSchedule_list(){
+        $(this).addClass('selected').siblings().removeClass('selected')
+        console.log(this.innerHTML);
+        console.log(this.value)
+        schedule_list.shift(this.value)
+
+        updateSchedule_list(schedule_list);
+}
+
+function updateSchedule_list(data){
+    $("#schedule-list").find("li").remove();
+    $("#schedule-list").append('<li>theaterCode &emsp;&emsp;&emsp;&emsp; Date &emsp;&emsp;&emsp; Audio &emsp;&emsp;&emsp; StartTime &emsp;&emsp;&emsp;Subtitle &emsp;Dimension </li>');
+    data.forEach((value,key)=>{
+        $("#schedule-list").append('<li class="clickSchedule" value='+key+' >'+value.TheatreCode+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Date+'&emsp;&emsp;'+value.Audio+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Time+'&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Subtitle+'&emsp;&emsp;&emsp;&emsp;'+value.Dimension+'&emsp;&emsp;&emsp;&emsp;&#10005;</li>');
+    })
+}
+
 function sentMovieForm(){
     var payload = {
         Movie : {
@@ -141,6 +157,7 @@ $(document).on('click',"#addSchedule",addScheduleTable);
 $(document).on("click","#backToAdmin", callBackFromShow);
 // $(document).on("click","#Reject", callBackFromMovie);
 // $(document).on("click","#createSchedule", sentMovieForm);
+$(document).on("click",".clickSchedule",deleteSchedule_list);
 
 ScheduleInfo();
 showbranch();
