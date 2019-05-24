@@ -533,25 +533,30 @@ router.post('/movies', (req,res) => {
             console.log(resp);
             // res.redirect('/addSchedule');
                 let MovieNo =resp.insertId;
-                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES ('"+MovieNo+"','"+ data.Schdule.TheatreCode+"','"+data.Schdule.Date+"','"+data.Schdule.Time+":00"+"','"+data.Schdule.Audio+"','"+data.Schdule.Dimension+"','"+data.Schdule.Subtitle+"')";
+
+                var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES"
+                data.schedule.forEach((value)=>{
+                sql2 += "('"+MovieNo+"','"+ value.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
+               });
+               sql2 = sql2.substring(0,sql2.length-1);
                 console.log(sql2)
-                 mysql.connect(sql2)
-                     .then((resp)=>{
-                         console.log("success")
-                    })
+                  mysql.connect(sql2)
+                      .then((resp)=>{
+                          console.log("success")
+                     })
                     .catch((err)=>{
                          console.log('error',err);
                      });
                 
-                var sql3 = ""
-                console.log(sql3)
-                mysql.connect(sql2)
-                     .then((resp)=>{
-                         console.log("success")
-                    })
-                    .catch((err)=>{
-                         console.log('error',err);
-                     });
+                // var sql3 = ""
+                // console.log(sql3)
+                // mysql.connect(sql2)
+                //      .then((resp)=>{
+                //          console.log("success")
+                //     })
+                //     .catch((err)=>{
+                //          console.log('error',err);
+                //      });
                     
             });
 

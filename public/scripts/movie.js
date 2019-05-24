@@ -58,8 +58,7 @@ function deleteSchedule_list(){
         $(this).addClass('selected').siblings().removeClass('selected')
         console.log(this.innerHTML);
         console.log(this.value)
-        schedule_list.shift(this.value)
-
+        delete schedule_list[this.value];
         updateSchedule_list(schedule_list);
 }
 
@@ -71,7 +70,7 @@ function updateSchedule_list(data){
     })
 }
 
-function sentMovieForm(){
+function createAllSchedules(){
     var payload = {
         Movie : {
         MovieName: $('#MovieName').val(),
@@ -82,21 +81,17 @@ function sentMovieForm(){
         Rate: $('#Rate').val(),
         Genre: $('#Genre').val(),
         Studio: $('#Studio').val(),
-        PosterURL: $('#PosterURL').val()},
-     Schdule : {
-        TheatreCode: theater,
-        Date: $('#Date').val(),
-        Time: $('#datetime24').val(),
-        Audio: $('#Audio').val(),
-        Dimension: $('#Dimension').val(),
-        Subtitle: $('#SubTitle').val()
-     }
+        PosterURL: $('#PosterURL').val()
+        },
+        schedule : [...schedule_list]
     };
     console.log(payload)
-    if(payload.MovieName!='') $.post('/Movies',payload,(res)=>{
-        console.log(success)
+     if(payload.MovieName!='') $.post('/Movies',payload,(res)=>{
+         console.log(success);
+         $('#movieAndSchduleForm').hide();
+         $('.content-view').show();
         
-    });
+     });
 }
 
 function datetime(){
@@ -158,6 +153,7 @@ $(document).on("click","#backToAdmin", callBackFromShow);
 // $(document).on("click","#Reject", callBackFromMovie);
 // $(document).on("click","#createSchedule", sentMovieForm);
 $(document).on("click",".clickSchedule",deleteSchedule_list);
+$(document).on("click","#createAllSchedule", createAllSchedules);
 
 ScheduleInfo();
 showbranch();
