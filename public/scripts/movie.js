@@ -2,6 +2,7 @@
 var theater;
 var branchName;
 var schedule_list =[];
+var test;
 
 function ScheduleInfo(data) {
     var payload = { table:"schedule" };
@@ -41,24 +42,51 @@ function showTheater(cl,data) {
     
 }
 
+function compare(temp){
+    var found = 0;
+    schedule_list.forEach((value)=>{
+        if( value.TheatreCode == temp.TheatreCode && value.Date == temp.Date && value.Time == temp.Time) found=1;
+    })
+    return found;
+}
+
 function addScheduleTable(){
-    var temp = {
-        TheatreCode: theater,
-        Date: $('#Date').val(),
-        Time: $('#datetime24').val(),
-        Audio: $('#Audio').val(),
-        Dimension: $('#Dimension').val(),
-        Subtitle: $('#SubTitle').val()
+    if($('#DateStart').val()!="" && theater != undefined){
+        var diff = ($('#DateEnd').val()=="") ? 0 : findDiffDate($('#DateStart').val(),$('#DateEnd').val());
+        //console.log(diff);
+        for(var i = 0; i <= diff ; i++){
+            var day = new Date($('#DateStart').val());
+            day.setDate(day.getDate()+i);
+            var temp = {
+                TheatreCode: theater,
+                Date: day.toISOString().substring(0, 10),
+                Time: $('#datetime24').val(),
+                Audio: $('#Audio').val(),
+                Dimension: $('#Dimension').val(),
+                Subtitle: $('#SubTitle').val()
+            }
+            
+            if(!compare(temp)) schedule_list.push(temp);
+            //console.log(temp);
+        }      
     }
-    schedule_list.push(temp);
     updateSchedule_list(schedule_list);
+    // schedule_list.push(temp);
+    // updateSchedule_list(schedule_list);
+}
+
+function findDiffDate(Start,End){
+    end = new Date(End)
+    start = new Date(Start)
+    diffTime = Math.abs(end.getTime() - start.getTime());
+    return (start<end) ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : -1; 
 }
 
 function deleteSchedule_list(){
-        $(this).addClass('selected').siblings().removeClass('selected')
-        console.log(this.innerHTML);
-        console.log(this.value)
-        delete schedule_list[this.value];
+        //$(this).addClass('selected').siblings().removeClass('selected')
+        //console.log(this.innerHTML);
+        //console.log($(this).attr('value'));
+        delete schedule_list[$(this).attr('value')];
         updateSchedule_list(schedule_list);
 }
 
@@ -66,7 +94,7 @@ function updateSchedule_list(data){
     $("#schedule-list").find("li").remove();
     $("#schedule-list").append('<li>theaterCode &emsp;&emsp;&emsp;&emsp; Date &emsp;&emsp;&emsp; Audio &emsp;&emsp;&emsp; StartTime &emsp;&emsp;&emsp;Subtitle &emsp;Dimension </li>');
     data.forEach((value,key)=>{
-        $("#schedule-list").append('<li class="clickSchedule" value='+key+' >'+value.TheatreCode+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Date+'&emsp;&emsp;'+value.Audio+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Time+'&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Subtitle+'&emsp;&emsp;&emsp;&emsp;'+value.Dimension+'&emsp;&emsp;&emsp;&emsp;&#10005;</li>');
+        $("#schedule-list").append('<li class="clickSchedule" value='+key+' >'+value.TheatreCode+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Date+'&emsp;&emsp;'+value.Audio+'&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Time+'&emsp;&emsp;&emsp;&emsp;&emsp;'+value.Subtitle+'&emsp;&emsp;&emsp;&emsp;'+value.Dimension+'&emsp;&emsp;&emsp;&emsp;<span class="deleteSchedule" value="'+key+'">X</span></li>');
     })
 }
 
@@ -105,7 +133,7 @@ function branch(){
     showTheater(branchName,);
 
 }
-function theater(){
+function select_theater(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.innerHTML);
     theater = this.innerHTML;
@@ -142,7 +170,7 @@ function callBackFromShow(){
 // }
 
 
- $(document).on('click',".clickTable", theater);
+ $(document).on('click',".clickTable", select_theater);
  $(document).on('click',".clickTableBranch", branch);
 
 $(document).on("click","#createMovie", callMovieForm);
@@ -152,7 +180,7 @@ $(document).on('click',"#addSchedule",addScheduleTable);
 $(document).on("click","#backToAdmin", callBackFromShow);
 // $(document).on("click","#Reject", callBackFromMovie);
 // $(document).on("click","#createSchedule", sentMovieForm);
-$(document).on("click",".clickSchedule",deleteSchedule_list);
+$(document).on("click",".deleteSchedule",deleteSchedule_list);
 $(document).on("click","#createAllSchedule", createAllSchedules);
 
 ScheduleInfo();

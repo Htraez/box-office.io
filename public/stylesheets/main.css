@@ -899,3 +899,12 @@ table{
 .btn-group-toggle.day-toggle .toggle-item{
     font-size: .7rem;
 }
+
+#config-list{
+    padding: 10px 20px;
+}
+
+#config-list input{
+    border: 1px solid white !important;
+    padding: 6px 15px !important;
+}
