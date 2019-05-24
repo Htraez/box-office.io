@@ -65,8 +65,12 @@ function fetchbranchforstaff(){
 function assignshiftforstaff(){
     var temp = {
         Date: $('#date').val(),
-        Start: $('#startTime').val(),
-        End: $('#endTime').val()   
+        StartHH: $('#HHstartTime').val(),
+        StartHH: $('#HHstartTime').val(),
+        StartHH: $('#HHstartTime').val(),
+        EndHH: $('#HHendTime').val(),
+        EndMM: $('#endTime').val(),
+        EndSS: $('#endTime').val(),  
     }
     console.log("OK");
     addshiftshow.push(temp);
