@@ -2,22 +2,6 @@
 var theater
 var branch
 
-
-
-
-function BranchOption(){
-    var payload = { table:"branch" };
-    $.post('/fetchData',payload,(data)=>{
-        data.forEach((value,key)=>{
-            
-            $("#Branch").append('<option class="form-control-plaintext" value="'+value.BranchNo+'">'+value.BranchName+'</option>');
-        });
-        console.log(data)
-    });
-}
-
-
-
 function ScheduleInfo(data) {
     var payload = { table:"schedule" };
     $("#Schedule").find('tr').remove();
@@ -31,15 +15,25 @@ function ScheduleInfo(data) {
     });
     
 }
-
-function showTheater(data) {
-    var payload = { table:"theatre" };
-    $("#theater").find('tr').remove()
-    console.log(branch)
+function showbranch(data) {
+    var payload = { table:"branch" };
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
-            if(branch==value.BranchNo)
-            $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');  
+            
+            $("#Branch").append('<li class="clickTableBranch" value="100value.BranchNo">'+value.BranchName+'</li>');
+        });
+        console.log(data)
+    });
+    
+}
+function showTheater(cl,data) {
+    var payload = { table:"theatre" };
+    $("#theater").find('li').remove()
+    $.post('/fetchData',payload,(data)=>{
+        data.forEach((value,key)=>{
+            if(cl==value.BranchNo)
+            $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');
+            
         });
         console.log(data)
     });
@@ -74,11 +68,18 @@ function sentMovieForm(){
     });
 }
 
-
 function datetime(){
     $('#datetime24').combodate();  
 }
+function branch(){
+    $(this).addClass('selected').siblings().removeClass('selected')
+    console.log(this.va);
+    var temp = this.innerHTML;
+    branchName = temp.replace(/\D/g, "");
+    console.log(branchName)
+    showTheater(branchName,);
 
+}
 function theater(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.innerHTML);
@@ -96,38 +97,38 @@ function ShowMovieForm(){
     $('#ShowMovieAll').show();
     $('.content-view').hide();
 }
-function callScheduleForm(){
-    $('#schduleForm').show();
-    $('#movieForm').hide();
-    branch = $('#Branch').val()
-    showTheater();
-}
-function callBackMovieForm(){
-    $('#schduleForm').hide();
-    $('#movieForm').show();
-}
+// function callScheduleForm(){
+//     $('#schduleForm').show();
+//     $('#movieForm').hide();
+//     branch = $('#Branch').val()
+//     showTheater();
+// }
+// function callBackMovieForm(){
+//     $('#schduleForm').hide();
+//     $('#movieForm').show();
+// }
 function callBackFromShow(){
     $('#ShowMovieAll').hide();
     $('.content-view').show();
 }
-function callBackFromMovie(){
-    $('#movieForm').hide();
-    $('.content-view').show();
-}
-//  $(document).on('click',".theaterTable",theater);
-$(document).on('click',".clickTable", theater);
+// function callBackFromMovie(){
+//     $('#movieForm').hide();
+//     $('.content-view').show();
+// }
 
+
+ $(document).on('click',".clickTable", theater);
+ $(document).on('click',".clickTableBranch", branch);
 
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 
-$(document).on("click","#next", callScheduleForm);
-$(document).on("click","#back", callBackMovieForm);
+// $(document).on("click","#next", callScheduleForm);
+// $(document).on("click","#back", callBackMovieForm);
 $(document).on("click","#backToAdmin", callBackFromShow);
-$(document).on("click","#Reject", callBackFromMovie);
-$(document).on("click","#createSchedule", sentMovieForm);
+// $(document).on("click","#Reject", callBackFromMovie);
+// $(document).on("click","#createSchedule", sentMovieForm);
 
-BranchOption();
 ScheduleInfo();
-
+showbranch();
 

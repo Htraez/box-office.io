@@ -1,0 +1,75 @@
+<div id="movieForm" name="movieForm" class="container-form">
+        <div class="row">
+            <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
+                    <span class='head-text level2'>MovieInfo</span>
+                    <ul class='open-list'>
+                        <form id="movie">
+                            <span class='head-text level3'>MovieName</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="MovieName"  name="MovieName"><br>
+                            <span class='head-text level3'>Director</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Director" name="Director"><br>
+                            <span class='head-text level3'>Casts</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Casts"  name="Casts"><br>
+                            <span class='head-text level3'>Desc</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Desc"  name="Desc"><br>
+                            <span class='head-text level3'>Duration</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Duration"  name="Duration"><br>
+                            <span class='head-text level3'>Rate</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Rate"  name="Rate"><br>
+                            <span class='head-text level3'>Genre</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Genre"  name="Genre"><br>
+                            <span class='head-text level3'>Studio</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="Studio"  name="Studio"><br>
+                            <span class='head-text level3'>PosterURL</span><input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="PosterURL"  name="PosterURL"><br>
+                            <!-- <span class='head-text level3'>branch</span>
+                                <select name="Branch" id="Branch" class="form-control-plaintext text-white"></select>
+                                    <br><br>   เปลี่ยนไปใช้ ul-liแทน -->
+                        </form>
+                    </ul>
+            </div>
+            <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
+                        <!-- schedule list -->
+                        <span class='head-text level2'>schedule list</span>
+                        <ul class='open-list'>
+
+                        </ul>
+            </div>
+        </div>
+        <div class="row">
+                <div class="col order-first">
+                        <span class='head-text level2'>Select branch</span>
+                        <ul class='open-list' id='Branch'></ul>
+                </div>
+                <div class="col">
+                        <span class='head-text level2'>Select theater</span>
+                        <ul class='open-list' id='theater'></ul>
+                </div>
+                <div class="col order-last">
+                        <span class='head-text level2'>Info</span>
+                        <ul class='open-list'>
+                                <label >Date</label>
+                                <input name="Date" id="Date" class="form-control-plaintext text-white" type="date"></input>
+                                <label >Audio</label>
+                                <select name="Audio" id="Audio" class="form-control-plaintext text-white">
+                                    <option class="form-control-plaintext" value="Thai">Thai</option>
+                                    <option class="form-control-plaintext" value="English">English</option>
+                                </select>
+                                <label >Start Time</label>
+                                <input type="text" id="datetime24"class="form-control-plaintext text-white " data-format="HH:mm" data-template="HH : mm" name="StartTime" value="10:30">
+                                <label >Subtitle</label>
+                                <select name="SubTitle" id="SubTitle" class="form-control-plaintext text-white ">
+                                    <option class="form-control-plaintext" value="Thai">Thai</option>
+                                    <option class="form-control-plaintext" value="English">English</option>
+                                </select>
+                                <label >Dimension</label>
+                                <select class="form-control-plaintext text-white" id="Dimension"  name="Dimension">
+                                    <option class="form-control-plaintext" value="2D">2D</option>
+                                    <option class="form-control-plaintext" value="3D">3D</option>
+                                </select>
+                        </ul>
+                </div>
+        </div>
+        <div class="mx-auto mt-4 text-right">
+                <button type="button" name="create" id="createSchedule" value="create"class="btn btn-white btn-outline-light">create</button>
+                <button type="button" id="back" class="btn btn-white btn-outline-light">Back</button>
+            </div>
+
+
+
+</div>
+
+
+
+    <script src="scripts/movie.js"></script>
