@@ -3,16 +3,18 @@
         <div class="container" >
             <form action="/staff" method="post">
                 <div class="form-group row justify-content-md-center">
+                    <form class="staffform" id="commentForm" method="input" action="">
+                    <fieldset>
                     <label for="imageURL" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Image Link</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="imageURL" name="imageURL">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="imageURL" name="imageURL" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="firstName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">First Name</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="firstName" name="firstName">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="firstName" name="firstName" required>
                     </div>
                 </div>
 
@@ -20,27 +22,27 @@
                     <label for="middleName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Middle Name</label>
                     <div class="col-6">
                         <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="middleName" name="middleName">
-                    </div>
+                    </div>  
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="lastName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Last Name</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="lastName" name="lastName">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="lastName" name="lastName" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="birthday" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Birth Day</label>
                     <div class="col-6">
-                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="birthday" name="birthday" style="width: 150px">
+                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="birthday" name="birthday" style="width: 150px" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="citizenID" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Citizen ID</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="citizenID" name="citizenID">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="citizenID" name="citizenID" required>
                     </div>
                 </div>
 
@@ -57,28 +59,28 @@
                 <div class="form-group row justify-content-md-center">
                     <label for="highestEdu" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Highest Education</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="highestEdu" name="highestEdu">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="highestEdu" name="highestEdu" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="dateEmployed" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Date Employed</label>
                     <div class="col-6">
-                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="dateEmployed" name="dateEmployed" style="width: 150px">
+                        <input type="date" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="dateEmployed" name="dateEmployed" style="width: 150px" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="address" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Address</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="address" name="address">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="address" name="address" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center">
                     <label for="phone" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Phone Number</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="phone" name="phone">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="phone" name="phone" required>
                     </div>
                 </div>
 
@@ -96,14 +98,14 @@
                 <div class="form-group row justify-content-md-center">
                     <label for="position" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Position</label>
                     <div class="col-6">
-                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="position" name="position">
+                        <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="position" name="position" required>
                     </div>
                 </div>
 
                 <div class="form-group row justify-content-md-center" style="width: 975px;">
                     <label for="branchNo" class="col-md-2 col-sm-2 col-3 mt-2 mb-0" >Branch</label>
                     <select name="branchNo" id="branchNo" class="col-md-3 col-sm-2 col-3 mt-2 mb-0 form-control-plaintext text-white pb-0 text-center">
-                        
+                    
                     </select>
                     <div class="col-4"></div> 
                 </div>
@@ -112,10 +114,11 @@
                         <button type="button" id="next" class="btn btn-white btn-outline-light ">Next</button>
                         <button type="button" id="cancelStaff" class="btn btn-white btn-outline-light ">Cancel</button>
                 </div>
-                
+                    </fieldset>
+                </form>
         </form>
     </div>
 </div>
 
-
+<script> $("#commentForm").validate(); </script>
 <script src="scripts/staff.js"></script>
