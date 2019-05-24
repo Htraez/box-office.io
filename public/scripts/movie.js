@@ -114,12 +114,16 @@ function createAllSchedules(){
         schedule : [...schedule_list]
     };
     console.log(payload)
-     if(payload.MovieName!='') $.post('/Movies',payload,(res)=>{
-         console.log(success);
-         $('#movieAndSchduleForm').hide();
-         $('.content-view').show();
-        
-     });
+     if(payload.MovieName!='') {
+        $.ajax({
+            type:"POST",
+            url: "/movies",
+            data: payload,
+            success: function(data) {
+                window.location.replace("/admin");  
+            }
+        })
+     }
 }
 
 function datetime(){

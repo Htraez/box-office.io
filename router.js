@@ -538,7 +538,10 @@ router.post('/branch', (req,res) => {
 
 
 router.post('/movies', (req,res) => {
+    var planWithSchedule =[];
+    var SeatClass =[];
     var data = req.body;
+    var total;
     var sql = "INSERT INTO `movie` (`MovieName`, `Director`, `Casts`, `Desc`, `Duration`, `Rate`, `Genre`, `Studio`, `PosterURL`) VALUES ('"+
                 data.Movie.MovieName+"','"+ data.Movie.Director+"','"+data.Movie.Casts+"','"+data.Movie.Desc+"','"+data.Movie.Duration+"','"+data.Movie.Rate+"','"+data.Movie.Genre+"','"+data.Movie.Studio+"','"+data.Movie.PosterURL+"')";
     mysql.connect(sql)
@@ -556,22 +559,66 @@ router.post('/movies', (req,res) => {
                   mysql.connect(sql2)
                       .then((resp)=>{
                           console.log("success")
+                          let ScheduleNo =resp.insertId;
+                          var sql3 = "SELECT schedule.scheduleNo, plan.PlanHeight,plan.PlanWidth,plan.SeatClass1,plan.NumberRow1,plan.SeatClass2,plan.NumberRow2,plan.SeatClass3,plan.NumberRow3,plan.SeatClass4,plan.NumberRow4 FROM schedule ,theatre ,plan WHERE schedule.TheatreCode=theatre.TheatreCode and plan.PlanName=theatre.PlanName and schedule.scheduleNo="+ScheduleNo;
+                 console.log(sql3)
+                 mysql.connect(sql3)
+                        .then((resp)=>{
+                            resp.rows.forEach((value,key)=>{
+                                planWithSchedule ={
+                                scheduleNo :value.scheduleNo,
+                                PlanHeight: value.PlanHeight,
+                                PlanWidth:  value.PlanWidth,
+                                SeatClass1: value.SeatClass1,
+                                NumberRow1: value.NumberRow1,
+                                SeatClass2: value. SeatClass2,
+                                NumberRow2: value.NumberRow2,
+                                SeatClass3: value.SeatClass3,
+                                NumberRow3: value.NumberRow3,
+                                SeatClass4: value.SeatClass4,
+                                NumberRow4: value.NumberRow4
+                                }
+                            });
+                            console.log(planWithSchedule)
+                            var sql4 ="SELECT ClassName,Price,Width FROM seatclass";
+                            console.log(sql4)
+                            mysql.connect(sql4)
+                                    .then((resp)=>{
+                                        resp.rows.forEach((value,key)=>{
+                                            SeatClass.push(  {
+                                                ClassName :value.ClassName,
+                                                Price :value.Price,
+                                                Width :value.Width
+                                            })
+                                             });
+                                             console.log(SeatClass)
+                                            total = SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass1).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass1).Width))*planWithSchedule.NumberRow1
+                                            console.log("1",total)
+                                            if(planWithSchedule.SeatClass2!=null)
+                                                {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass2).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass2).Width))*planWithSchedule.NumberRow2
+                                                console.log("2",total)}
+                                            if(planWithSchedule.SeatClass3!=null)
+                                                { total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass3).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass3).Width))*planWithSchedule.NumberRow3
+                                                console.log("3",total)}
+                                            if(planWithSchedule.SeatClass4!=null)
+                                                 {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass4).Price * (Math.trunc(planWithSchedule.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === planWithSchedule.SeatClass4).Width))*planWithSchedule.NumberRow4
+                                                    console.log("4",total)}
+                                            var sql5 ="INSERT INTO `movie_revenue` (`MovieNo`, `ExpectRevenue`) VALUES ('"+MovieNo+"','"+total+"')";
+                                            mysql.connect(sql5)
+                                            console.log(sql5)
+                                            console.log(total)
+                                            res.sendStatus(200)
+                                                })
+                    })
                      })
                     .catch((err)=>{
                          console.log('error',err);
                      });
                 
-                // var sql3 = ""
-                // console.log(sql3)
-                // mysql.connect(sql2)
-                //      .then((resp)=>{
-                //          console.log("success")
-                //     })
-                //     .catch((err)=>{
-                //          console.log('error',err);
-                //      });
-                    
-            });
+                
+
 
 });
+});
+
 module.exports = router;
