@@ -20,7 +20,7 @@ $('.web-body').on('popup-closeAll', function(){
     $('.popup-area').hide();
 });
 
-$('button, .side-bar-icon').click(function(){
+$('button, .side-bar-icon, a').click(function(){
     let popupId = $(this).data('popup');
     if(popupId){
         $('.web-body').addClass('overlay');
