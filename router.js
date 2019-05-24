@@ -395,14 +395,9 @@ router.post('/seatclass', (req,res) => {
                 data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
     mysql.connect(sql)
         .then((resp)=>{
-<<<<<<< HEAD
-            
-        });
-=======
             console.log(resp);
             res.redirect('/seat');
         });*/
->>>>>>> 9bd4e775c47d7dd1e13a9b97f6d1a625e8f4a1f3
 });
 
 
