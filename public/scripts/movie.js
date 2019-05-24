@@ -1,6 +1,6 @@
 
 var theater
-var branch
+var branchName
 
 function ScheduleInfo(data) {
     var payload = { table:"schedule" };
@@ -20,7 +20,7 @@ function showbranch(data) {
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
             
-            $("#Branch").append('<li class="clickTableBranch" value="100value.BranchNo">'+value.BranchName+'</li>');
+            $("#Branch").append('<li class="clickTableBranch" value="'+value.BranchNo+'">'+value.BranchName+'</li>');
         });
         console.log(data)
     });
@@ -73,9 +73,8 @@ function datetime(){
 }
 function branch(){
     $(this).addClass('selected').siblings().removeClass('selected')
-    console.log(this.va);
-    var temp = this.innerHTML;
-    branchName = temp.replace(/\D/g, "");
+    console.log(this.value);
+    branchName = this.value;
     console.log(branchName)
     showTheater(branchName,);
 
