@@ -588,6 +588,7 @@ class ticketingProcess {
 
         this.form.find('#tab1 #tab1-branch-list').children().remove();
         this.form.find('#tab1 #tab1-schedule-list').children().remove();
+        
         Object.keys(this.temp.branchSchedule).forEach((branchName)=>{
             this.form.find('#tab1 #tab1-branch-list').append('<li data-branch="'+branchName+'">'+branchName+'</li>');
             let form = this.form;
@@ -614,6 +615,13 @@ class ticketingProcess {
                 });
             });
         });
+
+        if(this.form.find('#tab1 #tab1-branch-list').children().length == 0){
+            this.form.find('#tab1 #tab1-branch-list').append('<div class="maintenance">This movie has no schedule on this day</div>');
+        }
+        if(this.form.find('#tab1 #tab1-schedule-list').children().length == 0){
+            this.form.find('#tab1 #tab1-schedule-list').append('<div class="maintenance">This movie has no schedule on this day</div>');
+        }
     }
 }
 
@@ -661,7 +669,7 @@ class webstate{
                 });
             }); 
         }
-        fetchData('movies',{status: 'show', date: new Date().toYMD()},(data,err)=>{
+        fetchData('movies',{status: 'show', dateStart: new Date().toYMD(), dateStop: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).toYMD() },(data,err)=>{
             if(!err){
                 this.showingList = data;
                 this.renderMoviesGrid($('.program-row'), 'index-row');

@@ -62,7 +62,8 @@ router.get('/movies', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
     let columns = undefined;
-    let movieDate = req.query.date == '' ? undefined:req.query.date;
+    let movieDateStart = req.query.dateStart == '' ? undefined:req.query.dateStart;
+    let movieDateStop = req.query.dateStop == '' ? undefined:req.query.dateStop;
     if(typeof req.query.columns != 'undefined'){
         columns = req.query.columns.length > 0 ? '`'+req.query.columns.join().replace(/,/g,'`,`')+'`':undefined;
     }
@@ -70,8 +71,11 @@ router.get('/movies', (req,res)=>{
                     + 'FROM `movie`' 
                     + (status||movieId ? 'WHERE':'') 
                     + (movieId ? '`MovieNo`='+movieId:'') 
-                    + (status&&movieId ? 'AND':'') 
-                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDate+'")':'') + ';';
+                    + (status&&movieId || movieDateStart&&movieId ? 'AND':'') 
+                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDateStart+'" ':' ') 
+                    + (movieDateStart&&movieDateStop ? 'AND `schedule`.`Date` <= "'+movieDateStop+'") ':'')
+                    + (movieDateStart&&!movieDateStop ? ') ':'')
+                    + ';';
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){

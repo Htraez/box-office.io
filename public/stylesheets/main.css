@@ -967,3 +967,9 @@ table{
 .blk{
     display: block;
 }
+
+.maintenance{
+    color: #ffffff4a;
+    text-align: center;
+    padding: 10px 0;
+}
