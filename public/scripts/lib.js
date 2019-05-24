@@ -21,6 +21,16 @@ const fetchData = (topic, data, next) => {
     }
 }
 
+const fetchDataPromise = (topic, data) => {
+    return new Promise(function(resolve, reject){
+        fetchData(topic, data, (data, err)=>{
+            if(!err){
+                resolve(data);
+            }else reject(err);
+        })
+    });
+}
+
 (function() {
     Date.prototype.toYMD = Date_toYMD;
     Date.prototype.withoutTime = wot;
@@ -126,7 +136,7 @@ class ticketingProcess {
     }
 
     iterate(targetStep=undefined){
-        console.log('iterate', this.step, targetStep);
+        //console.log('iterate', this.step, targetStep);
         if(typeof targetStep!='undefined'){
             this.step = targetStep;
             if(targetStep==0) this.kill();
@@ -176,16 +186,7 @@ class ticketingProcess {
                         type: 'POST',
                         data: self.form.serialize(),
                         success:function(ticketData){
-                            iziToast.destroy();
-                            iziToast.show({
-                                title: 'Congrats! ',
-                                icon: 'fas fa-ticket-alt',
-                                message: 'Your Ticket(s) Is Here',
-                                position: 'topCenter',
-                                color: 'green',
-                                close: false
-                            });
-                            console.log(ticketData);
+                            window.location.replace('/?reservationNo='+ticketData.ReservationKey+'&scheduleNo='+ticketData.ScheduleNo);
                         },
                         error:function(jqXhr, textStatus){
                             iziToast.destroy();
@@ -587,6 +588,7 @@ class ticketingProcess {
 
         this.form.find('#tab1 #tab1-branch-list').children().remove();
         this.form.find('#tab1 #tab1-schedule-list').children().remove();
+        
         Object.keys(this.temp.branchSchedule).forEach((branchName)=>{
             this.form.find('#tab1 #tab1-branch-list').append('<li data-branch="'+branchName+'">'+branchName+'</li>');
             let form = this.form;
@@ -613,6 +615,13 @@ class ticketingProcess {
                 });
             });
         });
+
+        if(this.form.find('#tab1 #tab1-branch-list').children().length == 0){
+            this.form.find('#tab1 #tab1-branch-list').append('<div class="maintenance">This movie has no schedule on this day</div>');
+        }
+        if(this.form.find('#tab1 #tab1-schedule-list').children().length == 0){
+            this.form.find('#tab1 #tab1-schedule-list').append('<div class="maintenance">This movie has no schedule on this day</div>');
+        }
     }
 }
 
@@ -622,6 +631,7 @@ class webstate{
         this.role = this.isAuth ? uRole:undefined;
         this.temp = {};
         iziToast.show({
+            class: 'fetchToast',
             position: "topCenter", 
             iconUrl: '/assets/images/load_placeholder.svg',
             title: 'Fetching Data', 
@@ -633,19 +643,39 @@ class webstate{
         });
         if(typeof this.role!='undefined') this.role = this.role == 2 ? 'admin':'user';
         if(this.isAuth) {
-            fetchData('user',['*'], (data,err)=>{
-                if(!err){
-                    this.userData = data;
-                    this.updateUIByAuth();
-                }
-            });
+            let self = this;
+            fetchDataPromise('user',['*'])
+            .then((data)=>{
+                this.userData = data;
+                this.updateUIByAuth();
+            })
+            .then(()=>{
+                fetchData('reservation/customer', {customerId: this.userData.CustomerNo}, (data,err)=>{
+                    if(!err){
+                        self.userData.Reservations = data;
+                        self.updateReservationProfile();
+                    }
+                });
+            })
+            .catch((err)=>{
+                iziToast.destroy();
+                iziToast.show({
+                    title: 'Fetching Failed! ',
+                    icon: 'fas fa-bug',
+                    message: 'with error ('+err+')',
+                    position: 'topCenter',
+                    color: 'red',
+                    close: false
+                });
+            }); 
         }
-        fetchData('movies',{status: 'show', date: new Date().toYMD()},(data,err)=>{
+        fetchData('movies',{status: 'show', dateStart: new Date().toYMD(), dateStop: new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).toYMD() },(data,err)=>{
             if(!err){
                 this.showingList = data;
                 this.renderMoviesGrid($('.program-row'), 'index-row');
                 this.renderMoviesGrid($('.reserv-render-area'));
-                iziToast.destroy();
+                var toast = document.querySelector('.fetchToast'); // Selector of your toast
+                iziToast.hide({}, toast);
             }else{
                 console.log(err);
             }
@@ -656,7 +686,121 @@ class webstate{
         this.schedule = schedule;
     }
 
-    updateUIByAuth=()=>{
+    updateReservationProfile = () => {
+        console.log(this.userData.Reservations);
+        //get openlist element
+        let datebookList = $('#user-ticket-datebook');
+        let scheduleList = $('#user-ticket-schedule');
+        let bookList = $('#user-ticket-reservation');
+        let infoList = $('#user-ticket-detail');
+        //remove all children on init
+        datebookList.children().remove();
+        bookList.children().remove();
+        scheduleList.children().remove();
+        //loop by each DateCreated
+        Object.keys(this.userData.Reservations).forEach((bookingDate)=>{
+            //append date
+            datebookList.append('<li data-book-date="'+bookingDate+'">'+bookingDate+'</li>');
+            //on select date
+            datebookList.children().last().off('click focusReservation').on('click focusReservation',function(e){
+                $(this).addClass('selected');
+                //hide all descendant list element
+                scheduleList.children().hide();
+                bookList.children().hide()
+                infoList.children().hide();
+                //deselect all sibling
+                $(this).siblings().removeClass('selected');
+                scheduleList.children().removeClass('selected');
+                bookList.children().removeClass('selected');
+                //show specific schedule by bookDate
+                let selectDate = $(this).data('bookDate');
+                scheduleList.find('li[data-book-date="'+selectDate+'"]').show();
+            });
+            //loop by each reservation
+            this.userData.Reservations[bookingDate].forEach((reservation)=>{
+                let movieName = reservation[0].MovieName;
+                let scheduleNo = reservation[0].ScheduleNo;
+                let playDate = new Date(reservation[0].PlayDate);
+                playDate = playDate.getDate()+'-'+playDate.getMonth()+'-'+playDate.getFullYear();
+                let playTime = reservation[0].PlayTime;
+                
+                //append schedule (prevent repeat)
+                if(scheduleList.find('li[data-schedule-no="'+scheduleNo+'"]').length == 0){
+                    scheduleList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'">'+'<strong>'+movieName+'</strong></br>'+playDate+'  |  '+playTime+'</li>');
+                    //on select schedule
+                    scheduleList.children().last().off('click focusReservation').on('click focusReservation',function(e){
+                        $(this).addClass('selected');
+                        //hide all descendant list element
+                        bookList.children().hide();
+                        infoList.children().hide();
+                        //deselect all sibling
+                        $(this).siblings().removeClass('selected');
+                        bookList.children().removeClass('selected');
+                        //show specific reservation by schedule
+                        let selectSchedule = $(this).data('scheduleNo');
+                        bookList.find('li[data-schedule-no="'+selectSchedule+'"]').show();
+                    });
+                }
+                
+                //append reservation
+                let reservationNo = reservation[0].ReservationNo;
+                bookList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'" data-reservation-no="'+reservationNo+'">'+'<strong>Reservation No.: </strong>'+reservationNo+'</li>');
+                //on select reservation
+                bookList.children().last().off('click focusReservation').on('click focusReservation',function(e){
+                    $(this).addClass('selected');
+                    //deselect all sibling
+                    $(this).siblings().removeClass('selected');
+                    //hide all descendant list element
+                    infoList.children().hide();
+                    //show specific info by reservationNo
+                    let selectReservation = $(this).data('reservationNo');
+                    infoList.find('li[data-reservation-no="'+selectReservation+'"]').show();
+                });
+
+                //transform reservation to seatclass wise
+                let byClass = {}
+                reservation.forEach((seat)=>{
+                    let seatClass = seat.SeatClass;
+                    if(typeof byClass[seatClass] == 'undefined') byClass[seatClass] = []
+                    byClass[seatClass].push(seat.SeatCode);
+                });
+
+                //append reservation info
+                let data = {
+                    data: {
+                        bookDate: bookingDate,
+                        scheduleNo: scheduleNo,
+                        reservationNo: reservationNo,
+                        MovieName: movieName,
+                        PosterURL: reservation[0].PosterURL,
+                        PlayTime: playTime,
+                        PlayDate: playDate,
+                        TheatreName: reservation[0].TheatreCode,
+                        Branch: reservation[0].BranchName,
+                        Audio: reservation[0].Audio,
+                        Genre: reservation[0].Genre,
+                        Rate: reservation[0].Rate,
+                        Dimension: reservation[0].Dimension,
+                        SeatList: byClass
+                    }
+                };
+                let html = new EJS({url:'/client-templates/ticket-info'}).render(data);
+                infoList.append(html);
+
+            });
+
+            
+        });
+
+        scheduleList.children().hide();
+        bookList.children().hide();
+        infoList.children().hide();
+        $(document).trigger('fetchReservationComplete');
+        //hide all descendant list element by default
+        
+    }
+
+    updateUIByAuth = () => {
         if(this.isAuth) {
             $('#head-login-btn').hide();
             $('#head-user-badge').show();
@@ -700,24 +844,4 @@ class webstate{
 
 }
 
-
-class ScheduleProcess{
-    constructor(){
-        // ตัวแปรเก็บ + (operationดึง+onclick)
-        // fetchData("movies",{MovieNo})
-        // fetchData('movies',{status: 'show'},(data,err)=>{
-        //     if(!err){
-        //         this.showingList = data;
-        //         this.renderMoviesGrid($('.program-row'), 'index-row');
-        //         this.renderMoviesGrid($('.reserv-render-area'));
-        //     }else{
-        //         console.log(err);
-        //     }
-        // }); 
-        // fetchData("branch",{BranchNo})
-        
-        // fetchData("theatre",{TheatreCode})
-    }
-    // function อื่นๆ เรียก ondemand
-}
 
