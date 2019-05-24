@@ -136,7 +136,7 @@ class ticketingProcess {
     }
 
     iterate(targetStep=undefined){
-        console.log('iterate', this.step, targetStep);
+        //console.log('iterate', this.step, targetStep);
         if(typeof targetStep!='undefined'){
             this.step = targetStep;
             if(targetStep==0) this.kill();
@@ -186,16 +186,7 @@ class ticketingProcess {
                         type: 'POST',
                         data: self.form.serialize(),
                         success:function(ticketData){
-                            iziToast.destroy();
-                            iziToast.show({
-                                title: 'Congrats! ',
-                                icon: 'fas fa-ticket-alt',
-                                message: 'Your Ticket(s) Is Here',
-                                position: 'topCenter',
-                                color: 'green',
-                                close: false
-                            });
-                            console.log(ticketData);
+                            window.location.replace('/?reservationNo='+ticketData.ReservationKey+'&scheduleNo='+ticketData.ScheduleNo);
                         },
                         error:function(jqXhr, textStatus){
                             iziToast.destroy();
@@ -675,7 +666,8 @@ class webstate{
                 this.showingList = data;
                 this.renderMoviesGrid($('.program-row'), 'index-row');
                 this.renderMoviesGrid($('.reserv-render-area'));
-                iziToast.destroy();
+                var toast = document.querySelector('.fetchToast'); // Selector of your toast
+                iziToast.hide({}, toast);
             }else{
                 console.log(err);
             }
@@ -702,7 +694,7 @@ class webstate{
             //append date
             datebookList.append('<li data-book-date="'+bookingDate+'">'+bookingDate+'</li>');
             //on select date
-            datebookList.children().last().off('click').click(function(e){
+            datebookList.children().last().off('click focusReservation').on('click focusReservation',function(e){
                 $(this).addClass('selected');
                 //hide all descendant list element
                 scheduleList.children().hide();
@@ -728,7 +720,7 @@ class webstate{
                 if(scheduleList.find('li[data-schedule-no="'+scheduleNo+'"]').length == 0){
                     scheduleList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'">'+'<strong>'+movieName+'</strong></br>'+playDate+'  |  '+playTime+'</li>');
                     //on select schedule
-                    scheduleList.children().last().off('click').click(function(e){
+                    scheduleList.children().last().off('click focusReservation').on('click focusReservation',function(e){
                         $(this).addClass('selected');
                         //hide all descendant list element
                         bookList.children().hide();
@@ -746,7 +738,7 @@ class webstate{
                 let reservationNo = reservation[0].ReservationNo;
                 bookList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'" data-reservation-no="'+reservationNo+'">'+'<strong>Reservation No.: </strong>'+reservationNo+'</li>');
                 //on select reservation
-                bookList.children().last().off('click').click(function(e){
+                bookList.children().last().off('click focusReservation').on('click focusReservation',function(e){
                     $(this).addClass('selected');
                     //deselect all sibling
                     $(this).siblings().removeClass('selected');
@@ -789,11 +781,15 @@ class webstate{
 
             });
 
-            //hide all descendant list element by default
-            scheduleList.children().hide();
-            bookList.children().hide()
-            infoList.children().hide();
+            
         });
+
+        scheduleList.children().hide();
+        bookList.children().hide();
+        infoList.children().hide();
+        $(document).trigger('fetchReservationComplete');
+        //hide all descendant list element by default
+        
     }
 
     updateUIByAuth = () => {

@@ -7,7 +7,6 @@ const   express = require('express'),
         passport = require('./passport');
 
 function checkAuthentication(req,res,next){
-    
     if(req.isAuthenticated()){
         //req.isAuthenticated() will return true if user is logged in
         next();
@@ -17,8 +16,16 @@ function checkAuthentication(req,res,next){
 }
 
 router.all('/', checkAuthentication, (req, res) => {
+    let reservationNo = req.query.reservationNo == '' ? undefined:req.query.reservationNo;
+    let scheduleNo = req.query.scheduleNo == ''? undefined:req.query.scheduleNo;
     res.render('index', {
-            auth: req.user.customerNo != null ? 1 : 2
+            auth: req.user.customerNo != null ? 1 : 2,
+            data:{
+                reservationSuccess: {
+                    reservationNo: reservationNo,
+                    scheduleNo: scheduleNo
+                }
+            }
     });
 });
 
@@ -415,7 +422,7 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
         console.log('ticketing ERROR',err);
         res.sendStatus(500);
     });
-    console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========\n');
+    //console.log('==========\nTicket(s) Requested:\n('+seatList.length+' seat(s))\n', req.body,'\n==========\n');
 });
 
 router.post('/tickets/:ticketId/confirm', (req,res)=>{
