@@ -479,6 +479,13 @@ router.post('/plan', (req,res)=>{
 
 router.post("/staff", (req, res) =>{
     var data = req.body;
+    var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
+                data.staff.FirstName+"','"+ data.staff.MidName+"','"+data.staff.LastName+"','"+data.staff.BirthDay+"','"+data.staff.CitizenID+"','"+data.staff.Gender+"','"+data.staff.HighestEdu+"','"+data.staff.ImageURL+"','"+data.staff.DateEmployed+"','"+data.staff.Address+"','"+data.staff.PhoneNumber+"','"+data.staff.Marital+"','"+data.staff.Position+"','"+data.staff.BranchNo+"')";
+    
+    mysql.connect(sql)
+        .then((resp)=>{
+             
+    })
     console.log(data);
 })
 

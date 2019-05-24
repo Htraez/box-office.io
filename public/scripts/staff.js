@@ -1,3 +1,6 @@
+var addshiftshow = [];
+
+
 function staffForm(){
     $("#staffForm").show();
     $(".content-view").hide();
@@ -28,6 +31,7 @@ function savedata(){
             CitizenID:$("#citizenID").val(),
             Gender:$("#gender").val(),
             HighestEdu:$("#highestEdu").val(),
+            ImageURL:$("#imageURL").val(),
             DateEmployed:$("#dateEmployed").val(),
             Address:$("#address").val(),
             PhoneNumber:$("#phone").val(),
@@ -35,9 +39,11 @@ function savedata(){
             Position:$("#position").val(),
             BranchNo:$("#branchNo").val(),
         },
-        shift:[]
+        shift:[
+            
+        ]
     }
-    if(payload.staff.FirstName&&payload.staff.Address){
+    if(payload.staff.FirstName&&payload.staff.LastName&&payload.staff.BirthDay&&payload.staff.CitizenID&&payload.staff.Gender&&payload.staff.HighestEdu&&payload.staff.ImageURL&&payload.staff.DateEmployed&&payload.staff.Address&&payload.staff.PhoneNumber&&payload.staff.Marital&&payload.staff.Position&&payload.staff.BranchNo){
         console.log(payload);
         $.post("/staff",payload,(res)=>{
             //ช่องว่างไว้ใส่ฟังก์ชันที่เราต้องการเรียกใช้หลังจากส่งข้อมูลเสร็จ
@@ -48,9 +54,28 @@ function savedata(){
     
 }
 
+function fetchbranchforstaff(){
+    $.get('/fetchData/branch/none',(data)=>{
+            data.forEach((value,key)=>{
+            $("#branchNo").append('<option class="form-control-plaintext" value="'+value.BranchNo+'">'+value.BranchName+'</option>');
+        })
+    });
+}
+
+function assignshiftforstaff(){
+    var temp = {
+        Date: $('#date').val(),
+        Start: $('#startTime').val(),
+        End: $('#endTime').val()   
+    }
+    console.log("OK");
+    addshiftshow.push(temp);
+}
+
 $(document).on("click","#createStaff",staffForm);
 $(document).on("click","#cancelStaff",cancelStaff);
 $(document).on("click","#next",next);
 $(document).on("click","#back",back);
-
+fetchbranchforstaff();
 $(document).on("click","#savedata",savedata);
+$(document).on("click","#assignShift",assignshiftforstaff)
