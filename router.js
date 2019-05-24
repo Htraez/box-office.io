@@ -7,6 +7,7 @@ const   express = require('express'),
         passport = require('./passport');
 
 function checkAuthentication(req,res,next){
+    
     if(req.isAuthenticated()){
         //req.isAuthenticated() will return true if user is logged in
         next();
@@ -121,6 +122,50 @@ router.get('/plan', (req,res)=>{
     .catch((err)=>{
         console.log('error',err);
     });
+});
+
+router.get('/reservation/customer', (req,res) => {
+    let targetCustomer = req.query.customerId == '' ? undefined: req.query.customerId;
+    if(targetCustomer){
+        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice`, c.`CouponCode`, c.`Deduction` "
+                        +"FROM `reservation` r, `reservation_items` i, `couponusage` c, `movie` m, `schedule` s, `theatre` t, `branch` b "
+                        +"WHERE r.`ReservationNo` = i.`ReservationNo` "
+                        +"AND s.`ScheduleNo` = r.`ScheduleNo` "
+                        +"AND t.`TheatreCode` = s.`TheatreCode` "
+                        +"AND b.`BranchNo` = t.`BranchNo` "
+                        +"AND m.`MovieNo` = s.`MovieNo` "
+                        +"AND c.`ReservationNo` = r.`ReservationNo` "
+                        +"AND r.`CustomerNo` = "+targetCustomer+";";
+        mysql.connect(query)
+        .then((resp)=>{
+            if(resp.rows.length <= 0){
+                //return
+                res.sendStatus(204);
+                return;
+            }
+            console.log('found',resp.rows.length,'user reservation(s)');
+            let byReservation = {}
+            let byCreatedDate = {}
+            resp.rows.forEach((row)=>{
+                if(typeof byReservation[row.ReservationNo] == 'undefined') byReservation[row.ReservationNo] = [];
+                byReservation[row.ReservationNo].push(row);
+            });
+            Object.keys(byReservation).forEach((reservationNo)=>{
+                let date = new Date(byReservation[reservationNo][0].DateCreated);
+                date = date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear();
+                if(typeof byCreatedDate[date] == 'undefined') byCreatedDate[date] = [];
+                byCreatedDate[date].push(byReservation[reservationNo]);
+            });
+            res.send(byCreatedDate);
+        })
+        .catch((err)=>{
+            console.log('error',err);
+        });
+        return;
+    }else{
+        res.sendStatus(400);
+        return;
+    }
 });
 
 router.get('/reservation/:scheduleNo', (req,res)=>{
@@ -477,10 +522,10 @@ router.post('/plan', (req,res)=>{
 
 //=======================
 
-router.all('/', (req, res) => {
-    console.log(req.user);
-    res.render('index');
-});
+// router.all('/', (req, res) => {
+//     console.log(req.user);
+//     res.render('index');
+// });
 
 router.get('/admin', checkAuthentication, (req,res) => {
     res.render('admin',{auth:true});
@@ -489,7 +534,7 @@ router.get('/admin', checkAuthentication, (req,res) => {
 router.post('/login', 
     passport.authenticate('local', { 
         successRedirect: '/',
-        failureRedirect: '/',
+        failureRedirect: '/?badlogin=true',
         failureFlash: true 
     }), (req,res) => {
     console.log('login route run!', req.body);

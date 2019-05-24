@@ -96,8 +96,8 @@ button > i{
     border: 1px solid var(--color-red)!important;
 }
 .btn-red:not([disabled]):hover{
-    background: var(--color-red);
-    color: black;
+    background: var(--color-red)!important;
+    color: black!important;
 }
 
 input.invalid:hover{
@@ -280,11 +280,17 @@ input.invalid:hover{
     font-size: .8rem;
 }
 
-.head-text-badge {
+.seat-badge{
+    width: 25px!important;
+    height: 25px!important;
+    vertical-align: middle;
+}
+
+.head-text-badge{
     vertical-align: text-bottom;
 }
 
-.head-text-badge .badge, .badge{
+.head-text-badge .badge, .seat-badge .badge, .badge{
     border: 1px solid white!important;
     margin: 0 3px;
     vertical-align: text-bottom!important;
@@ -569,26 +575,7 @@ button .fetch.userpic{
     }
 }
 
-.dropdown-menu{
-    position: absolute!important;
-    will-change: transform!important;
-    border-radius: 0px!important;
-    top: 0px!important;
-    left: 0px!important;
-    transform: translate3d(-38px, 36px, 0px);
-    -webkit-transform: translate3d(-38px, 36px, 0px);
-    -moz-transform: translate3d(-38px, 36px, 0px);
-    -ms-transform: translate3d(-38px, 36px, 0px);
-    -o-transform: translate3d(-38px, 36px, 0px);
-}
 
-.dropdown-item{
-    font-family: inherit!important;
-    display: flex!important;
-    justify-content: center!important;
-    margin-bottom: 7px!important;
-    font-size: .9rem!important;
-}
 
 .select-field{
     background: var(--color-corngray);
@@ -660,17 +647,50 @@ input[disabled], input[disabled]:hover{
     display: inline;
 }
 .dropdown .dropdown-menu{
+    position: absolute!important;
+    will-change: transform!important;
+    border-radius: 0px!important;
+    top: 0px!important;
+    left: 0px!important;
+    transform: translate3d(-38px, 36px, 0px);
+    -webkit-transform: translate3d(-38px, 36px, 0px);
+    -moz-transform: translate3d(-38px, 36px, 0px);
+    -ms-transform: translate3d(-38px, 36px, 0px);
+    -o-transform: translate3d(-38px, 36px, 0px);
     border: 1px solid white!important;
-    background: rgba(0, 0, 0, 0.5)!important;
+    background: black!important;
     color: white!important;
 }
 .dropdown .dropdown-item{
+    background: black!important;
+    font-family: inherit!important;
+    display: flex!important;
+    justify-content: center!important;
+    font-size: .9rem!important;
+    padding: 10px !important;
     color: white!important;
+    font-weight: 800;
+    border-bottom: 1px solid #ffffff08;
+}
+.dropdown .dropdown-item.userpic{
+    padding: 0px !important;
 }
 .dropdown .dropdown-item:hover{
     cursor: pointer!important;
+    background: white!important;
     color: black!important;
 }
+
+.dropdown-item:nth-of-type(1){
+    margin-top: 15px!important;
+    border-top: 1px solid #ffffff1f;
+}
+
+.dropdown-item:last-of-type{
+    margin-bottom: 15px!important;
+    border-bottom: 1px solid #ffffff1f;
+}
+
 #reserv-nshow-theatre+.dropdown-menu{
     transform: translate3d(0px, 31px, 0px)!important;
     width: -webkit-fill-available;
@@ -679,6 +699,7 @@ input[disabled], input[disabled]:hover{
     -ms-transform: translate3d(0px, 31px, 0px)!important;
     -o-transform: translate3d(0px, 31px, 0px)!important;
 }
+
 
 .open-list{
     font-size: .8rem;
@@ -706,6 +727,11 @@ input[disabled], input[disabled]:hover{
 .open-list li:hover{
     background: #ffffff38;
     cursor: pointer;
+}
+
+.open-list.non-select li:hover{
+    background: transparent;
+    cursor: unset;
 }
 
 .open-list li:focus, .open-list li.selected{
@@ -897,4 +923,47 @@ table{
 
 .btn-group-toggle.day-toggle .toggle-item{
     font-size: .7rem;
+}
+
+.card{
+    background: black!important;
+    padding: 10px!important;
+    border: 1px solid white!important;
+    min-height: 100px!important;
+}
+
+.stat-showcase{
+    display: flex;
+    justify-content: center;
+}
+.stat-showcase label{
+    font-size: .8rem;
+}
+.stat-showcase label span{
+    font-weight: 500;
+    display: block;
+    max-width: 75px;
+    text-align: center;
+    font-size: 0.7rem;
+}
+.stat-showcase .btn-green{
+    border-style: dashed;
+    min-width: 70px;
+    min-height: 70px;
+    font-size: .7rem;
+    font-weight: 900;
+    border-radius: .4rem;
+    -webkit-border-radius: .4rem;
+    -moz-border-radius: .4rem;
+    -ms-border-radius: .4rem;
+    -o-border-radius: .4rem;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.blk{
+    display: block;
 }
