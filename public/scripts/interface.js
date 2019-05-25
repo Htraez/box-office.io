@@ -65,10 +65,6 @@ $(document).on("keydown", "form.preventEnter", function(event) {
     //prevent hitting enter in form
 });
 
-$(document).on("click", "#signup",function () {
-    $("#login-popup > div").closest('.popup-area').hide();
-});
-
 $('.popup-area, #popup-close, .close-key').click(function(e){
     if(e.target != this && e.target != this.children[0]) return;
     $('.web-body').removeClass('overlay');
@@ -107,4 +103,110 @@ $('button').on('reset', function(e, isDisable=true, moreClass=undefined){
     if($(this).data('default-disable')&&isDisable) $(this).prop("disabled", true);
     if(typeof $(this).data('default-class') != 'undefined'||moreClass) $(this).attr( "class", $(this).data('default-class')+' '+(moreClass?moreClass:''));
     if(typeof $(this).data('default-txt') != 'undefined') $(this).find('span').text($(this).data('default-txt'));
+});
+
+$(document).on("click", "#signup",function () {
+    $("#login-popup > div").closest('.popup-area').hide();
+});
+
+$(document).on("click", "#NextRegForm",function () {
+    $('#LoginPart').hide();
+    $('#CustomerDeatail').show();
+});
+
+$(document).on("click", "#BackRegForm",function () {
+    $('#LoginPart').show();
+    $('#CustomerDeatail').hide();
+});
+
+$(document).ready(function() {
+    $('#NextRegForm').prop('disabled', true);
+    $('#RegisterPassword').keyup(function() {
+       if(($('#RegisterPassword').val() == $('#RegisterConPassword').val())&&($('#RegisterUserName').val())) {
+          $('#NextRegForm').prop('disabled', false);
+       }
+       else $('#NextRegForm').prop('disabled', true);
+    });
+    $('#RegisterConPassword').keyup(function() {
+        if(($('#RegisterPassword').val() == $('#RegisterConPassword').val())&&($('#RegisterUserName').val())) {
+           $('#NextRegForm').prop('disabled', false);
+        }
+        else $('#NextRegForm').prop('disabled', true);
+     });
+     $('#RegisterUserName').keyup(function() {
+        if(($('#RegisterPassword').val() == $('#RegisterConPassword').val())&&($('#RegisterUserName').val())) {
+           $('#NextRegForm').prop('disabled', false);
+        }
+        else $('#NextRegForm').prop('disabled', true);
+     });
+});
+
+$(document).on("click","#SubRegForm", function () {
+    var Notfound=['<strong>'];
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Saving Data', 
+        color: 'blue',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
+    payload = {
+        user : {
+            username : $('#RegisterUserName').val(),
+            password : $('#RegisterPassword').val(),
+        },
+        Detail : {
+            firstname : $('#RegisterFirstName').val(),
+            midname : $('#RegisterMidName').val(),
+            lastname : $('#RegisterLastName').val(),
+            birthday : $('#RegisterBirthDay').val(),
+            gender : $('#RegisterGender').val(),
+            C_PId : $('#RegisterCID').val(),
+            phone : $('#RegisterPhone').val(),
+            img : $('#RegisterIMG').val(),
+            address : $('#RegisterAddress').val(),
+            email : $('#RegisterEmail').val(),
+        }
+    }
+    //console.log(payload);
+    const entries = Object.entries(payload.Detail)
+    for (const [key,value] of entries) {
+        //console.log(key,value,(value)=="")
+        if((value)==""){
+            Notfound.push(key);
+        }
+    }
+    if(Notfound.length==1){
+        $.post('/register',payload,(res)=>{
+            iziToast.destroy();
+            iziToast.show({
+                position: "topCenter", 
+                icon: "far fa-thumbs-up",
+                title: 'Save!', 
+                color: 'green',
+                timeout: 2000,
+                message: 'Register successfully.'
+            });
+            window.location.href = "/";
+        });
+    }
+    else{
+        Notfound.push('</strong>');
+        var show = 'You should check input in on some of those fields below. </br>'+Notfound.toString();
+        show = show.replace("C_PId","Citizen/Passport ID");
+        show = show.replace("img","image");
+        show = show.replace(/,/g,"&emsp13;");
+        iziToast.destroy();
+        iziToast.show({
+            position: "topCenter", 
+            icon: "fas fa-exclamation-triangle",
+            title: 'Warning!', 
+            color: 'orange',
+            timeout: 10000,
+            message: show
+        });
+    }
 });

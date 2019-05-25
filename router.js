@@ -454,9 +454,10 @@ router.post('/seatclass', (req,res) => {
     //res.send(data);
     data.SeatClassData.forEach((value)=>{
         if(value.Detail){
-            if(value.Detail=='Create') console.log(value);
-            sql += "('"+value.ClassName+"','"+ value.Price+"','"+value.Couple+"','"+value.FreeFood+"','"+value.Width/100+"','"+value.Height/100+"'),";
-            use = 1;
+            if(value.Detail=='Create'){
+                sql += "('"+value.ClassName+"','"+ value.Price+"','"+value.Couple+"','"+value.FreeFood+"','"+value.Width+"','"+value.Height+"'),";
+                use = 1;
+            }
         }
         
     })
@@ -464,20 +465,38 @@ router.post('/seatclass', (req,res) => {
     if(use){
         mysql.connect(sql)
         .then((resp)=>{
-            console.log(resp);
             res.sendStatus(200);
         });
     }
-    
-    /*var sql = "INSERT INTO `seatclass` (`ClassName`, `Price`, `Couple`, `FreeFood`, `Width`, `Height`) VALUES ('"+
-                data.Name+"','"+ data.Price+"','"+data.Couple+"','"+data.FreeFood+"','"+data.Width/100+"','"+data.Height/100+"')";
-    mysql.connect(sql)
-        .then((resp)=>{
-            console.log(resp);
-            res.redirect('/seat');
-        });*/
+    else res.sendStatus(200);
 });
 
+
+router.post('/plan/update', (req,res)=>{
+    var data = req.body;
+    var sql = "UPDATE `plan` SET `PlanName` = '"+data.newName+"' WHERE `plan`.`PlanName` = '"+data.oldName+"'";
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+router.get('/plan/delete/:plan',(req,res)=>{
+    var sql = "DELETE FROM `plan` WHERE `plan`.`PlanName` = '"+req.params.plan+"'";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
 
 router.post('/plan', (req,res)=>{
     var data = req.body;
@@ -525,6 +544,23 @@ router.post('/plan', (req,res)=>{
             }else res.send(resp);
        });
 });
+
+router.post('/register',(req,res)=>{
+    var data = req.body;
+    var sql = "INSERT INTO `customer`( `FirstName`, `MidName`, `LastName`, `BirthDate`, `Gender`, `CitizenID/PassportID`, `PhoneNumber`, `ImageURL`, `Address`, `Email`) VALUES";
+    sql += " ('"+data.Detail.firstname+"','"+data.Detail.midname+"','"+data.Detail.lastname+"','"+data.Detail.birthday+"','"+data.Detail.gender+"','"+data.Detail.C_PId+"','"+data.Detail.phone+"','"+data.Detail.img+"','"+data.Detail.address+"','"+data.Detail.email+"')";
+    mysql.connect(sql)
+        .then((resp)=>{
+            var sql = "INSERT INTO `users`(`Username`, `Password`, `CustomerNo.`, `StaffNo.`) VALUES";
+            sql += "('"+data.user.username+"','"+data.user.password+"','"+resp.insertId+"',NULL)";
+            console.log(sql);
+            mysql.connect(sql)
+                .then((resp=>{
+                    res.sendStatus(200);
+                }))
+        })
+    console.log(data);
+})
 
 
 //=======================

@@ -67,16 +67,39 @@
     </div>    
 </div>
 
+<div class="popup-area" id='delete-plan-popup' style='display: none;'>
+    <div class="popup-window col-xs-8 col-md-4">
+        <div class="popup-head">
+            <span id='popup-head-text'>Delete Plan</span>
+            <span id='popup-close'><i class="fas fa-times"></i></span>
+        </div>
+        <div class="popup-body" style="flex-basis: auto;max-height: 80vh;overflow-y: visible;">  
+            <div class="popup-head">
+                <p id='popup-head-text'>Are you sure to delete ?</p>
+            </div>
+            <div class="row">
+                <div class="mx-auto mt-3 text-center">
+                    <button type="button" id="confirmDeletePlan" class="btn btn-white btn-outline-light mr-5" style="border-radius: 0 !important;">Yes</button>
+                    <button type="button" id='popup-close' class="btn btn-white btn-outline-light" style="border-radius: 0 !important; position: initial;">No</button>  
+                </div>
+            </div>
+        </div>
+        <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+            
+        </div>
+    </div>    
+</div>
+
 <div class='popup-area' id='signup-popup' style='display: none;'>
-    <div class="popup-window col-xs-12 col-md-10">
+    <div class="popup-window col-xs-8 col-md-6">
         <div class="popup-head">
             <span id='popup-head-text'>Register</span>
             <span id='popup-close'><i class="fas fa-times"></i></span>
         </div>
-        <div class="popup-body">
+        <div class=" popup-body" style='overflow: unset;'>
             <%- include register %>
         </div>
-        <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+        <div class="popup-footer" style='height: fit-content;'>
             
         </div>
     </div>

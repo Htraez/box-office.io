@@ -1,4 +1,5 @@
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
+var oldBranchName=null;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
     Thcount=0
@@ -52,30 +53,55 @@ function editTh(id){
 }
 
 function saveTheatre(){
+    iziToast.show({
+        position: "bottomLeft", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Saving Theatre', 
+        color: 'blue',
+        message: 'Please Wait',
+        timeout: false,
+    });
     var data = {Name:$('#NameTheatre').val(), Branch:$('#TheatreBranch').val(),Detail:{Type:'Create',Old:''}}
     if(data.Name!='' && data.Branch){
-        $('#NameTheatre').val('');
-        if(nowTH==0){
-            addTable([data]);
-            Theatre.push(data);
-        }
-        else {
-            switch (Theatre[nowTH].Detail.Type){
-                case 'Load': data.Detail = {Type:'Update',Old:Theatre[nowTH].Name}; break;
-                case 'Update' : data.Detail = Theatre[nowTH].Detail; break;
-                default : break;
+        $.get('/fetchData/theatre/TheatreCode='+data.Name,(getdata)=>{
+            if(getdata.length==0&&!(Theatre.find((val)=>{ return val.Name==data.Name}))){
+                $('#NameTheatre').val('');
+                if(nowTH==0){
+                    addTable([data]);
+                    Theatre.push(data);
+                }
+                else {
+                    switch (Theatre[nowTH].Detail.Type){
+                        case 'Load': data.Detail = {Type:'Update',Old:Theatre[nowTH].Name}; break;
+                        case 'Update' : data.Detail = Theatre[nowTH].Detail; break;
+                        default : break;
+                    }
+                    Theatre[nowTH] = data;
+                    reRenderTHTable();
+                }
+                iziToast.destroy();
+                iziToast.show({
+                    icon: "far fa-thumbs-up",
+                    title: 'Save!', 
+                    color: 'green',
+                    position: 'bottomLeft',
+                    timeout: 2000,
+                    message: 'You Theatre is save successfully.',
+                });
             }
-            Theatre[nowTH] = data;
-            reRenderTHTable();
-        }
-        iziToast.show({
-            icon: "far fa-thumbs-up",
-            title: 'Save!', 
-            color: 'green',
-            position: 'bottomLeft',
-            timeout: 2000,
-            message: 'You Theatre is save successfully.',
+            else{
+                iziToast.destroy();
+                iziToast.show({
+                    position: "bottomLeft", 
+                    icon: "fas fa-exclamation-triangle",
+                    title: 'Warning!', 
+                    color: 'orange',
+                    timeout: 2000,
+                    message: 'This TheatreName is already used',
+                });
+            }
         });
+        
         
     }
     else {
@@ -209,7 +235,7 @@ $(document).on("keypress", "form", function(event) {
 });
 
 function pageRedirect() {
-    window.location.href = "http://localhost:8080/plan";
+    window.location.href = "http://localhost:8080/admin";
 } 
 
 function sentPlanForm() {
@@ -241,21 +267,91 @@ function sentPlanForm() {
     };
     var testP = {SeatClassData : [...SeatClass]};
     if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0){
-        $.post('/seatclass',testP,(res)=>{
-            console.log(res);
-            $.post('/plan',payload,(res)=>{
-                iziToast.destroy();
-                iziToast.show({
-                    position: "topCenter", 
-                    icon: "far fa-thumbs-up",
-                    title: 'Save!', 
-                    color: 'green',
-                    timeout: 2000,
-                    message: 'You Plan is save successfully.',
-                });
-                cancelPlan();
-            })
-        });            
+        if(oldBranchName!=null&&payload.PlanName!=oldBranchName){
+            $.get('/fetchData/plan/PlanName='+payload.PlanName,(data)=>{
+                if(data.length==0){
+                    var send = {newName:payload.PlanName,oldName:oldBranchName}
+                    $.post('/plan/update',send,(res)=>{
+                        $.post('/seatclass',testP,(res)=>{
+                            //console.log(res);
+                            $.post('/plan',payload,(res)=>{
+                                iziToast.destroy();
+                                iziToast.show({
+                                    position: "topCenter", 
+                                    icon: "far fa-thumbs-up",
+                                    title: 'Save!', 
+                                    color: 'green',
+                                    timeout: 2000,
+                                    message: 'You Plan is save successfully.',
+                                });
+                                cancelPlan();
+                            });
+                        });
+                    })
+                }
+                else{
+                    iziToast.destroy();
+                    iziToast.show({
+                        position: "topCenter", 
+                        icon: "fas fa-exclamation-triangle",
+                        title: 'Warning!', 
+                        color: 'orange',
+                        timeout: 2000,
+                        message: 'This BranchName is already used',
+                    });
+                }
+            });
+        }
+        else if(oldBranchName==null){
+            $.get('/fetchData/plan/PlanName='+payload.PlanName,(data)=>{
+                if(data.length==0){
+                    $.post('/seatclass',testP,(res)=>{
+                        console.log(res);
+                        $.post('/plan',payload,(res)=>{
+                            iziToast.destroy();
+                            iziToast.show({
+                                position: "topCenter", 
+                                icon: "far fa-thumbs-up",
+                                title: 'Save!', 
+                                color: 'green',
+                                timeout: 2000,
+                                message: 'You Plan is save successfully.',
+                            });
+                            cancelPlan();
+                        });
+                    });
+                }
+                else{
+                    iziToast.destroy();
+                    iziToast.show({
+                        position: "topCenter", 
+                        icon: "fas fa-exclamation-triangle",
+                        title: 'Warning!', 
+                        color: 'orange',
+                        timeout: 2000,
+                        message: 'This BranchName is already used',
+                    });
+                }
+            });
+        }
+        else{
+            $.post('/seatclass',testP,(res)=>{
+                //console.log(res);
+                $.post('/plan',payload,(res)=>{
+                    iziToast.destroy();
+                    iziToast.show({
+                        position: "topCenter", 
+                        icon: "far fa-thumbs-up",
+                        title: 'Save!', 
+                        color: 'green',
+                        timeout: 2000,
+                        message: 'You Plan is save successfully.',
+                    });
+                    cancelPlan();
+                })
+            });
+        }
+                    
     } 
     else{
         iziToast.destroy();
@@ -311,6 +407,8 @@ function cancelPlan() {
     $('#viewPlanName').text('');
     $('#viewPlanWidth').text("Width :  m.");
     $('#viewPlanHeight').text("Height :  m.");
+    $('#NameTheatre').val('');
+    oldBranchName=null;
 }
 
 function callPlanForm(event,PlanName = null) {
@@ -345,6 +443,7 @@ function callPlanForm(event,PlanName = null) {
     event.stopPropagation();
     if(PlanName){
         LoadDataEditForm(PlanName);
+        oldBranchName = PlanName;
         //console.log(PlanName);
     }
 }
@@ -377,18 +476,31 @@ function addNewSeat() {
         Width: parseFloat($("#SeatClassForm")[0][2].value)/100,
         Detail: "Create"
     }
-    SeatClass.push(SeatData);
-    $("#SeatClassForm")[0][0].value = '';
-    $("#listSeatClassTable").find('li').remove();
-    $("#SeatClassForm")[0][3].value=0;
-    $("#SeatClassForm")[0][2].value=0;
-    $("#SeatClassForm")[0][1].value=0;
-    addListSeatClassTable(SeatClass);
-    reRenderSeatClassOption()
+    if(SeatData.ClassName!=null&&!(SeatClass.find((val)=>{ return val.ClassName.toLowerCase()==SeatData.ClassName.toLowerCase()}))&&SeatData.Height>0&&SeatData.Width>0&&SeatData.Price>0){
+        SeatClass.push(SeatData);
+        $("#SeatClassForm")[0][0].value = '';
+        $("#listSeatClassTable").find('li').remove();
+        $("#SeatClassForm")[0][3].value=0;
+        $("#SeatClassForm")[0][2].value=0;
+        $("#SeatClassForm")[0][1].value=0;
+        addListSeatClassTable(SeatClass);
+        reRenderSeatClassOption()
+    }
+    else{
+        iziToast.show({
+            position: "topCenter", 
+            icon: "fas fa-exclamation-triangle",
+            title: 'Warning!', 
+            color: 'orange',
+            timeout: 2000,
+            message: 'You should check input in on some of those fields below.',
+        });
+    }
     //console.log(SeatData);
 }
 
 function addListSeatClassTable(data) {
+    //$("#listSeatClassTable").append("<li class='seatClassTable'>Add Seat Class</li>");
     data.forEach((value, key) => {
         //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
         var tableRowappend = "<li class='seatClassTable'>"+value.ClassName+"</li>";
@@ -420,8 +532,17 @@ $(document).on("click","#callEditPlanForm",function(event){
     callPlanForm(event,$('#viewPlanName').text());
 });
 
-$(document).on("click","#callDeletePlanForm",function(){
-    console.log("Delete");
+
+$(document).on("click","#callDeletePlanForm",function(e){e.stopPropagation();});
+$(document).on("click","#popup-close",function(e){e.stopPropagation();});
+
+$(document).on("click","#confirmDeletePlan",function(event){
+    event.stopPropagation();
+    var deletePlan = $('#viewPlanName').text();
+    $.get('/plan/delete/'+deletePlan,(res)=>{
+        pageRedirect();
+    });
+    //console.log("Delete");
 });
 
 $(document).on("click","#CreateSeatClass", addNewSeat)
