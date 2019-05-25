@@ -551,8 +551,8 @@ router.post('/plan', (req,res)=>{
 
 router.post('/register',(req,res)=>{
     var data = req.body;
-    var sql = "INSERT INTO `customer`( `FirstName`, `MidName`, `LastName`, `BirthDate`, `Gender`, `CitizenID/PassportID`, `PhoneNumber`, `ImageURL`, `Address`, `Email`) VALUES";
-    sql += " ('"+data.Detail.firstname+"','"+data.Detail.midname+"','"+data.Detail.lastname+"','"+data.Detail.birthday+"','"+data.Detail.gender+"','"+data.Detail.C_PId+"','"+data.Detail.phone+"','"+data.Detail.img+"','"+data.Detail.address+"','"+data.Detail.email+"')";
+    var sql = "INSERT INTO `customer`( `FirstName`, `MidName`, `LastName`, `BirthDate`, `Age`, `Gender`, `CitizenID/PassportID`, `PhoneNumber`, `ImageURL`, `Address`, `Email`) VALUES";
+    sql += " ('"+data.Detail.firstname+"','"+data.Detail.midname+"','"+data.Detail.lastname+"','"+data.Detail.birthday+"','"+data.Detail.age+"','"+data.Detail.gender+"','"+data.Detail.C_PId+"','"+data.Detail.phone+"','"+data.Detail.img+"','"+data.Detail.address+"','"+data.Detail.email+"')";
     mysql.connect(sql)
         .then((resp)=>{
             var sql = "INSERT INTO `users`(`Username`, `Password`, `CustomerNo.`, `StaffNo.`) VALUES";
