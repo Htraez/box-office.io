@@ -30,65 +30,66 @@
             </div>
         </div>
         <div class="row">
-                <div class="col order-first">
-                        <span class='head-text level2'>Select branch</span>
-                        <ul class='open-list' id='Branch'></ul>
-                </div>
-                <div class="col">
-                        <span class='head-text level2'>Select theater</span>
-                        <ul class='open-list' id='theater'></ul>
-                </div>
-                <div class="col order-last">
-                        <span class='head-text level2'>Info</span>
-                        <ul id="config-list" class='open-list'>
-                                <div class="form-group">
-                                        <label ><strong>Start Date</strong></label>
-                                        <input name="DateStart" id="DateStart" class="form-control-plaintext text-white" type="date"required></input>
-                                </div>
-                                
-                                <div class="form-group">
-                                        <label ><strong>End Date</strong></label>
-                                        <input name="DateEnd" id="DateEnd" class="form-control-plaintext text-white" type="date"></input>
-                                </div>
-                                
-                                <div class="form-group">
-                                        <label ><strong>Audio</strong></label>
-                                        <select name="Audio" id="Audio" class="form-control-plaintext text-white">
-                                        <option class="form-control-plaintext" value="Thai">Thai</option>
-                                        <option class="form-control-plaintext" value="English">English</option>
-                                        </select>
-                                </div>
+                <ul class='open-list'>  <!-- แก้css -->
+                        <div class="col order-first">
+                                <span class='head-text level2'>Select branch</span>
+                                <ul class='open-list' id='Branch'></ul>
+                        </div>
+                        <div class="col">
+                                <span class='head-text level2'>Select theater</span>
+                                <ul class='open-list' id='theater'></ul>
+                        </div>
+                        <div class="col order-last">
+                                <span class='head-text level2'>Info</span>
+                                <ul id="config-list" class='open-list'>
+                                        <div class="form-group">
+                                                <label ><strong>Start Date</strong></label>
+                                                <input name="DateStart" id="DateStart" class="form-control-plaintext text-white" type="date"required></input>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                                <label ><strong>End Date</strong></label>
+                                                <input name="DateEnd" id="DateEnd" class="form-control-plaintext text-white" type="date"></input>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                                <label ><strong>Audio</strong></label>
+                                                <select name="Audio" id="Audio" class="form-control-plaintext text-white">
+                                                <option class="form-control-plaintext" value="Thai">Thai</option>
+                                                <option class="form-control-plaintext" value="English">English</option>
+                                                </select>
+                                        </div>
 
-                                <div class="form-group">
-                                        <label ><strong>Start Time</strong></label>
-                                        <input type="text" id="datetime24"class="form-control-plaintext text-white " data-format="HH:mm" data-template="HH : mm" name="StartTime" value="10:30"required>
-                                </div>
+                                        <div class="form-group">
+                                                <label ><strong>Start Time</strong></label>
+                                                <input type="text" id="datetime24"class="form-control-plaintext text-white " data-format="HH:mm" data-template="HH : mm" name="StartTime" value="10:30"required>
+                                        </div>
 
-                                <div class="form-group">
-                                        <label ><strong>Subtitle</strong></label>
-                                        <select name="SubTitle" id="SubTitle" class="form-control-plaintext text-white ">
-                                        <option class="form-control-plaintext" value="Thai">Thai</option>
-                                        <option class="form-control-plaintext" value="English">English</option>
-                                        </select>
-                                </div>
+                                        <div class="form-group">
+                                                <label ><strong>Subtitle</strong></label>
+                                                <select name="SubTitle" id="SubTitle" class="form-control-plaintext text-white ">
+                                                <option class="form-control-plaintext" value="Thai">Thai</option>
+                                                <option class="form-control-plaintext" value="English">English</option>
+                                                </select>
+                                        </div>
 
-                                <div class="form-group">
-                                        <label ><strong>Dimension</strong></label>
-                                        <select class="form-control-plaintext text-white" id="Dimension"  name="Dimension">
-                                                <option class="form-control-plaintext" value="2D">2D</option>
-                                                <option class="form-control-plaintext" value="3D">3D</option>
-                                        </select>
-                                </div>
-                        </ul>
+                                        <div class="form-group">
+                                                <label ><strong>Dimension</strong></label>
+                                                <select class="form-control-plaintext text-white" id="Dimension"  name="Dimension">
+                                                        <option class="form-control-plaintext" value="2D">2D</option>
+                                                        <option class="form-control-plaintext" value="3D">3D</option>
+                                                </select>
+                                        </div>
+                                </ul>
+                        </div>
+        
+                <div class="mx-auto mt-4 text-right">
+                        <button type="button" id="addSchedule" value="create"class="btn btn-white btn-outline-light">add</button> 
                 </div>
-        </div>
-        <div class="mx-auto mt-4 text-right">
-                <button type="button" id="addSchedule" value="create"class="btn btn-white btn-outline-light">add</button> 
+                </ul>
         </div>
         <div class="mx-auto mt-4 text-center">
                 <button type="button" id="createAllSchedule" value="create"class="btn btn-white btn-outline-light">create</button> 
-        </div>
-        <div class="mx-auto mt-4 text-center">
                 <button type="button" id="cancelAllSchedule" class="btn btn-white btn-outline-light">cancel</button> 
         </div>
 

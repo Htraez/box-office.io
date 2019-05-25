@@ -616,7 +616,7 @@ router.post('/movies', (req,res) => {
                       .then((resp)=>{
                           console.log("success")
                           let ScheduleNo =resp.insertId;
-                          var sql3 = "SELECT schedule.scheduleNo, plan.PlanHeight,plan.PlanWidth,plan.SeatClass1,plan.NumberRow1,plan.SeatClass2,plan.NumberRow2,plan.SeatClass3,plan.NumberRow3,plan.SeatClass4,plan.NumberRow4 FROM schedule ,theatre ,plan WHERE schedule.TheatreCode=theatre.TheatreCode and plan.PlanName=theatre.PlanName and schedule.scheduleNo="+ScheduleNo;
+                          var sql3 = "SELECT schedule.scheduleNo, plan.PlanHeight,plan.PlanWidth,plan.SeatClass1,plan.NumberRow1,plan.SeatClass2,plan.NumberRow2,plan.SeatClass3,plan.NumberRow3,plan.SeatClass4,plan.NumberRow4 FROM schedule ,theatre ,plan WHERE schedule.TheatreCode=theatre.TheatreCode and plan.PlanName=theatre.PlanName and schedule.MovieNo="+MovieNo;
                  console.log(sql3)
                  mysql.connect(sql3)
                         .then((resp)=>{
@@ -649,7 +649,7 @@ router.post('/movies', (req,res) => {
                                              });
                                              console.log(SeatClass)
                                             planWithSchedule.forEach((value,key)=>{
-                                            total = SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Width))*value.NumberRow1
+                                            total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass1).Width))*value.NumberRow1
                                             console.log("1",total)
                                             if(value.SeatClass2!=null)
                                                 {total = total+SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Price * (Math.trunc(value.PlanWidth/SeatClass.find(SeatClass => SeatClass.ClassName === value.SeatClass2).Width))*value.NumberRow2
