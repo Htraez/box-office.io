@@ -110,8 +110,22 @@ $(document).on("click", "#signup",function () {
 });
 
 $(document).on("click", "#NextRegForm",function () {
-    $('#LoginPart').hide();
-    $('#CustomerDeatail').show();
+    $.get('/fetchData/users/Username='+$('#RegisterUserName').val(),(data)=>{
+        if(data.length==0){
+            $('#LoginPart').hide();
+            $('#CustomerDeatail').show();
+        }
+        else{
+            iziToast.show({
+                position: "topCenter", 
+                icon: "fas fa-exclamation-triangle",
+                title: 'Warning!', 
+                color: 'orange',
+                timeout: 2000,
+                message: 'This Username is already used',
+            });
+        }
+    });
 });
 
 $(document).on("click", "#BackRegForm",function () {
@@ -180,17 +194,32 @@ $(document).on("click","#SubRegForm", function () {
         }
     }
     if(Notfound.length==1){
-        $.post('/register',payload,(res)=>{
-            iziToast.destroy();
-            iziToast.show({
-                position: "topCenter", 
-                icon: "far fa-thumbs-up",
-                title: 'Save!', 
-                color: 'green',
-                timeout: 2000,
-                message: 'Register successfully.'
-            });
-            window.location.href = "/";
+        $.get('/fetchData/customer/Email='+payload.Detail.email,(data)=>{
+            if(data.length==0){
+                $.post('/register',payload,(res)=>{
+                    iziToast.destroy();
+                    iziToast.show({
+                        position: "topCenter", 
+                        icon: "far fa-thumbs-up",
+                        title: 'Save!', 
+                        color: 'green',
+                        timeout: 2000,
+                        message: 'Register successfully.'
+                    });
+                    window.location.href = "/";
+                });
+            }
+            else{
+                iziToast.destroy();
+                iziToast.show({
+                    position: "topCenter", 
+                    icon: "fas fa-exclamation-triangle",
+                    title: 'Warning!', 
+                    color: 'orange',
+                    timeout: 2000,
+                    message: 'This Email is already used',
+                });
+            }
         });
     }
     else{
