@@ -51,7 +51,7 @@ function compare(temp){
 }
 
 function addScheduleTable(){
-    if($('#DateStart').val()!="" && theater != undefined){
+    if($('#DateStart').val()!="" && theater != undefined ){
         var diff = ($('#DateEnd').val()=="") ? 0 : findDiffDate($('#DateStart').val(),$('#DateEnd').val());
         //console.log(diff);
         for(var i = 0; i <= diff ; i++){
@@ -65,7 +65,7 @@ function addScheduleTable(){
                 Dimension: $('#Dimension').val(),
                 Subtitle: $('#SubTitle').val()
             }
-            
+            console.log(temp)
             if(!compare(temp)) schedule_list.push(temp);
             //console.log(temp);
         }      
@@ -127,9 +127,9 @@ function createAllSchedules(){
      else console.log("error")
 }
 
-function datetime(){
-    $('#datetime24').combodate();  
-}
+// function datetime(){
+//     $('#datetime24').combodate();  
+// }
 function branch(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value);
@@ -155,38 +155,28 @@ function ShowMovieForm(){
     $('#ShowMovieAll').show();
     $('.content-view').hide();
 }
-// function callScheduleForm(){
-//     $('#schduleForm').show();
-//     $('#movieForm').hide();
-//     branch = $('#Branch').val()
-//     showTheater();
-// }
-// function callBackMovieForm(){
-//     $('#schduleForm').hide();
-//     $('#movieForm').show();
-// }
+
 function callBackFromShow(){
     $('#ShowMovieAll').hide();
     $('.content-view').show();
 }
-// function callBackFromMovie(){
-//     $('#movieForm').hide();
-//     $('.content-view').show();
-// }
+
+function cancelAllSchedule(){
+    
+    $('#movieAndSchduleForm').hide();
+    $('.content-view').show();
+}
+
 
 
  $(document).on('click',".clickTable", select_theater);
  $(document).on('click',".clickTableBranch", branch);
-
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#ShowMovie", ShowMovieForm);
 $(document).on('click',"#addSchedule",addScheduleTable);
-// $(document).on("click","#back", callBackMovieForm);
 $(document).on("click","#backToAdmin", callBackFromShow);
-// $(document).on("click","#Reject", callBackFromMovie);
-// $(document).on("click","#createSchedule", sentMovieForm);
 $(document).on("click",".deleteSchedule",deleteSchedule_list);
-$(document).on("click","#createAllSchedule", createAllSchedules);
-
+$(document).on("click","#createAllSchedule", createAllSchedules);   
+$(document).on("click","#cancelAllSchedule", cancelAllSchedule);  
 ScheduleInfo();
 showbranch();
