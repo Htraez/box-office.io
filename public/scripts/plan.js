@@ -266,7 +266,7 @@ function sentPlanForm() {
         Theatre: temp.slice(1,temp.length)
     };
     var testP = {SeatClassData : [...SeatClass]};
-    if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0){
+    if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0 && payload.NoRow1>0){
         if(oldBranchName!=null&&payload.PlanName!=oldBranchName){
             $.get('/fetchData/plan/PlanName='+payload.PlanName,(data)=>{
                 if(data.length==0){
