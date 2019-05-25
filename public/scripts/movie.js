@@ -114,7 +114,7 @@ function createAllSchedules(){
         schedule : [...schedule_list]
     };
     console.log(payload)
-     if(payload.MovieName!='') {
+     if(payload.Movie.MovieName!=''&&payload.Movie.Director!=''&&payload.Movie.Casts!=''&&payload.Movie.Desc&&payload.Movie.Duration!=''&&payload.Movie.Genre!=''&&payload.Movie.Rate!=''&&payload.Movie.Studio!=''&&payload.Movie.PosterURL!='') {
         $.ajax({
             type:"POST",
             url: "/movies",
@@ -124,6 +124,7 @@ function createAllSchedules(){
             }
         })
      }
+     else console.log("error")
 }
 
 function datetime(){
