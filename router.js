@@ -140,14 +140,13 @@ router.get('/plan', (req,res)=>{
 router.get('/reservation/customer', (req,res) => {
     let targetCustomer = req.query.customerId == '' ? undefined: req.query.customerId;
     if(targetCustomer){
-        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice`, c.`CouponCode`, c.`Deduction` "
-                        +"FROM `reservation` r, `reservation_items` i, `couponusage` c, `movie` m, `schedule` s, `theatre` t, `branch` b "
+        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice` "
+                        +"FROM `reservation` r, `reservation_items` i, `movie` m, `schedule` s, `theatre` t, `branch` b "
                         +"WHERE r.`ReservationNo` = i.`ReservationNo` "
                         +"AND s.`ScheduleNo` = r.`ScheduleNo` "
                         +"AND t.`TheatreCode` = s.`TheatreCode` "
                         +"AND b.`BranchNo` = t.`BranchNo` "
                         +"AND m.`MovieNo` = s.`MovieNo` "
-                        +"AND c.`ReservationNo` = r.`ReservationNo` "
                         +"AND r.`CustomerNo` = "+targetCustomer+";";
         mysql.connect(query)
         .then((resp)=>{
@@ -164,8 +163,9 @@ router.get('/reservation/customer', (req,res) => {
                 byReservation[row.ReservationNo].push(row);
             });
             Object.keys(byReservation).forEach((reservationNo)=>{
+                let mon_template = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let date = new Date(byReservation[reservationNo][0].DateCreated);
-                date = date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear();
+                date = date.getDate()+'-'+(mon_template[date.getMonth()])+'-'+date.getFullYear();
                 if(typeof byCreatedDate[date] == 'undefined') byCreatedDate[date] = [];
                 byCreatedDate[date].push(byReservation[reservationNo]);
             });

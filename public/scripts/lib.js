@@ -73,6 +73,9 @@ class ticketingProcess {
 
         let s = this;
         this.form.find('.day-toggle .toggle-item').click(function(e){
+            s.form.find('#tab1-branchNo').val('');
+            s.form.find('#tab1-scheduleNo').val('');
+            s.allowContinue(s.form);
             iziToast.destroy();
             iziToast.show({
                 title: 'Status ',
@@ -161,6 +164,19 @@ class ticketingProcess {
                 this.iterate(this.step+1);
             }
         });
+
+        if(this.step==2){
+            iziToast.warning({
+                position: "topCenter", 
+                icon: 'fas fa-hourglass-start',
+                title: 'Loading', 
+                message: 'Retriving Theatre Seat Data',
+                close: false,
+                overlay: true,
+                displayMode:1,
+                timeout: false
+            });
+        }
 
         if(this.step==3){
             this.form.closest('.popup-window').find('.popup-footer :nth-child(2)').hide();
@@ -263,9 +279,10 @@ class ticketingProcess {
                 break;
             }
             case 2: {
+                this.form.find('.seat-renderarea').children().remove();
                 this.fetchReserved(this.temp.scheduleSelection)
                 .then((reserved)=>{
-
+                    
                     let markedSeat = {}
                     if(typeof reserved!='undefined' && reserved!='') reserved.forEach((entry)=>{
                         markedSeat[entry.SeatCode] = entry;
@@ -389,6 +406,7 @@ class ticketingProcess {
                     if(this.step==2){
                         this.form.find("#tab2 input.inactiveStep").removeClass('inactiveStep');
                     }
+                    iziToast.destroy();
                 })
                 .catch(err=>{
                     iziToast.show({
@@ -592,12 +610,18 @@ class ticketingProcess {
         Object.keys(this.temp.branchSchedule).forEach((branchName)=>{
             this.form.find('#tab1 #tab1-branch-list').append('<li data-branch="'+branchName+'">'+branchName+'</li>');
             let form = this.form;
+            let slf = this;
             let ws = this.webState;
             this.form.find('#tab1 #tab1-branch-list').children().last().click(function(e){
                 $(this).addClass('selected');
                 $(this).siblings().removeClass('selected');
                 form.find('#tab1 #tab1-schedule-list li').hide();
                 form.find('#tab1 #tab1-schedule-list li[data-branch="'+$(this).data('branch')+'"]').show();
+
+                form.find('#tab1-branchNo').val('');
+                form.find('#tab1-scheduleNo').val('');
+                slf.allowContinue(slf.form);
+                form.find('#tab1 #tab1-schedule-list li').removeClass('selected');
             });
             this.temp.branchSchedule[branchName].forEach((schedule)=>{
                 this.form.find('#tab1 #tab1-schedule-list').append('<li data-branch="'+branchName+'"> <strong>Theatre</strong> '+schedule.TheatreCode+'  |  <i class="fas fa-clock"></i>  '+schedule.Time+'<span class="badge" style="margin-left: 1rem;">'+schedule.Dimension+'</span></li>');
@@ -624,7 +648,6 @@ class ticketingProcess {
         }
     }
 }
-
 class webstate{
     constructor(auth){
         this.isAuth = auth;
@@ -697,6 +720,8 @@ class webstate{
         datebookList.children().remove();
         bookList.children().remove();
         scheduleList.children().remove();
+
+        let totalReservation = 0;
         //loop by each DateCreated
         Object.keys(this.userData.Reservations).forEach((bookingDate)=>{
             //append date
@@ -717,11 +742,12 @@ class webstate{
                 scheduleList.find('li[data-book-date="'+selectDate+'"]').show();
             });
             //loop by each reservation
-            this.userData.Reservations[bookingDate].forEach((reservation)=>{
+            this.userData.Reservations[bookingDate].forEach((reservation, i)=>{
+                let mon_template = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let movieName = reservation[0].MovieName;
                 let scheduleNo = reservation[0].ScheduleNo;
                 let playDate = new Date(reservation[0].PlayDate);
-                playDate = playDate.getDate()+'-'+playDate.getMonth()+'-'+playDate.getFullYear();
+                playDate = playDate.getDate()+'-'+(mon_template[playDate.getMonth()])+'-'+playDate.getFullYear();
                 let playTime = reservation[0].PlayTime;
                 
                 //append schedule (prevent repeat)
@@ -745,6 +771,7 @@ class webstate{
                 //append reservation
                 let reservationNo = reservation[0].ReservationNo;
                 bookList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'" data-reservation-no="'+reservationNo+'">'+'<strong>Reservation No.: </strong>'+reservationNo+'</li>');
+                totalReservation++;
                 //on select reservation
                 bookList.children().last().off('click focusReservation').on('click focusReservation',function(e){
                     $(this).addClass('selected');
@@ -786,9 +813,10 @@ class webstate{
                 };
                 let html = new EJS({url:'/client-templates/ticket-info'}).render(data);
                 infoList.append(html);
-
             });
 
+            //render total reservation
+            $("#user-ticket-no-reserve").text(totalReservation);
             
         });
 
@@ -817,6 +845,39 @@ class webstate{
             $('.fetch.userEmail').text(this.userData.Email);
             $('.fetch.username').text(this.userData.username);
             $('.fetch.userpic').attr('src',this.userData.ImageURL);
+
+            //profile page
+            let profile = $('#profile-view form');
+            profile.find('#fname').val(this.userData.FirstName);
+            profile.find('#mname').val(this.userData.MidName);
+            profile.find('#lname').val(this.userData.LastName);
+            profile.find('#citizen').val(this.userData.FirstName);
+            profile.find('#bdate').val(this.userData.FirstName);
+            profile.find('.pf-gender option[value="'+this.userData.Gender+'"]').prop('selected', true)
+            profile.find('#email').val(this.userData.Email);
+            profile.find('#phone').val(this.userData.PhoneNumber);
+            profile.find('#addr').val(this.userData.Address);
+            profile.find('#uname').val(this.userData.username);
+
+            profile.find('#pf-cancel').off('click').click(function(e){
+                e.preventDefault();
+                profile.find('input, textarea').prop('readonly', true);
+                profile.find('select').attr('disabled', true);
+                profile.find('.psw-group, .send-group').hide();
+                profile.find('.psw-group #psw, .send-group').prop('readonly', true);
+            });
+
+            profile.find('input').off('click').click(function(e){
+                if($(this).prop('readonly')||$(this).attr('disabled')){
+                    $(this).prop('readonly', false);
+                    $(this).attr('disabled', false);
+
+                    profile.find('.psw-group, .send-group').show();
+                    profile.find('.psw-group #psw, .send-group').prop('readonly', false);
+
+
+                }
+            })
         };
     }
 
