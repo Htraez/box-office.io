@@ -62,7 +62,8 @@ router.get('/movies', (req,res)=>{
     let status = req.query.status == '' ? undefined:req.query.status;
     let movieId = req.query.movieId == '' ? undefined:req.query.movieId;
     let columns = undefined;
-    let movieDate = req.query.date == '' ? undefined:req.query.date;
+    let movieDateStart = req.query.dateStart == '' ? undefined:req.query.dateStart;
+    let movieDateStop = req.query.dateStop == '' ? undefined:req.query.dateStop;
     if(typeof req.query.columns != 'undefined'){
         columns = req.query.columns.length > 0 ? '`'+req.query.columns.join().replace(/,/g,'`,`')+'`':undefined;
     }
@@ -70,8 +71,11 @@ router.get('/movies', (req,res)=>{
                     + 'FROM `movie`' 
                     + (status||movieId ? 'WHERE':'') 
                     + (movieId ? '`MovieNo`='+movieId:'') 
-                    + (status&&movieId ? 'AND':'') 
-                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDate+'")':'') + ';';
+                    + (status&&movieId || movieDateStart&&movieId ? 'AND':'') 
+                    + (status=='show' ? '`MovieNo` IN (SELECT `MovieNo` FROM `schedule` WHERE `schedule`.`Date` >= "'+movieDateStart+'" ':' ') 
+                    + (movieDateStart&&movieDateStop ? 'AND `schedule`.`Date` <= "'+movieDateStop+'") ':'')
+                    + (movieDateStart&&!movieDateStop ? ') ':'')
+                    + ';';
     mysql.connect(query)
     .then((resp)=>{
         if(resp.rows.length <= 0){
@@ -134,14 +138,13 @@ router.get('/plan', (req,res)=>{
 router.get('/reservation/customer', (req,res) => {
     let targetCustomer = req.query.customerId == '' ? undefined: req.query.customerId;
     if(targetCustomer){
-        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice`, c.`CouponCode`, c.`Deduction` "
-                        +"FROM `reservation` r, `reservation_items` i, `couponusage` c, `movie` m, `schedule` s, `theatre` t, `branch` b "
+        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice` "
+                        +"FROM `reservation` r, `reservation_items` i, `movie` m, `schedule` s, `theatre` t, `branch` b "
                         +"WHERE r.`ReservationNo` = i.`ReservationNo` "
                         +"AND s.`ScheduleNo` = r.`ScheduleNo` "
                         +"AND t.`TheatreCode` = s.`TheatreCode` "
                         +"AND b.`BranchNo` = t.`BranchNo` "
                         +"AND m.`MovieNo` = s.`MovieNo` "
-                        +"AND c.`ReservationNo` = r.`ReservationNo` "
                         +"AND r.`CustomerNo` = "+targetCustomer+";";
         mysql.connect(query)
         .then((resp)=>{
@@ -158,8 +161,9 @@ router.get('/reservation/customer', (req,res) => {
                 byReservation[row.ReservationNo].push(row);
             });
             Object.keys(byReservation).forEach((reservationNo)=>{
+                let mon_template = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 let date = new Date(byReservation[reservationNo][0].DateCreated);
-                date = date.getDate()+'-'+date.getMonth()+'-'+date.getFullYear();
+                date = date.getDate()+'-'+(mon_template[date.getMonth()])+'-'+date.getFullYear();
                 if(typeof byCreatedDate[date] == 'undefined') byCreatedDate[date] = [];
                 byCreatedDate[date].push(byReservation[reservationNo]);
             });

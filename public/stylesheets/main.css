@@ -127,15 +127,15 @@ input.invalid:hover{
 .btn-green[disabled]{
     cursor: not-allowed;
 }
-.btn-green:not([disabled]):hover, .btn-green:not([disabled]).active:hover{
-    background: var(--color-green)!important;
-    color: black!important;
-    cursor: pointer;
-}
-.btn-green:not([disabled]).active{
-    font-weight: 900;
+.btn-green:not([disabled]):hover{
     background: var(--color-green-tran-1)!important;
     color: var(--color-green)!important;
+    cursor: pointer;
+}
+.btn-green:not([disabled]).active, .btn-green:not([disabled]).selected{
+    font-weight: 900;
+    background: var(--color-green)!important;
+    color: black!important;
 }
 .btn-gray{
     background: var(--color-gray);
@@ -966,4 +966,58 @@ table{
 
 .blk{
     display: block;
+}
+
+.maintenance{
+    color: #ffffff4a;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.frame-square {
+    background: #fff;
+    border: 2px solid #000;
+    display: inline-block;
+    vertical-align: top;
+    padding: 10px;
+    width: 130px;
+    height: 130px;
+    margin-right: .5em;
+    margin-bottom: .3em;
+}
+  
+.form-group{
+    padding: 0 7px!important;
+}
+
+.small-tg label{
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    font-size: .7rem;
+    height: 25px;
+    font-weight: 700;
+}
+  
+#profile-popup label{
+    font-weight: 900;
+}
+
+#profile-popup label.error{
+    color: var(--color-red);
+    font-weight: 500;
+    font-style: italic;
+}
+
+#profile-popup input, #profile-popup textarea{
+    font-weight: 300;
+    font-size: .75rem;
+    text-transform: capitalize;
+}
+
+input:read-only, textarea:read-only{
+    font-size: .8rem!important;
+    text-transform: capitalize!important;
+    border-style: dashed!important;
+    cursor: not-allowed!important;
 }
