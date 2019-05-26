@@ -740,6 +740,10 @@ class webstate{
                 //show specific schedule by bookDate
                 let selectDate = $(this).data('bookDate');
                 scheduleList.find('li[data-book-date="'+selectDate+'"]').show();
+                if(e.type=='focusReservation'){
+                    let thisElemOffsetFromTop = $(this)[0].offsetTop;
+                    datebookList[0].scrollTop = thisElemOffsetFromTop;
+                }
             });
             //loop by each reservation
             this.userData.Reservations[bookingDate].forEach((reservation, i)=>{
@@ -751,7 +755,8 @@ class webstate{
                 let playTime = reservation[0].PlayTime;
                 
                 //append schedule (prevent repeat)
-                if(scheduleList.find('li[data-schedule-no="'+scheduleNo+'"]').length == 0){
+                if(scheduleList.find('li[data-schedule-no="'+scheduleNo+'"][data-book-date="'+bookingDate+'"]').length == 0){
+                    console.log('append schedule with date', bookingDate);
                     scheduleList.append('<li data-book-date="'+bookingDate+'" data-schedule-no="'+scheduleNo+'">'+'<strong>'+movieName+'</strong></br>'+playDate+'  |  '+playTime+'</li>');
                     //on select schedule
                     scheduleList.children().last().off('click focusReservation').on('click focusReservation',function(e){
@@ -765,6 +770,10 @@ class webstate{
                         //show specific reservation by schedule
                         let selectSchedule = $(this).data('scheduleNo');
                         bookList.find('li[data-schedule-no="'+selectSchedule+'"]').show();
+                        if(e.type=='focusReservation'){
+                            let thisElemOffsetFromTop = $(this)[0].offsetTop;
+                            scheduleList[0].scrollTop = thisElemOffsetFromTop;
+                        }
                     });
                 }
                 
@@ -782,6 +791,10 @@ class webstate{
                     //show specific info by reservationNo
                     let selectReservation = $(this).data('reservationNo');
                     infoList.find('li[data-reservation-no="'+selectReservation+'"]').show();
+                    if(e.type=='focusReservation'){
+                        let thisElemOffsetFromTop = $(this)[0].offsetTop;
+                        bookList[0].scrollTop = thisElemOffsetFromTop;
+                    }
                 });
 
                 //transform reservation to seatclass wise
