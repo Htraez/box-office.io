@@ -135,10 +135,57 @@ router.get('/plan', (req,res)=>{
     });
 });
 
+router.get('/coupon', (req,res)=>{
+    console.log('user sent=>',req.query);
+    let code = req.query.code == '' ? undefined:req.query.code;
+    let query = "SELECT c.*, cm.`MovieNo`, cb.`BranchNo` "
+                    + "FROM `coupon` c, `coupon_branch` cb, `coupon_movie` cm "
+                    + "WHERE c.`CouponCode` = cb.`CouponCode` "
+                    + "AND c.`CouponCode` = cm.`CouponCode` "
+                    + "AND c.`CouponCode` = '"+code+"';";
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.status(200).send([]);
+            return;
+        }
+        console.log('found',resp.rows.length,'coupon with code "'+code+'"');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
+router.get('/seatclass', (req,res)=>{
+    let classNames = req.query.className == '' ? undefined:req.query.className;
+    let query = "SELECT * FROM `seatclass` WHERE "
+    let i = 0;
+    classNames.forEach((className)=>{
+        if(i>0) query += ' OR '
+        query += "`ClassName`='"+className+"'";
+        i++;
+    }) 
+    query+=";" 
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.sendStatus(404);
+        }
+        console.log('found',resp.rows.length,'theatre plan(s)');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
 router.get('/reservation/customer', (req,res) => {
     let targetCustomer = req.query.customerId == '' ? undefined: req.query.customerId;
     if(targetCustomer){
-        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice` "
+        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode` "
                         +"FROM `reservation` r, `reservation_items` i, `movie` m, `schedule` s, `theatre` t, `branch` b "
                         +"WHERE r.`ReservationNo` = i.`ReservationNo` "
                         +"AND s.`ScheduleNo` = r.`ScheduleNo` "
@@ -150,6 +197,7 @@ router.get('/reservation/customer', (req,res) => {
         .then((resp)=>{
             if(resp.rows.length <= 0){
                 //return
+                console.log('NO RESERVE FOUND')
                 res.sendStatus(204);
                 return;
             }
@@ -199,53 +247,11 @@ router.get('/reservation/:scheduleNo', (req,res)=>{
     });
 });
 
-router.get('/coupon', (req,res)=>{
-    console.log('user sent=>',req.query);
-    let code = req.query.code == '' ? undefined:req.query.code;
-    let query = "SELECT * FROM `coupon` "
-                    + "WHERE `CouponCode`='"+code+"'";
-    mysql.connect(query)
-    .then((resp)=>{
-        if(resp.rows.length <= 0){
-            //return
-            res.status(200).send([]);
-            return;
-        }
-        console.log('found',resp.rows.length,'coupon with code "'+code+'"');
-        res.send(resp.rows);
-    })
-    .catch((err)=>{
-        console.log('error',err);
-    });
-});
 
-router.get('/seatclass', (req,res)=>{
-    let classNames = req.query.className == '' ? undefined:req.query.className;
-    let query = "SELECT * FROM `seatclass` WHERE "
-    let i = 0;
-    classNames.forEach((className)=>{
-        if(i>0) query += ' OR '
-        query += "`ClassName`='"+className+"'";
-        i++;
-    }) 
-    query+=";" 
-    mysql.connect(query)
-    .then((resp)=>{
-        if(resp.rows.length <= 0){
-            //return
-            res.sendStatus(404);
-        }
-        console.log('found',resp.rows.length,'theatre plan(s)');
-        res.send(resp.rows);
-    })
-    .catch((err)=>{
-        console.log('error',err);
-    });
-});
-
-router.post('/tickets', checkAuthentication, (req,res)=>{
+router.post('/reservation', checkAuthentication, (req,res)=>{
     let seatList = req.body.seatCode;
     let movieNo = req.body.movieNo;
+    let branchNo = req.body.branchNo;
     let customerNo = req.body.customerNo;
     let scheduleNo = req.body.scheduleNo;
     let email = req.body.userEmail;
@@ -254,11 +260,15 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     if(typeof req.body.coupon != 'undefined') {
         couponCode = (req.body.coupon!='') ? req.body.coupon.toUpperCase():null;
     }
+    console.log('coupon', req.body.coupon, couponCode)
     //identify issuer
     let correctUser = req.user.customerNo == req.body.customerNo;
 
     //initialize reservation
+    //console.log(req.body);
     let reservation = {
+        MovieNo: movieNo,
+        BranchNo: branchNo,
         ReservationKey: undefined,
         CustomerNo: customerNo,
         ScheduleNo: scheduleNo,
@@ -305,6 +315,7 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                 if(resp.rows.length > 0){
                     let classInfo = resp.rows;
                     // seat code to class, row, column
+                    console.log('seat List', seatList)
                     seatList.forEach((seatCode, i)=>{
                         // console.log(seatCode);
                         let row = seatCode.match(/[a-zA-Z]+/g)[0].charCodeAt(0)+26*(seatCode.match(/[a-zA-Z]+/g).length-1)-65; //start from 0
@@ -335,10 +346,10 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     })
     //INSERT reservation item
     .then((reservations)=>{
-        let query6 = "INSERT INTO reservation_items(`ReservationNo`, `ReservationItem`, `SeatCode`, `SeatClass`, `SeatRow`, `SeatCol`, `FullPrice`) VALUES";
+        let query6 = "INSERT INTO reservation_items(`ReservationNo`, `ReservationItem`, `SeatCode`, `SeatClass`, `SeatRow`, `SeatCol`) VALUES";
         reservations.TicketList.forEach((item, i)=>{
             if(i>0) query6 += ",";
-            query6 += "("+item.ReservationNo+","+item.ReservationItem+",'"+item.SeatCode+"','"+item.SeatClass+"',"+item.SeatRow+","+item.SeatCol+","+item.FullPrice+")";
+            query6 += "("+item.ReservationNo+","+item.ReservationItem+",'"+item.SeatCode+"','"+item.SeatClass+"',"+item.SeatRow+","+item.SeatCol+")";
         });
         query6 += ";"
         return mysql.connect(query6)
@@ -349,23 +360,31 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     //validate coupon
     .then((resp)=>{
         let reservationObj = resp.reservationObj;
-        let query = "SELECT * FROM `coupon` "
-                    + "WHERE `CouponCode`='"+couponCode+"';";
+        let query = "SELECT c.*, cm.`MovieNo`, cb.`BranchNo` "
+                    + "FROM `coupon` c, `coupon_branch` cb, `coupon_movie` cm "
+                    + "WHERE c.`CouponCode` = cb.`CouponCode` "
+                    + "AND c.`CouponCode` = cm.`CouponCode` "
+                    + "AND c.`CouponCode` = '"+couponCode+"';";
         //validate coupon (if found create coupon usage)
         return mysql.connect(query)
         .then((resp)=>{
+            let totalPrice = 0;
+            reservationObj.TicketList.forEach((ticket)=>{
+                totalPrice+=ticket.FullPrice;
+            });
+
             if(resp.rows.length <= 0 || couponCode==null){
                 reservationObj.CouponUsage = null;
+                reservationObj.Billing = totalPrice;
+                //console.log('billing no coupon',reservationObj.Billing);
                 // return null;
             }else{
                 //console.log(reservationObj);
-                let totalPrice = 0;
-                reservationObj.TicketList.forEach((ticket)=>{
-                    totalPrice+=ticket.FullPrice;
-                });
                 let coupon = resp.rows[0];
                 let deduction = totalPrice*coupon.Discount;
                 if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) deduction = coupon.MaxDiscount;
+                if(totalPrice-deduction<0) deduction=totalPrice;
+                
                 //validate requirement (if not pass return like is null)
                     //check coupon
                     let todayDate = new Date();
@@ -375,12 +394,28 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                     let spendPass = totalPrice >= coupon.MinSpend;
                     let minSeatPass = reservationObj.TicketList.length >= coupon.MinSeat;
                     let availablePass = coupon.NoAvailable > 0;
+                    
+                    //create allowing branch and movie data
+                    let couponBranchData = [];
+                    let couponMovieData = [];
+                    resp.rows.forEach((row)=>{
+                        if(!couponBranchData.includes(row.BranchNo)){
+                            couponBranchData.push(row.BranchNo);
+                        }
+                        if(!couponMovieData.includes(row.MovieNo)){
+                            couponMovieData.push(row.MovieNo);
+                        }
+                    });
+                    console.log('Coupon\'s allowing movies', couponMovieData);
+                    console.log('Coupon\'s allowing branches', couponBranchData);
                     //check coupon schedule
-                    let schedulePass = true;
+                    let branchPass = couponBranchData.includes(parseInt(reservationObj.BranchNo));
+                    if(!branchPass) console.log('==> Ticket for branch(',reservationObj.BranchNo,') not satisfy coupon(',coupon.CouponCode,')');
                     //check coupon seatclass
-                    let seatClassPass = true;
-
-                if(!(expPass && spendPass && minSeatPass && availablePass && schedulePass && seatClassPass)){
+                    let moviePass = couponMovieData.includes(parseInt(reservationObj.MovieNo));
+                    if(!moviePass) console.log('==> Ticket for movie(',reservationObj.MovieNo,') not satisfy coupon(',coupon.CouponCode,')');
+                    console.log(branchPass, moviePass)
+                if(!(expPass && spendPass && minSeatPass && availablePass && branchPass && moviePass)){
                     reservationObj.CouponUsage = null;
                 }else{
                     //create coupon usage
@@ -392,12 +427,38 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                         let couponUsageKey = resp.insertId;
                         reservationObj.CouponUsage = couponUsageKey;
                         reservationObj.Coupon = coupon;
+                        reservationObj.Billing = totalPrice - deduction;
+                        if(totalPrice-deduction<0) reservationObj.Billing = 0;
+                        //console.log('billing',reservationObj.Billing);
                         return reservationObj;
                     });
                 }
             }
             return reservationObj;
         })
+    })
+    //update `Billing` in reservation table && add movie revenue
+    .then((reservationObj)=>{
+        console.log('res obj on update', reservationObj);
+        let query = "UPDATE `reservation` "
+                        + "SET `Billing` = " + reservationObj.Billing + " "
+                        + "WHERE `ReservationNo` = " + reservationObj.ReservationKey
+                        + ";";
+        return mysql.connect(query)
+        .then((resp)=>{
+            let totalPrice = 0;
+            reservationObj.TicketList.forEach((ticket)=>{
+                totalPrice+=ticket.FullPrice;
+            });
+            let queryM = "UPDATE `movie_revenue` "
+                        + "SET RealRevenue = RealRevenue+" + totalPrice + " "
+                        + "WHERE MovieNo = " + reservationObj.MovieNo
+            
+            return mysql.connect(queryM)
+            .then((resp)=>{
+                return reservationObj;
+            });
+        });
     })
     //update coupon's NoAvailable
     .then((reservationObj)=>{
