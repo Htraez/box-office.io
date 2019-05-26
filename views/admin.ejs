@@ -2,28 +2,32 @@
     <div class='content-view'>
         <span class='head-text level0'>Dashboard</span>
     </div>
-    <div class="content-view input-group">
-        <h3><span class="head-text " >Analysis Report&emsp;</span>
-        <button class="btn btn-white btn-outline-light btn-sm" id="showAnalyRe" data-popup='analysis-popup' style="border-radius: 0 !important;" type="button" id="Analysis">Show</button>
-        </h3>
+    <div class="content-view dashview">
+        <div class="head-group big">
+            <span class="head-text level1" >Analysis Report&emsp;</span>
+            <button class="btn-white btn-sm" id="showAnalyRe" data-popup='analysis-popup' style="border-radius: 0 !important;" type="button" id="Analysis">Show</button>
+            <span class="head-text level2">Find All Statistical Informations</span>
+        </div>
     </div>
-    <div class="content-view">
-        <h3><span class="head-text " style="vertical-align: sub;">Plan&emsp;</span>
-        <button class="btn-white" id="createPlan" style="display: inline-block;">Create</button></h3>
-        <br>
+    <div class="content-view dashview">
+        <div class="head-group big">
+            <span class="head-text level1" style="vertical-align: sub;">Plan&emsp;</span>
+            <button class="btn-white btn-sm" id="createPlan" style="display: inline-block;">Create</button>
+            <span class="head-text level2" >Manage Theatre Plan And Branch Assignment</span>
+        </div>
         <div class="row justify-content-start align-items-center">
             <div class="col-4">
                 <ul class="open-list mb-0" id="listPlanTable" style="overflow: auto; height: 160px;"></ul>
             </div>
-            <div class="col-4">
-                <div class="container-fluid border border-light" id="detailPlan" style="display: none;">
-                    <h6 class="pt-2">Name : <span id="viewPlanName"></span></h6>
-                    <h6 id="viewPlanWidth">Width : </h6>
-                    <h6 id="viewPlanHeight">Height : </h6>
+            <div class="open-list col-8" style="padding: 0;font-size:.75rem;min-height:160px;">
+                <div class="container-fluid" id="detailPlan" style="display: none;">
+                    <div class="pt-2">Name : <span id="viewPlanName"></span></div>
+                    <div id="viewPlanWidth">Width : </div>
+                    <div id="viewPlanHeight">Height : </div>
                     <div class="row pb-2">
                         <div class="mx-auto mt-3 text-center">
-                            <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
-                            <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="callDeletePlanForm">Delete</button>  
+                            <button type="button" class="btn-white btn-sm mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
+                            <button type="button" data-popup="delete-plan-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeletePlanForm">Delete</button>  
                         </div>
                     </div>
                 </div>
@@ -34,59 +38,66 @@
         <%- include partials/plan %>
     </div>
     
-        <div class='content-view'>
-            <div class="row">
-                <span class="head-text">Movie&emsp;</span>
-                <button class="btn btn-outline-light btn-white" id="createMovie">Create&emsp;</button> 
-                <select class="form-control-plaintext text-white" id="SelectMovieShow">
-                    <option class="form-control-plaintext"id="Now"value="Now">Now</option>
-                    <option class="form-control-plaintext" id="History"value="History">History</option>
+    <div class='content-view dashview'>
+        <div class="row" style='width:100%;margin:0;'>
+            <div class="head-group big" style='width:100%;'>
+                <span class="head-text level1">Movie&emsp;</span>
+                <button class="btn-white btn-sm" id="createMovie">Create</button> 
+                <span class="head-text level2">Manage Movie Info. & Scheduling</span>
+            </div>
+
+            <div class="col-3 col-sm-6">
+                <div class="head-text level1" style='font-size: .85rem;font-weight: 900;'>Select Schedule By Status</div>
+                <select id='mode-select-sched' class="form-control text-white" id="SelectMovieShow" style='margin-bottom: 10px;font-size: .8rem;'>
+                    <option class="form-control"id="Now"value="Now">Now</option>
+                    <option class="form-control" id="History"value="History">History</option>
                 </select>
-                <div class="col-3">
-                    <ul class='open-list' id='Movie' style="overflow: auto; height: 160px;" ></ul>
-                </div>
-                <div class="col-5" style='padding: 0;'>
-                    <div id='m-schedule-table'>
-                        <table class="table">
-                            <thead>
-                                <tr style="background: white; color:black; font-weight:900;">
-                                    <th>ScheduleNo</th>
-                                    <th>MovieNo</th>
-                                    <th>TheatreCode</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Audio</th>
-                                    <th>Dimension</th>
-                                    <th>Subtitle</th>
-                                </tr>
-                            </thead>
-                            <tbody id='Schedule'>
+                <div class="head-text level1" style='font-size: .85rem;font-weight: 900;'>Schedule(s)</div>
+                <ul class='open-list' id='Movie' style="overflow: auto; height: 160px;" ></ul>
+            </div>
+            <div class="col-4 col-sm-6">
+                <ul class='open-list' id='MovieInfo' style="overflow: auto; height: 160px;" ></ul>
+                <button class="btn-white btn-sm" id="EditMovie">Edit</button>
+                <button class="btn-white btn-sm" id="DeleteMovie">Delete</button>
+            </div>
+            <div class="col-5 col-sm-12" style='padding: 0;'>
+                <div id='m-schedule-table' style='border:1px solid white;'>
+                    <table class="table" style="border:none;word-wrap:break-word;table-layout: fixed;">
+                        <thead>
+                            <tr style="background: white; color:black; font-weight:700; font-size: .7rem;">
+                                <th style='position: sticky;top: 0;background: white'>Schedule Number</th>
+                                <th style='position: sticky;top: 0;background: white'>Movie</br>Number</th>
+                                <th style='position: sticky;top: 0;background: white'>Theatre</br>Code</th>
+                                <th style='position: sticky;top: 0;background: white'>Date</th>
+                                <th style='position: sticky;top: 0;background: white'>Time</th>
+                                <th style='position: sticky;top: 0;background: white'>Audio</th>
+                                <th style='position: sticky;top: 0;background: white'>3D/2D</th>
+                                <th style='position: sticky;top: 0;background: white'>Subtitle</th>
+                            </tr>
+                        </thead>
+                        <tbody id='Schedule'>
 
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-outline-light btn-white" id="AddSchedule">Add&emsp;</button>
-                    <button class="btn btn-outline-light btn-white" id="DeleteSchedule">Delete&emsp;</button>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-4">
-                    <ul class='open-list' id='MovieInfo' style="overflow: auto; height: 160px;" ></ul>
-                    <button class="btn btn-outline-light btn-white" id="EditMovie">Edit&emsp;</button>
-                    <button class="btn btn-outline-light btn-white" id="DeleteMovie">Delete&emsp;</button>
-                </div>
-            </div>              
-        </div>
+                <button class="btn-white btn-sm" id="AddSchedule" style='margin-top: 8px;background: black;'>Add</button>
+                <button class="btn-white btn-sm" id="DeleteSchedule" style='margin-top: 8px;background: black;'>Delete</button>
+            </div>
+            
+        </div>              
+    </div>
 
-        <div id="movieAndSchduleForm" class="content-form" style="display: none;">
-                <%- include partials/movie-schedule %>
-        </div>
+    <div id="movieAndSchduleForm" class="content-form" style="display: none;">
+            <%- include partials/movie-schedule %>
+    </div>
 
-        <div id="EditMovieForm" class="content-form" style="display: none;"  >
-                <%- include partials/edit-movie %>
-        </div>
-    
-        <div id="EditScheduleForm" class="content-form" style="display: none;" >
-                    <%- include partials/add-schedule %>
-        </div>
+    <div id="EditMovieForm" class="content-form" style="display: none;"  >
+            <%- include partials/edit-movie %>
+    </div>
+
+    <div id="EditScheduleForm" class="content-form" style="display: none;" >
+                <%- include partials/add-schedule %>
+    </div>
 
         
 <%- include partials/foot %> 

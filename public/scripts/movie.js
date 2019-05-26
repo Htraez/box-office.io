@@ -13,7 +13,7 @@ function ScheduleInfo(cl,data) {
     $("#Schedule").find('li').remove();
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<tr value="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+value.Date+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td>'+value.Dimension+'</td><td>'+value.Subtitle+'</td></tr>'); 
+                $("#Schedule").append('<tr value="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td><span class="badge head-text-badge">'+value.Dimension+'</span></td><td>'+value.Subtitle+'</td></tr>'); 
             }
     });
     
@@ -121,16 +121,17 @@ function showmovie(data) {
         });
         MovieSchedule.forEach((value,key)=>{
             if($(".MovieTable[mv-uq='"+value.MovieNo+"']").length==0){
+                    // console.log('movie schedule==>',value);
                     let tempDate = new Date(value.Date)
                     let today = new Date()
                     let isHist = tempDate < today;
                     let histStatus = 'Now';
                     if(isHist) histStatus = 'History';
-                    $("#Movie").append('<li data-st="'+histStatus+'" mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'" style="display: none;"  >'+value.MovieName+'</li>');
+                    $("#Movie").append('<li data-st="'+histStatus+'" mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'" style="display: none;"  ><strong>Movie Name: </strong>'+value.MovieName+'<span class="badge head-text-badge">'+value.Rate+'</span></li>');
                     }
-         });
-         $("[data-st='Now']").show();
-         $('body').on('change','#SelectMovieShow',function(){
+        });
+        $("[data-st='Now']").show();
+        $('body').on('change','#SelectMovieShow',function(){
             console.log("ok");  
             let str = this.value;
               console.log(str);
@@ -138,7 +139,7 @@ function showmovie(data) {
              (str == 'History') ? $("[data-st='Now']").hide() : $("[data-st='History']").hide();
              
             })  
-         });
+        });
         //  $(document).on('change','#his',function(){
         //     let str = this.data(("+stu"))            })   
         // });
