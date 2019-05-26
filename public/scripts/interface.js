@@ -177,7 +177,6 @@ $(document).on("click","#SubRegForm", function () {
             midname : $('#RegisterMidName').val(),
             lastname : $('#RegisterLastName').val(),
             birthday : $('#RegisterBirthDay').val(),
-            age : $('#RegisterAge').val(),
             gender : $('#RegisterGender').val(),
             C_PId : $('#RegisterCID').val(),
             phone : $('#RegisterPhone').val(),

@@ -562,7 +562,7 @@ $(window).click(function() {
 
 1.จำนวนลูกค้าต่อ Branch ของหนังแต่ละเรื่อง
 --sql--
-SELECT t.BranchName, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
+SELECT t.BranchName, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max
 FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName  
     FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b
     WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo
