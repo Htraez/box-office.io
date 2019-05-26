@@ -7,7 +7,6 @@ var Movies;
 var MovieSchedule =[];
 var MovieEdit;
 
-
 function ScheduleInfo(cl,data) {
     $("#Schedule").find('li').remove();
     console.log(cl)
@@ -85,19 +84,40 @@ function showmovie(data) {
                 Subtitle: value.Subtitle
             });
         });
-         MovieSchedule.forEach((value,key)=>{
-            // if($("#SelectMovieShow[data-st='"++"']").length==0){   
-                if($(".MovieTable[mv-uq='"+value.MovieNo+"']").length==0){
-                    $("#Movie").append('<li data-st="'+value.Date+'"mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+        MovieSchedule.forEach((value,key)=>{
+            if($(".MovieTable[mv-uq='"+value.MovieNo+"']").length==0){
+                    let tempDate = new Date(value.Date)
+                    let today = new Date()
+                    let isHist = tempDate < today;
+                    let histStatus = 'Now';
+                    if(isHist) histStatus = 'History';
+                    $("#Movie").append('<li data-st="'+histStatus+'" mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'" style="display: none;"  >'+value.MovieName+'</li>');
                     }
-                // }
-                    
-                
          });
+         $("[data-st='Now']").show();
+         $('body').on('change','#SelectMovieShow',function(){
+            console.log("ok");  
+            let str = this.value;
+              console.log(str);
+             $("[data-st="+str+"]").show();
+             (str == 'History') ? $("[data-st='Now']").hide() : $("[data-st='History']").hide();
+             
+            })  
+         });
+        //  $(document).on('change','#his',function(){
+        //     let str = this.data(("+stu"))            })   
+        // });
          
-    });
-    
-}
+        //  $(document).on('change', '#Now',function(){
+        //         $("[data-st="+History+"]").hide()
+        //         $("[data-st="+Now+"]").show()
+        //  });
+        //  $(document).on('change', '#History', function(){
+        //     console.log("ok")
+        //     $("[data-st="+History+"]").show()
+        //         $("[data-st="+Now+"]").hide()
+        // });
+    }
 
 function EditMovie (cl,data){
      if(MovieSchedule.MovieNo=cl){
@@ -234,16 +254,14 @@ function select_Movie(){
 function select_Schedule(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value);
-    Schedule_select =(this.value;
+    Schedule_select =(this.value);
 
 }
-
 
 function callMovieForm(){
     $('#movieAndSchduleForm').show();
     $('.content-view').hide();
 }
-
 
 function callBackFromShow(){
     $('#ShowMovieAll').hide();
@@ -256,16 +274,25 @@ function cancelAllSchedule(){
 }
 
 function UpdateDataMovie(){
-    $('#EditMovie').show();
+    $('#EditMovieForm').show();
     $('.content-view').hide();
+
+
+    $('#MovieName').val(MovieSchedule.MovieName);
+    $('#Director').val(MovieSchedule.Director);
+    $('#Casts').val(MovieSchedule.Casts);
+    $('#Desc').val(MovieSchedule.Desc);
+    $('#Duration').val(MovieSchedule.Duration);
+    $('#Rate').val(MovieSchedule.Rate);
+    $('#Genre').val(MovieSchedule.Genre);
+    $('#Studio').val(MovieSchedule.Studio);
+    $('#PosterURL').val(MovieSchedule.PosterURL);
 }
 
-function UpdateDataSchedule(){
-    $('#EditSchedule').show();
+function AddDataSchedule(){
+    $('#EditScheduleForm').show();
     $('.content-view').hide();
 }
-
-
 
 $(document).on('click',".clickTable", select_theater);
 $(document).on('click',".clickTableBranch", branch);
@@ -281,7 +308,7 @@ $(document).on("click","#EditMovie", UpdateDataMovie);
 $(document).on("click","#DeleteMovie", DeleteMovie);
 $(document).on('click',".MovieTable",select_Movie);
 $(document).on('click',".scheduleTable",select_Schedule);
-$(document).on("click","#EditSchedule", UpdateDataSchedule);
+$(document).on("click","#EditSchedule", AddDataSchedule);
 // ----------------------------
 showbranch();
 showmovie();

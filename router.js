@@ -713,7 +713,7 @@ router.post('/movies', (req,res) => {
 router.post('/Deletemovies', (req,res) => {
     var data = req.body;
     console.log(data)
-    var sql = "Delete  From `movies` where  MovieNo=(MovieNo) VALUES ('"+data.MovieNo+"')";
+    var sql = "Delete  From `movies` where `MovieNo`=(`MovieNo`) VALUES ('"+data.MovieNo+"')";
     mysql.connect(sql)
         .then((resp)=>{
             console.log(resp);
