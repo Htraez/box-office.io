@@ -75,14 +75,10 @@ function showmovie(data) {
                 Subtitle: value.Subtitle
             });
         });
-        //console.log(MovieSchedule)
-        // MovieSchedule.forEach((value,key)=>{
-        //     $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
-        // });
          MovieSchedule.forEach((value,key)=>{
-                // if(MovieSchedule.MovieName!=this.innerHTML){
-                    $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
-                // }
+                if(MovieSchedule.MovieName){
+                    $("#Movie").append('<li data-st="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+                }
          });
 
     });
@@ -221,12 +217,20 @@ function callBackFromShow(){
 }
 
 function cancelAllSchedule(){
-    while (schedule_list.length){
-         schedule_list.pop(); 
-        }
     $('#movieAndSchduleForm').hide();
     $('.content-view').show();
 }
+
+function EditMovieForm(){
+    $('#EditMovie').show();
+    $('.content-view').hide();
+}
+
+function EditSchedule(){
+    $('#EditScheduleForm').show();
+    $('.content-view').hide();
+}
+
 
 
 
@@ -242,6 +246,7 @@ $(document).on("click","#cancelAllSchedule", cancelAllSchedule);
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#EditMovie", EditMovieForm);
 $(document).on("click","#DeleteMovie", DeleteMovie);
+$(document).on("click","#EditSchedule", EditSchedule);
 
 $(document).on('click',".MovieTable",select_Movie);
 
