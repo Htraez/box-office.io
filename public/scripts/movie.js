@@ -46,9 +46,9 @@ function showTheater(cl,data) {
 
 function showmovie(data) {
     var payload = { table:"movie" };
+    
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
-            
             $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
         });
         console.log(data)
