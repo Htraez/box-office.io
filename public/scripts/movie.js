@@ -3,17 +3,19 @@ var theater;
 var branchName;
 var schedule_list =[];
 var test;
+var Movies;
 
-function ScheduleInfo(data) {
+function ScheduleInfo(cl,data) {
     var payload = { table:"schedule" };
-    $("#Schedule").find('tr').remove();
-    console.log('A');
+    $("#Schedule").find('li').remove();
+    console.log(cl)
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
-            
-            $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'</li>');
+            if(cl==value.MovieNo)
+                {
+                $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>');
+                }
         });
-        console.log(data)
     });
     
 }
@@ -36,6 +38,18 @@ function showTheater(cl,data) {
             if(cl==value.BranchNo)
             $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');
             
+        });
+        console.log(data)
+    });
+    
+}
+
+function showmovie(data) {
+    var payload = { table:"movie" };
+    $.post('/fetchData',payload,(data)=>{
+        data.forEach((value,key)=>{
+            
+            $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
         });
         console.log(data)
     });
@@ -146,15 +160,21 @@ function select_theater(){
 
 }
 
+function select_Movie(){
+    $(this).addClass('selected').siblings().removeClass('selected')
+    console.log(this.value);
+    Movies = this.value;
+    $('#Schedule').show();
+    ScheduleInfo(Movies,);
+}
+
 
 function callMovieForm(){
     $('#movieAndSchduleForm').show();
     $('.content-view').hide();
+    $('#ShowMovieAll').hide();
 }
-function ShowMovieForm(){
-    $('#ShowMovieAll').show();
-    $('.content-view').hide();
-}
+
 
 function callBackFromShow(){
     $('#ShowMovieAll').hide();
@@ -162,7 +182,9 @@ function callBackFromShow(){
 }
 
 function cancelAllSchedule(){
-    
+    while (schedule_list.length){
+         schedule_list.pop(); 
+        }
     $('#movieAndSchduleForm').hide();
     $('.content-view').show();
 }
@@ -172,11 +194,12 @@ function cancelAllSchedule(){
  $(document).on('click',".clickTable", select_theater);
  $(document).on('click',".clickTableBranch", branch);
 $(document).on("click","#createMovie", callMovieForm);
-$(document).on("click","#ShowMovie", ShowMovieForm);
+$(document).on('click',".MovieTable",select_Movie);
 $(document).on('click',"#addSchedule",addScheduleTable);
 $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click",".deleteSchedule",deleteSchedule_list);
 $(document).on("click","#createAllSchedule", createAllSchedules);   
 $(document).on("click","#cancelAllSchedule", cancelAllSchedule);  
-ScheduleInfo();
+// ScheduleInfo();
 showbranch();
+showmovie();
