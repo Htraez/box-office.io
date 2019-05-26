@@ -1,4 +1,5 @@
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
+var Plandata = [];
 var oldBranchName=null;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
@@ -520,12 +521,9 @@ $(document).on("click",".planTable",function (event){
     $('#viewPlanHeight').text("Height :  m.");
     $('#detailPlan').show();
     $(this).addClass('selected').siblings().removeClass('selected');
-    $.get('/fetchData/plan/PlanName='+this.innerHTML,(data)=>{
-        $('#viewPlanName').text(data[0].PlanName);
-        $('#viewPlanWidth').text("Width : "+data[0].PlanWidth+" m.");
-        $('#viewPlanHeight').text("Height : "+data[0].PlanHeight+" m.");
-        $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
-    });
+    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.innerHTML).PlanName);
+    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanWidth+" m.");
+    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanHeight+" m.");
 });
 
 $(document).on("click","#callEditPlanForm",function(event){
@@ -550,6 +548,7 @@ $(document).on("click","#CreateSeatClass", addNewSeat)
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{
             addListPlanTable(data);
+            Plandata = data;
     });
 }
 getPlanList();
@@ -560,7 +559,6 @@ $(window).click(function() {
 });
 
 /*
-
 1.จำนวนลูกค้าต่อ Branch ของหนังแต่ละเรื่อง
 --sql--
 SELECT t.BranchName, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
@@ -569,7 +567,6 @@ FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName
     WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo
     GROUP BY sh.MovieNo , th.BranchNo ) AS t
 GROUP BY t.BranchName
-
 2.จำนวนลูกค้าต่อ Genre ต่าง ๆ ของหนังต่อ Branch
 --sql--
 SELECT t.Genre, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
@@ -578,8 +575,6 @@ FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre
     WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo
     GROUP BY m.Genre , th.BranchNo ) AS t
 GROUP BY t.Genre
-
 3.อายุของลูกค้าต่อ Genre ต่าง ๆ ของหนัง
 --sql--
-
 */

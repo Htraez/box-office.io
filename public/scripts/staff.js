@@ -115,7 +115,7 @@ function getStaffList(){
 }
 
 $(document).on("click",".staffList",function(event){
-    event.stopPropagation();
+    //event.stopPropagation();
     $('#viewstaffname').text('');
     $('#viewstaffdate').text("Date : ");
     $('#viewstaffstarttime').text("Start : ");
