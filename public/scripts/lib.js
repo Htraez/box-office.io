@@ -3,7 +3,7 @@ const fetchData = (topic, data, next) => {
         case 'user':{
             $.get('/user', {
                 columns:data
-            },(data)=>{
+            },(data,status)=>{
                 next(data,null);
             }).fail((err)=>{
                 next(null,err);
@@ -11,7 +11,7 @@ const fetchData = (topic, data, next) => {
             break;
         }
         default: {
-            $.get('/'+topic,data, (dataBack)=>{
+            $.get('/'+topic,data, (dataBack,status)=>{
                 next(dataBack,null);
             }).fail((err)=>{
                 next(null,err);
@@ -198,7 +198,7 @@ class ticketingProcess {
                     });
                     //send form wait for status and tickets
                     $.ajax({
-                        url: '/tickets',
+                        url: '/reservation',
                         type: 'POST',
                         data: self.form.serialize(),
                         success:function(ticketData){
@@ -480,7 +480,7 @@ class ticketingProcess {
                                 console.log('fetch coupon with code = ', $(this).val());
                                 if(!err){
                                     console.log('coupon response=>',data);
-                                    if(data.length == 1){
+                                    if(data.length > 0){
                                         //calculate criteria result
                                         let coupon = data[0];
                                         console.log('this is coupon data', coupon);
@@ -495,18 +495,37 @@ class ticketingProcess {
                                             let spendPass = totalPrice >= coupon.MinSpend;
                                             let minSeatPass = self.temp.seatList.length >= coupon.MinSeat;
                                             let availablePass = coupon.NoAvailable > 0;
-                                            //check coupon schedule
-                                            let schedulePass = true;
-                                            //check coupon seatclass
-                                            let seatClassPass = true;
-                                        
-                                            console.log(expPass ,spendPass,minSeatPass,availablePass,schedulePass,seatClassPass);
-                                        if(expPass && spendPass && minSeatPass && availablePass && schedulePass && seatClassPass){
                                             
+                                            //create allowing branch and movie data
+                                            let couponBranchData = [];
+                                            let couponMovieData = [];
+                                            let branchNo = self.form.find('#tab1-branchNo').val();
+                                            let movieNo = self.form.find('#movieNo').val();
+                                            
+                                            console.log(data)
+                                            data.forEach((row)=>{
+                                                if(!couponBranchData.includes(row.BranchNo)){
+                                                    couponBranchData.push(row.BranchNo);
+                                                }
+                                                if(!couponMovieData.includes(row.MovieNo)){
+                                                    couponMovieData.push(row.MovieNo);
+                                                }
+                                            });
+                                            console.log('ccc',branchNo,movieNo,couponBranchData,couponMovieData);
+                                            //check coupon schedule
+                                            let branchPass = couponBranchData.includes(parseInt(branchNo));
+                                            if(!branchPass) console.log('==> Ticket for branch(',branchNo,') not satisfy coupon(',coupon.CouponCode,')');
+                                            //check coupon seatclass
+                                            let moviePass = couponMovieData.includes(parseInt(movieNo));
+                                            if(!moviePass) console.log('==> Ticket for movie(',movieNo,') not satisfy coupon(',coupon.CouponCode,')');
+                                        
+                                            console.log(expPass ,spendPass,minSeatPass,availablePass,branchPass,moviePass);
+                                        if(expPass && spendPass && minSeatPass && availablePass && branchPass && moviePass){
                                             //calculate discount
                                             let discountPercent = data[0].Discount*100;
                                             let deduction = totalPrice*coupon.Discount;
                                             if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) deduction = coupon.MaxDiscount;
+                                            if(totalPrice-deduction<0) deduction=totalPrice;
                                             let discountPrice = totalPrice-deduction;
                                             //confirm on screen
                                             iziToast.show({
@@ -522,9 +541,25 @@ class ticketingProcess {
                                             if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) self.form.find('#tab3-discount-rate').text(deduction.toString(10)+'.-');
                                             self.form.find('#tab3-total-price').text(discountPrice.toString(10)+'.-');
                                         }else{
+                                            let notPassReq = undefined;
+                                            if(!expPass){
+                                                notPassReq = "Coupon Expired";
+                                            }else if(!spendPass){
+                                                notPassReq = "Total Spending Is Not Enough";
+                                            }else if(!minSeatPass){
+                                                notPassReq = "No. of Seat Less Than Minimum";
+                                            }else if(!availablePass){
+                                                notPassReq = "Out of Coupon";
+                                            }else if(!branchPass){
+                                                notPassReq = "Branch '"+self.webState.temp.branchSelection.name+"' Can't Apply This Coupon";
+                                            }else if(!moviePass){
+                                                notPassReq = "This Movie Can't Apply This Coupon";
+                                            }else{
+                                                notPassReq = "Try Another Coupon";
+                                            }
                                             iziToast.show({
                                                 title: '&#128549; Coupon Not Applied',
-                                                message: 'Coupon Requirement Not Met\t',
+                                                message: 'Coupon Requirement Not Met\n '+notPassReq,
                                                 position: 'topCenter',
                                                 color: 'red',
                                                 close: false
@@ -698,7 +733,7 @@ class webstate{
                 this.renderMoviesGrid($('.program-row'), 'index-row');
                 this.renderMoviesGrid($('.reserv-render-area'));
                 var toast = document.querySelector('.fetchToast'); // Selector of your toast
-                iziToast.hide({}, toast);
+                if(toast!=null&&toast!=undefined) iziToast.hide({}, toast);
             }else{
                 console.log(err);
             }
@@ -710,6 +745,7 @@ class webstate{
     }
 
     updateReservationProfile = () => {
+        if(typeof this.userData.Reservations == 'undefined') return;
         console.log(this.userData.Reservations);
         //get openlist element
         let datebookList = $('#user-ticket-datebook');

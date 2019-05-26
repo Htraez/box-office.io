@@ -13,7 +13,7 @@ function ScheduleInfo(cl,data) {
     $("#Schedule").find('li').remove();
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<li value="'+value.ScheduleNo+'" class="scheduleTable">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>'); 
+                $("#Schedule").append('<tr value="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+value.Date+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td>'+value.Dimension+'</td><td>'+value.Subtitle+'</td></tr>'); 
             }
     });
     
@@ -347,6 +347,7 @@ function select_Movie(){
 }
 
 function select_Schedule(){
+    
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value);
     Schedule_select =(this.value);

@@ -137,10 +137,57 @@ router.get('/plan', (req,res)=>{
     });
 });
 
+router.get('/coupon', (req,res)=>{
+    console.log('user sent=>',req.query);
+    let code = req.query.code == '' ? undefined:req.query.code;
+    let query = "SELECT c.*, cm.`MovieNo`, cb.`BranchNo` "
+                    + "FROM `coupon` c, `coupon_branch` cb, `coupon_movie` cm "
+                    + "WHERE c.`CouponCode` = cb.`CouponCode` "
+                    + "AND c.`CouponCode` = cm.`CouponCode` "
+                    + "AND c.`CouponCode` = '"+code+"';";
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.status(200).send([]);
+            return;
+        }
+        console.log('found',resp.rows.length,'coupon with code "'+code+'"');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
+router.get('/seatclass', (req,res)=>{
+    let classNames = req.query.className == '' ? undefined:req.query.className;
+    let query = "SELECT * FROM `seatclass` WHERE "
+    let i = 0;
+    classNames.forEach((className)=>{
+        if(i>0) query += ' OR '
+        query += "`ClassName`='"+className+"'";
+        i++;
+    }) 
+    query+=";" 
+    mysql.connect(query)
+    .then((resp)=>{
+        if(resp.rows.length <= 0){
+            //return
+            res.sendStatus(404);
+        }
+        console.log('found',resp.rows.length,'theatre plan(s)');
+        res.send(resp.rows);
+    })
+    .catch((err)=>{
+        console.log('error',err);
+    });
+});
+
 router.get('/reservation/customer', (req,res) => {
     let targetCustomer = req.query.customerId == '' ? undefined: req.query.customerId;
     if(targetCustomer){
-        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode`, i.`FullPrice` "
+        let query = "SELECT r.*, b.`BranchName`, m.*, s.`TheatreCode`, s.`Date` as PlayDate, s.`Time` as PlayTime, s.`Audio`, s.`Dimension`, s.`Subtitle`, i.`ReservationItem`, i.`SeatClass`, i.`SeatCode` "
                         +"FROM `reservation` r, `reservation_items` i, `movie` m, `schedule` s, `theatre` t, `branch` b "
                         +"WHERE r.`ReservationNo` = i.`ReservationNo` "
                         +"AND s.`ScheduleNo` = r.`ScheduleNo` "
@@ -152,6 +199,7 @@ router.get('/reservation/customer', (req,res) => {
         .then((resp)=>{
             if(resp.rows.length <= 0){
                 //return
+                console.log('NO RESERVE FOUND')
                 res.sendStatus(204);
                 return;
             }
@@ -201,53 +249,11 @@ router.get('/reservation/:scheduleNo', (req,res)=>{
     });
 });
 
-router.get('/coupon', (req,res)=>{
-    console.log('user sent=>',req.query);
-    let code = req.query.code == '' ? undefined:req.query.code;
-    let query = "SELECT * FROM `coupon` "
-                    + "WHERE `CouponCode`='"+code+"'";
-    mysql.connect(query)
-    .then((resp)=>{
-        if(resp.rows.length <= 0){
-            //return
-            res.status(200).send([]);
-            return;
-        }
-        console.log('found',resp.rows.length,'coupon with code "'+code+'"');
-        res.send(resp.rows);
-    })
-    .catch((err)=>{
-        console.log('error',err);
-    });
-});
 
-router.get('/seatclass', (req,res)=>{
-    let classNames = req.query.className == '' ? undefined:req.query.className;
-    let query = "SELECT * FROM `seatclass` WHERE "
-    let i = 0;
-    classNames.forEach((className)=>{
-        if(i>0) query += ' OR '
-        query += "`ClassName`='"+className+"'";
-        i++;
-    }) 
-    query+=";" 
-    mysql.connect(query)
-    .then((resp)=>{
-        if(resp.rows.length <= 0){
-            //return
-            res.sendStatus(404);
-        }
-        console.log('found',resp.rows.length,'theatre plan(s)');
-        res.send(resp.rows);
-    })
-    .catch((err)=>{
-        console.log('error',err);
-    });
-});
-
-router.post('/tickets', checkAuthentication, (req,res)=>{
+router.post('/reservation', checkAuthentication, (req,res)=>{
     let seatList = req.body.seatCode;
     let movieNo = req.body.movieNo;
+    let branchNo = req.body.branchNo;
     let customerNo = req.body.customerNo;
     let scheduleNo = req.body.scheduleNo;
     let email = req.body.userEmail;
@@ -256,11 +262,15 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     if(typeof req.body.coupon != 'undefined') {
         couponCode = (req.body.coupon!='') ? req.body.coupon.toUpperCase():null;
     }
+    console.log('coupon', req.body.coupon, couponCode)
     //identify issuer
     let correctUser = req.user.customerNo == req.body.customerNo;
 
     //initialize reservation
+    //console.log(req.body);
     let reservation = {
+        MovieNo: movieNo,
+        BranchNo: branchNo,
         ReservationKey: undefined,
         CustomerNo: customerNo,
         ScheduleNo: scheduleNo,
@@ -307,6 +317,7 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                 if(resp.rows.length > 0){
                     let classInfo = resp.rows;
                     // seat code to class, row, column
+                    console.log('seat List', seatList)
                     seatList.forEach((seatCode, i)=>{
                         // console.log(seatCode);
                         let row = seatCode.match(/[a-zA-Z]+/g)[0].charCodeAt(0)+26*(seatCode.match(/[a-zA-Z]+/g).length-1)-65; //start from 0
@@ -337,10 +348,10 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     })
     //INSERT reservation item
     .then((reservations)=>{
-        let query6 = "INSERT INTO reservation_items(`ReservationNo`, `ReservationItem`, `SeatCode`, `SeatClass`, `SeatRow`, `SeatCol`, `FullPrice`) VALUES";
+        let query6 = "INSERT INTO reservation_items(`ReservationNo`, `ReservationItem`, `SeatCode`, `SeatClass`, `SeatRow`, `SeatCol`) VALUES";
         reservations.TicketList.forEach((item, i)=>{
             if(i>0) query6 += ",";
-            query6 += "("+item.ReservationNo+","+item.ReservationItem+",'"+item.SeatCode+"','"+item.SeatClass+"',"+item.SeatRow+","+item.SeatCol+","+item.FullPrice+")";
+            query6 += "("+item.ReservationNo+","+item.ReservationItem+",'"+item.SeatCode+"','"+item.SeatClass+"',"+item.SeatRow+","+item.SeatCol+")";
         });
         query6 += ";"
         return mysql.connect(query6)
@@ -351,23 +362,31 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
     //validate coupon
     .then((resp)=>{
         let reservationObj = resp.reservationObj;
-        let query = "SELECT * FROM `coupon` "
-                    + "WHERE `CouponCode`='"+couponCode+"';";
+        let query = "SELECT c.*, cm.`MovieNo`, cb.`BranchNo` "
+                    + "FROM `coupon` c, `coupon_branch` cb, `coupon_movie` cm "
+                    + "WHERE c.`CouponCode` = cb.`CouponCode` "
+                    + "AND c.`CouponCode` = cm.`CouponCode` "
+                    + "AND c.`CouponCode` = '"+couponCode+"';";
         //validate coupon (if found create coupon usage)
         return mysql.connect(query)
         .then((resp)=>{
+            let totalPrice = 0;
+            reservationObj.TicketList.forEach((ticket)=>{
+                totalPrice+=ticket.FullPrice;
+            });
+
             if(resp.rows.length <= 0 || couponCode==null){
                 reservationObj.CouponUsage = null;
+                reservationObj.Billing = totalPrice;
+                //console.log('billing no coupon',reservationObj.Billing);
                 // return null;
             }else{
                 //console.log(reservationObj);
-                let totalPrice = 0;
-                reservationObj.TicketList.forEach((ticket)=>{
-                    totalPrice+=ticket.FullPrice;
-                });
                 let coupon = resp.rows[0];
                 let deduction = totalPrice*coupon.Discount;
                 if(coupon.MaxDiscount != 0 && coupon.MaxDiscount != null) deduction = coupon.MaxDiscount;
+                if(totalPrice-deduction<0) deduction=totalPrice;
+                
                 //validate requirement (if not pass return like is null)
                     //check coupon
                     let todayDate = new Date();
@@ -377,12 +396,28 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                     let spendPass = totalPrice >= coupon.MinSpend;
                     let minSeatPass = reservationObj.TicketList.length >= coupon.MinSeat;
                     let availablePass = coupon.NoAvailable > 0;
+                    
+                    //create allowing branch and movie data
+                    let couponBranchData = [];
+                    let couponMovieData = [];
+                    resp.rows.forEach((row)=>{
+                        if(!couponBranchData.includes(row.BranchNo)){
+                            couponBranchData.push(row.BranchNo);
+                        }
+                        if(!couponMovieData.includes(row.MovieNo)){
+                            couponMovieData.push(row.MovieNo);
+                        }
+                    });
+                    console.log('Coupon\'s allowing movies', couponMovieData);
+                    console.log('Coupon\'s allowing branches', couponBranchData);
                     //check coupon schedule
-                    let schedulePass = true;
+                    let branchPass = couponBranchData.includes(parseInt(reservationObj.BranchNo));
+                    if(!branchPass) console.log('==> Ticket for branch(',reservationObj.BranchNo,') not satisfy coupon(',coupon.CouponCode,')');
                     //check coupon seatclass
-                    let seatClassPass = true;
-
-                if(!(expPass && spendPass && minSeatPass && availablePass && schedulePass && seatClassPass)){
+                    let moviePass = couponMovieData.includes(parseInt(reservationObj.MovieNo));
+                    if(!moviePass) console.log('==> Ticket for movie(',reservationObj.MovieNo,') not satisfy coupon(',coupon.CouponCode,')');
+                    console.log(branchPass, moviePass)
+                if(!(expPass && spendPass && minSeatPass && availablePass && branchPass && moviePass)){
                     reservationObj.CouponUsage = null;
                 }else{
                     //create coupon usage
@@ -394,12 +429,38 @@ router.post('/tickets', checkAuthentication, (req,res)=>{
                         let couponUsageKey = resp.insertId;
                         reservationObj.CouponUsage = couponUsageKey;
                         reservationObj.Coupon = coupon;
+                        reservationObj.Billing = totalPrice - deduction;
+                        if(totalPrice-deduction<0) reservationObj.Billing = 0;
+                        //console.log('billing',reservationObj.Billing);
                         return reservationObj;
                     });
                 }
             }
             return reservationObj;
         })
+    })
+    //update `Billing` in reservation table && add movie revenue
+    .then((reservationObj)=>{
+        console.log('res obj on update', reservationObj);
+        let query = "UPDATE `reservation` "
+                        + "SET `Billing` = " + reservationObj.Billing + " "
+                        + "WHERE `ReservationNo` = " + reservationObj.ReservationKey
+                        + ";";
+        return mysql.connect(query)
+        .then((resp)=>{
+            let totalPrice = 0;
+            reservationObj.TicketList.forEach((ticket)=>{
+                totalPrice+=ticket.FullPrice;
+            });
+            let queryM = "UPDATE `movie_revenue` "
+                        + "SET RealRevenue = RealRevenue+" + totalPrice + " "
+                        + "WHERE MovieNo = " + reservationObj.MovieNo
+            
+            return mysql.connect(queryM)
+            .then((resp)=>{
+                return reservationObj;
+            });
+        });
     })
     //update coupon's NoAvailable
     .then((reservationObj)=>{
@@ -573,8 +634,8 @@ router.post('/plan', (req,res)=>{
 
 router.post('/register',(req,res)=>{
     var data = req.body;
-    var sql = "INSERT INTO `customer`( `FirstName`, `MidName`, `LastName`, `BirthDate`, `Age`, `Gender`, `CitizenID/PassportID`, `PhoneNumber`, `ImageURL`, `Address`, `Email`) VALUES";
-    sql += " ('"+data.Detail.firstname+"','"+data.Detail.midname+"','"+data.Detail.lastname+"','"+data.Detail.birthday+"','"+data.Detail.age+"','"+data.Detail.gender+"','"+data.Detail.C_PId+"','"+data.Detail.phone+"','"+data.Detail.img+"','"+data.Detail.address+"','"+data.Detail.email+"')";
+    var sql = "INSERT INTO `customer`( `FirstName`, `MidName`, `LastName`, `BirthDate`, `Gender`, `CitizenID/PassportID`, `PhoneNumber`, `ImageURL`, `Address`, `Email`) VALUES";
+    sql += " ('"+data.Detail.firstname+"','"+data.Detail.midname+"','"+data.Detail.lastname+"','"+data.Detail.birthday+"','"+data.Detail.gender+"','"+data.Detail.C_PId+"','"+data.Detail.phone+"','"+data.Detail.img+"','"+data.Detail.address+"','"+data.Detail.email+"')";
     mysql.connect(sql)
         .then((resp)=>{
             var sql = "INSERT INTO `users`(`Username`, `Password`, `CustomerNo.`, `StaffNo.`) VALUES";
@@ -588,6 +649,29 @@ router.post('/register',(req,res)=>{
     console.log(data);
 })
 
+router.get('/analysis/:number',(req,res)=>{
+    var sql = [
+        "SELECT t.BranchName, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b  WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo GROUP BY sh.MovieNo , th.BranchNo ) AS t GROUP BY t.BranchName",
+        "SELECT t.Genre, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `movie` m WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo GROUP BY m.Genre , th.BranchNo ) AS t GROUP BY t.Genre",
+        "SELECT temp.MovieName, MIN(temp.Age) AS min, AVG(temp.Age) AS avg, MAX(temp.Age) AS max FROM    (SELECT TIMESTAMPDIFF(year,c.`BirthDate`,now()) AS Age, m.`MovieName` FROM schedule s, movie m, customer c, reservation r WHERE c.`CustomerNo` = r.`CustomerNo` AND s.`ScheduleNo` = r.`ScheduleNo` AND m.`MovieNo` = s.`MovieNo`) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.Age) AS min, AVG(temp.Age) AS avg, MAX(temp.Age) AS max FROM    (SELECT TIMESTAMPDIFF(year,c.`BirthDate`,now()) AS Age, m.Genre FROM schedule s, movie m, customer c, reservation r WHERE c.`CustomerNo` = r.`CustomerNo` AND s.`ScheduleNo` = r.`ScheduleNo` AND m.`MovieNo` = s.`MovieNo`) AS temp GROUP BY temp.Genre",
+        "SELECT temp.MovieName, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg , MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice , b.BranchNo, b.BranchName, m.MovieNo, m.MovieName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM (SELECT SUM(sc.Price) AS tPrice, m.Genre, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.Genre) AS temp GROUP BY temp.Genre",
+        "SELECT temp.Studio, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice, m.Studio, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.Studio) AS temp GROUP BY temp.Studio",
+        "SELECT temp.WeekOfYear, MIN(temp.tPrice) AS min , AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice, WEEK(r.DateCreated) as WeekOfYear, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY WeekOfYear, b.BranchNo) AS temp GROUP BY temp.WeekOfYear",
+        "SELECT WeekNoOfYear, MIN(CusCount) AS min, AVG(CusCount) avg, MAX(CusCount) max FROM	(SELECT b.BranchName, b.BranchNo, WEEK(r.DateCreated) AS WeekNoOfYear , COUNT(YEAR(r.DateCreated)) AS CusCount FROM schedule s, reservation r, theatre t, branch b WHERE  r.`ScheduleNo` = s.`ScheduleNo` AND s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo GROUP BY b.BranchNo,  WeekNoOfYear) AS temp GROUP BY temp.WeekNoOfYear",
+        "SELECT temp.WeekDay, MIN(CusCount) AS min, AVG(CusCount) avg, MAX(CusCount) max FROM	(SELECT COUNT(c.CustomerNo) AS CusCount, b.BranchName, DAYOFWEEK(r.DateCreated) as WeekDay FROM schedule s, reservation r, theatre t, branch b, customer c WHERE s.`ScheduleNo` = r.`ScheduleNo` AND s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND r.CustomerNo = c.CustomerNo GROUP BY WeekDay, BranchName) AS temp GROUP BY temp.WeekDay",
+        "SELECT temp.MovieName, MIN(temp.shCount) AS min, AVG(temp.shCount) AS avg, MAX(temp.shCount) AS max FROM    (SELECT COUNT(s.ScheduleNo) AS shCount, m.MovieNo, m.MovieName, b.BranchNo, b.BranchName FROM schedule s, theatre t, branch b, movie m WHERE s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND m.MovieNo = s.MovieNo GROUP BY m.MovieNo , b.BranchNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.shCount) AS min, AVG(temp.shCount) AS avg, MAX(temp.shCount) AS max FROM    (SELECT COUNT(s.ScheduleNo) AS shCount, m.Genre, b.BranchNo, b.BranchName FROM schedule s, theatre t, branch b, movie m WHERE s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND m.MovieNo = s.MovieNo GROUP BY b.BranchNo, m.Genre) AS temp GROUP BY temp.Genre",
+        "SELECT temp.MovieName, MIN(temp.cuCount) AS min, AVG(temp.cuCount) AS avg , MAX(temp.cuCount) AS max FROM (SELECT COUNT(cu.CouponUsageNo) AS cuCount , m.MovieName, m.MovieNo FROM couponusage cu, reservation r, schedule s, theatre t, branch b, movie m WHERE cu.ReservationNo = r.ReservationNo AND r.ScheduleNo = s.ScheduleNo AND s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.BranchName, MIN(temp.cuCount) AS min, AVG(temp.cuCount) AS avg , MAX(temp.cuCount) AS max FROM (SELECT COUNT(cu.CouponUsageNo) AS cuCount , m.MovieName, m.MovieNo, b.BranchName, b.BranchNo FROM couponusage cu, reservation r, schedule s, theatre t, branch b, movie m WHERE cu.ReservationNo = r.ReservationNo AND r.ScheduleNo = s.ScheduleNo AND s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.BranchNo",
+        "SELECT temp.MovieName, MIN(Duration) AS min, AVG(Duration) AS avg, MAX(Duration) AS max FROM (SELECT TIMESTAMPDIFF(day,MIN(s.Date) , MAX(s.Date) )+1 AS Duration, m.MovieNo, m.MovieName, b.BranchNo, b.BranchName FROM schedule s, movie m, theatre t, branch b WHERE s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY m.MovieNo, b.BranchNo) AS temp GROUP BY temp.MovieName"
+    ];
+    mysql.connect(sql[req.params.number])
+        .then((resp)=>{
+            res.send(resp.rows);
+        })
+})
 
 //=======================
 
@@ -756,7 +840,7 @@ router.post('/AddNewSchedule', (req,res) => {
     var total=0;
     console.log(data)
     var sql;
-    data.schedule.forEach((value,key)=>{
+    data.schedule.forEach((value)=>{
          sql ="INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
     })
     sql= sql.substring(0, sql.length-1)

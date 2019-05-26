@@ -1,6 +1,6 @@
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
 var Plandata = [];
-var oldBranchName=null;
+var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
     Thcount=0
@@ -45,33 +45,10 @@ function removeTh(id){
 
 function editTh(id){
     $('#Th'+id).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    noweditP = Theatre[id].Name;
     if(id>0){
         $('#NameTheatre').val(Theatre[id].Name);
         $('#TheatreBranch').val(Theatre[id].Branch);
-    }
-    else $('#NameTheatre').val('');
-    nowTH=id;
-}
-
-function reRenderTHTable(){
-    for(var i = Thcount-1 ; i >= 0 ; i--) {
-        $('#Th'+i).remove();
-        Thcount--;
-    }
-    addTable(Theatre);
-}
-
-function removeTh(id){
-    var THName = $('#Th'+id)[0].childNodes[0].innerHTML;
-    Theatre.splice(Theatre.findIndex((val)=>{return val.Name==THName}),1);
-    reRenderTHTable();
-}
-
-function editTh(id){
-    $('#Th'+id).addClass('bg-secondary').siblings().removeClass('bg-secondary');
-    if(id>0){
-        $('#NameTheatre').val(Theatre[id].Name);
-        $('#Branch').val(Theatre[id].Branch);
     }
     else $('#NameTheatre').val('');
     nowTH=id;
@@ -89,7 +66,7 @@ function saveTheatre(){
     var data = {Name:$('#NameTheatre').val(), Branch:$('#TheatreBranch').val(),Detail:{Type:'Create',Old:''}}
     if(data.Name!='' && data.Branch){
         $.get('/fetchData/theatre/TheatreCode='+data.Name,(getdata)=>{
-            if(getdata.length==0&&!(Theatre.find((val)=>{ return val.Name==data.Name}))){
+            if(getdata.length==0&&!(Theatre.find((val)=>{ return val.Name==data.Name}))||(noweditP==data.Name)){
                 $('#NameTheatre').val('');
                 if(nowTH==0){
                     addTable([data]);
@@ -181,7 +158,7 @@ function getSeatClass(){
 
 function addSeat() {
     if(OpSeatCount<=4){
-        $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="padding-left: 13px;">Seat Class '+OpSeatCount+'</label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
+        $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="padding-left: 13px;">Seat Class '+OpSeatCount+'</label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3" style="min-width: 110px;"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
         if(OpSeatCount>1)appendSeatClass(OpSeatCount);
         OpSeatCount++;
     }
@@ -581,28 +558,3 @@ $(window).click(function() {
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
 });
-
-/*
-
-1.จำนวนลูกค้าต่อ Branch ของหนังแต่ละเรื่อง
---sql--
-SELECT t.BranchName, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo
-    GROUP BY sh.MovieNo , th.BranchNo ) AS t
-GROUP BY t.BranchName
-
-2.จำนวนลูกค้าต่อ Genre ต่าง ๆ ของหนังต่อ Branch
---sql--
-SELECT t.Genre, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `movie` m
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo
-    GROUP BY m.Genre , th.BranchNo ) AS t
-GROUP BY t.Genre
-
-3.อายุของลูกค้าต่อ Genre ต่าง ๆ ของหนัง
---sql--
-
-*/

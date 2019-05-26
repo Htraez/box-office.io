@@ -83,9 +83,8 @@ button > i{
 }
 .btn-white{
     background: transparent;
-    color: white ;
-    border: 1px solid white ;
-    border-radius: 0 !important;
+    color: white;
+    border: 1px solid white;
 }
 .btn-white:not([disabled]):hover, .btn-white:not([disabled]).wait, .btn-white:not([disabled]):focus{
     background: white;
@@ -1021,4 +1020,20 @@ input:read-only, textarea:read-only{
     text-transform: capitalize!important;
     border-style: dashed!important;
     cursor: not-allowed!important;
+}
+
+
+
+#m-schedule-table{
+    height: 250px;
+    overflow-y: scroll;
+}
+
+#m-schedule-table table tr th{
+    font-size: .7rem;
+}
+
+#m-schedule-table table tr td{
+    font-size: .65rem;
+    padding: 2px;
 }
