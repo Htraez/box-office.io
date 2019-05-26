@@ -6,10 +6,11 @@ var test;
 var Movies;
 var MovieSchedule =[];
 var MovieEdit;
+var Branch =[];
+var TheatreA =[];
 
 function ScheduleInfo(cl,data) {
     $("#Schedule").find('li').remove();
-    console.log(cl)
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
                 $("#Schedule").append('<li value="'+value.ScheduleNo+'" class="scheduleTable">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>'); 
@@ -20,7 +21,6 @@ function ScheduleInfo(cl,data) {
 
 function MovieInfo(cl,data) {
     $("#MovieInfo").find('li').remove();
-    console.log(cl)
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
                 if($(".infotable[mv-uq='"+value.MovieNo+"']").length==0){
@@ -36,28 +36,63 @@ function MovieInfo(cl,data) {
             }
     }); 
 }
-function showbranch(data) {
+function frechBranch() {
     var payload = { table:"branch" };
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
-            
-            $("#Branch").append('<li class="clickTableBranch" value="'+value.BranchNo+'">'+value.BranchName+'</li>');
+                Branch.push ({
+                    BranchNo:value.BranchNo,
+                    BranchName:value.BranchName,
+                    BranchAddress:value.BranchAddress,
+                    PhoneNumber:value.PhoneNumber,
+                    ManagerStaffNo:value.ManagerStaffNo,
+                })
         });
-        console.log(data)
+        console.log(Branch)
+        showbranch();
     });
-    
 }
-function showTheater(cl,data) {
+
+function frechTheater(){
     var payload = { table:"theatre" };
-    $("#theater").find('li').remove()
     $.post('/fetchData',payload,(data)=>{
         data.forEach((value,key)=>{
-            if(cl==value.BranchNo)
-            $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');
-            
+            TheatreA.push ({
+                TheatreCode:value.TheatreCode,
+                BranchNo:value.BranchNo,
+                PlanName:value.PlanName
+            })
         });
-        console.log(data)
     });
+        console.log(TheatreA)
+        
+
+}
+
+function showbranch() {
+    $("#Branch").find('li').remove() 
+    $("Branch_add").find('li').remove()
+            Branch.forEach((value,key)=>{
+            $("#Branch").append('<li class="clickTableBranch" value="'+value.BranchNo+'">'+value.BranchName+'</li>');
+        });
+        Branch.forEach((value,key)=>{
+            $("#Branch_add").append('<li class="clickTableBranch" value="'+value.BranchNo+'">'+value.BranchName+'</li>');
+        });
+
+}
+function showTheater(cl,data) {
+    console.log(cl)
+    $("#theater").find('li').remove()
+    $("#theater_add").find('li').remove()
+        TheatreA.forEach((value,key)=>{
+            if(cl==value.BranchNo)
+            $("#theater").append('<li class="clickTable">'+value.TheatreCode+'</li>');   
+        });
+        TheatreA.forEach((value,key)=>{
+            if(cl==value.BranchNo)
+            $("#theater_add").append('<li class="clickTable">'+value.TheatreCode+'</li>');   
+        });
+    
     
 }
 
@@ -291,17 +326,33 @@ function cancelAllSchedule(){
 function UpdateDataMovie(){
     $('#EditMovieForm').show();
     $('.content-view').hide();
-
-
-    $('#MovieName').val(MovieSchedule.MovieName);
-    $('#Director').val(MovieSchedule.Director);
-    $('#Casts').val(MovieSchedule.Casts);
-    $('#Desc').val(MovieSchedule.Desc);
-    $('#Duration').val(MovieSchedule.Duration);
-    $('#Rate').val(MovieSchedule.Rate);
-    $('#Genre').val(MovieSchedule.Genre);
-    $('#Studio').val(MovieSchedule.Studio);
-    $('#PosterURL').val(MovieSchedule.PosterURL);
+    var temp =[];
+    console.log(Movies)
+    MovieSchedule.forEach((value,key)=>{
+        if(value.MovieNo==Movies){
+         temp ={
+            MovieName:value.MovieName,
+            Director:value.Director,
+            Casts:value.Casts,
+            Desc:value.Desc,
+            Duration:value.Duration,
+            Rate:value.Rate,
+            Genre:value.Genre,
+            Studio:value.Studio,
+            PosterURL:value.PosterURL,
+            }
+        }
+        console.log(temp)
+    })
+    $('#MovieName_Add').val(temp.MovieName);
+    $('#Director_Add').val(temp.Director);
+    $('#Casts_Add').val(temp.Casts);
+    $('#Desc_Add').val(temp.Desc);
+    $('#Duration_Add').val(temp.Duration);
+    $('#Rate_Add').val(temp.Rate);
+    $('#Genre_Add').val(temp.Genre);
+    $('#Studio_Add').val(temp.Studio);
+    $('#PosterURL_Add').val(temp.PosterURL);
 }
 
 function AddDataSchedule(){
@@ -309,9 +360,40 @@ function AddDataSchedule(){
     $('.content-view').hide();
 }
 
+function EditMovieSucc(){
+    var payload = {
+        MovieNo:Movies,
+        MovieName: $('#MovieName_Add').val(),
+        Director: $('#Director_Add').val(),
+        Casts: $('#Casts_Add').val(),
+        Desc: $('#Desc_Add').val(),
+        Duration: $('#Duration_Add').val(),
+        Rate: $('#Rate_Add').val(),
+        Genre: $('#Genre_Add').val(),
+        Studio: $('#Studio_Add').val(),
+        PosterURL: $('#PosterURL_Add').val()
+    }
+    console.log(payload)
+    $.ajax({
+        type:"post",
+        url: "/moviesUpdate",
+        data: payload,
+        success: function(data) {
+            window.location.replace("/admin");  
+        }
+    });
+}
+
+
+function addScheduleTable1(){
+    
+    addScheduleTable();
+}
+
 $(document).on('click',".clickTable", select_theater);
 $(document).on('click',".clickTableBranch", branch);
 $(document).on('click',"#addSchedule",addScheduleTable);
+$(document).on('click',"#addSchedule1",addScheduleTable1);
 $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click",".deleteSchedule",deleteSchedule_list);
 $(document).on("click","#createAllSchedule", createAllSchedules);   
@@ -324,7 +406,9 @@ $(document).on("click","#DeleteMovie", DeleteMovie);
 $(document).on("click","#DeleteSchedule", DeleteSchedule);
 $(document).on('click',".MovieTable",select_Movie);
 $(document).on('click',".scheduleTable",select_Schedule);
-$(document).on("click","#EditSchedule", AddDataSchedule);
+$(document).on("click","#AddSchedule", AddDataSchedule);
+$(document).on("click","#EditMovieSucc", EditMovieSucc)
 // ----------------------------
-showbranch();
+frechBranch();
+
 showmovie();

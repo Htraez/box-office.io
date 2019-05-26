@@ -735,4 +735,18 @@ router.delete('/DeleteSchedule', (req,res) => {
     console.log(sql)
 })
 
+router.post('/moviesUpdate', (req,res) => {
+    var data = req.body;
+    console.log(data)
+    var sql = "Update  `movie` SET `MovieName`='"+data.MovieName+"',`Director`='"+data.Director+"',`Cast`='"+data.Casts+"',`Desc`='"+data.Desc+"',`Duration`='"+data.Duration+"',`Rate`='"+data.Rate+"',`Genre`='"+data.Genre+"',`Studio`='"+data.Studio+"',`PosterURL`='"+data.PosterURL+"' where `movie`.`MovieNo`= "+data.MovieNo;
+    console.log(sql)
+    mysql.connect(sql)
+        .then((resp)=>{
+            console.log(resp);
+            res.sendStatus(200)
+        });
+    console.log(sql)
+})
+
 module.exports = router;
+
