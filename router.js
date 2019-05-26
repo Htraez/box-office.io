@@ -750,15 +750,20 @@ router.post('/moviesUpdate', (req,res) => {
 
 router.post('/AddNewSchedule', (req,res) => {
     var data = req.body;
+    var planWithSchedule =[];
+    var SeatClass =[];
+    var movieNo=data.Movie.MovieNo;
+    var total=0;
     console.log(data)
-    var sql ="INSERT INTO `schedule` (`Movie)(`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES"
+    var sql;
     data.schedule.forEach((value,key)=>{
-        sql +="('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
-    sql = sql.substring(0,sql.length-1);
+         sql ="INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
+    })
+    sql= sql.substring(0, sql.length-1)
     console.log(sql)
     mysql.connect(sql)
         .then((resp)=>{
-            var sql2 = "SELECT schedule.scheduleNo, plan.PlanHeight,plan.PlanWidth,plan.SeatClass1,plan.NumberRow1,plan.SeatClass2,plan.NumberRow2,plan.SeatClass3,plan.NumberRow3,plan.SeatClass4,plan.NumberRow4 FROM schedule ,theatre ,plan WHERE schedule.TheatreCode=theatre.TheatreCode and plan.PlanName=theatre.PlanName and schedule.MovieNo="+data.Movie.MovieNo;
+            var sql2 = "SELECT schedule.scheduleNo, plan.PlanHeight,plan.PlanWidth,plan.SeatClass1,plan.NumberRow1,plan.SeatClass2,plan.NumberRow2,plan.SeatClass3,plan.NumberRow3,plan.SeatClass4,plan.NumberRow4 FROM schedule ,theatre ,plan WHERE schedule.TheatreCode=theatre.TheatreCode and plan.PlanName=theatre.PlanName and schedule.MovieNo="+data.Movie.MoveNo;
             console.log(sql2) 
             mysql.connect(sql2)
          .then((resp)=>{
@@ -805,7 +810,7 @@ router.post('/AddNewSchedule', (req,res) => {
                                     console.log("4",total)}
                             
                             });
-                            var sql4 ="INSERT INTO `movie_revenue` (`MovieNo`, `ExpectRevenue`) VALUES ('"+MovieNo+"','"+total+"')";
+                            var sql4 ="UPDATE `movie_revenue`set `ExpectRevenue`='"+total+"' where`MovieNo`= "+data.Movie.MoveNo;
                             mysql.connect(sql4)
                             console.log(sql4)
                             console.log(total)
@@ -816,7 +821,6 @@ router.post('/AddNewSchedule', (req,res) => {
     .catch((err)=>{
          console.log('error',err);
      });
-});
 });
 module.exports = router;
 
