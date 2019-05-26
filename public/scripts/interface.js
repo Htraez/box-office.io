@@ -45,7 +45,7 @@ $(document).ready(function(){
                     title: 'Cha-ching!~ ',
                     class: 'ticketSuccess',
                     icon: 'fas fa-ticket-alt',
-                    message: 'This Is Your Ticket',
+                    message: 'This Is Your Reservation',
                     position: 'topCenter',
                     color: 'green',
                     displayMode: 1,
