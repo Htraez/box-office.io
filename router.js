@@ -462,6 +462,16 @@ router.get('/fetchData/:table/:condition', (req,res) => {
         });
 });
 
+router.get('/fetchDataMovie',(req,res)=>{
+    console.log("movieWithSchedule");
+    var sql = "SELECT * FROM `movie`, `schedule` where schedule.MovieNo = movie.MovieNo";
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.send(resp.rows);
+        });
+});
+
+
 router.post('/seatclass', (req,res) => {
     var data = req.body;
     var use = 0;
