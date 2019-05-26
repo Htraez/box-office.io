@@ -1021,3 +1021,19 @@ input:read-only, textarea:read-only{
     border-style: dashed!important;
     cursor: not-allowed!important;
 }
+
+
+
+#m-schedule-table{
+    height: 250px;
+    overflow-y: scroll;
+}
+
+#m-schedule-table table tr th{
+    font-size: .7rem;
+}
+
+#m-schedule-table table tr td{
+    font-size: .65rem;
+    padding: 2px;
+}
