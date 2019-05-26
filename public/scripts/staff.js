@@ -76,6 +76,9 @@ function assignshiftforstaff(){
         console.log("ERROR");
         }
         else{
+            if(temp.StartHH<10||temp.StartMM<10||temp.StartSS<10||temp.EndHH<10||temp.EndMM<10||temp.EndSS<10){
+                $('#HHstartTime').val()
+            }
         console.log("OK");
         addshiftshow.push(temp);
         }
@@ -96,10 +99,26 @@ function addtotable(){
     
 }
 
-$(document).on("click","#createStaff",staffForm);
+function addListStaff(data) {
+data.forEach((value) => {
+    //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
+    var shifttableappend = "<li class='staffList'>"+value.FirstName+"&emsp;"+value.LastName+"</li>";
+    $("#listStaff").append(shifttableappend);
+    });
+//$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+}
+
+function getStaffList(){
+    $.get('/fetchData/staff/none',(data)=>{
+            addListStaff(data);
+    });
+}
+
+$(document).on("click","#createstaffshift",staffForm);
 $(document).on("click","#cancelStaff",cancelStaff);
 $(document).on("click","#next",next);
 $(document).on("click","#back",back);
 fetchbranchforstaff();
+getStaffList();
 $(document).on("click","#savedata",savedata);
 $(document).on("click","#assignShift",assignshiftforstaff)

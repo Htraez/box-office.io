@@ -29,11 +29,34 @@
         <%- include partials/plan %>
     </div>
     <div class="content-view">
-        <h3><span class="head-text">Staff&emsp;</span>
-        <button class="btn btn-outline-light btn-white" id="createStaff">Create</button></h3>
+        <h3><span class="head-text">Staff Shift&emsp;</span>
+        <button class="btn-white" id="createstaffshift" style="display: inline-block;">Create</button></h3>
         <br>
+        <div class="row justify-content-start align-items-center">
+            <div class="col-4">
+                <ul class="open-list mb-0" id="listStaff" style="overflow: auto; height: 160px;"></ul>
+            </div>
+            <div class="col-4">
+                <div class="container-fluid border border-light" id="detailstaff" style="display: none;">
+                    <h6 class="pt-2">Name : <span id="viewstaffname"></span></h6>
+                    <h6 id="viewstaffdate">Date : </h6>
+                    <h6 id="viewstaffstarttime">Start : </h6>
+                    <h6 id="viewstaffendtime">End : </h6>
+                    <div class="row pb-2">
+                        <div class="mx-auto mt-3 text-center">
+                            <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
+                            <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="callDeletePlanForm">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                 
+        </div>
     </div>
+    
+    
     <div id="staffForm" class="content-form" style="display: none;">
+
         <%- include partials/staff %>
     </div>
     <div id="addShift" class="content-form" style="display: none;">
