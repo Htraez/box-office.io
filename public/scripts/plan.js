@@ -557,28 +557,3 @@ $(window).click(function() {
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
 });
-
-/*
-
-1.จำนวนลูกค้าต่อ Branch ของหนังแต่ละเรื่อง
---sql--
-SELECT t.BranchName, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo
-    GROUP BY sh.MovieNo , th.BranchNo ) AS t
-GROUP BY t.BranchName
-
-2.จำนวนลูกค้าต่อ Genre ต่าง ๆ ของหนังต่อ Branch
---sql--
-SELECT t.Genre, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `movie` m
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo
-    GROUP BY m.Genre , th.BranchNo ) AS t
-GROUP BY t.Genre
-
-3.อายุของลูกค้าต่อ Genre ต่าง ๆ ของหนัง
---sql--
-
-*/
