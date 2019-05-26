@@ -114,6 +114,7 @@ function getStaffList(){
     });
 }
 
+$(document).on("click,")
 $(document).on("click","#createstaffshift",staffForm);
 $(document).on("click","#cancelStaff",cancelStaff);
 $(document).on("click","#next",next);
