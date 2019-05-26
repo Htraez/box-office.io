@@ -1,5 +1,4 @@
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
-var Plandata = [];
 var oldBranchName=null;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
@@ -521,9 +520,12 @@ $(document).on("click",".planTable",function (event){
     $('#viewPlanHeight').text("Height :  m.");
     $('#detailPlan').show();
     $(this).addClass('selected').siblings().removeClass('selected');
-    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.innerHTML).PlanName);
-    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanWidth+" m.");
-    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanHeight+" m.");
+    $.get('/fetchData/plan/PlanName='+this.innerHTML,(data)=>{
+        $('#viewPlanName').text(data[0].PlanName);
+        $('#viewPlanWidth').text("Width : "+data[0].PlanWidth+" m.");
+        $('#viewPlanHeight').text("Height : "+data[0].PlanHeight+" m.");
+        $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    });
 });
 
 $(document).on("click","#callEditPlanForm",function(event){
@@ -548,7 +550,6 @@ $(document).on("click","#CreateSeatClass", addNewSeat)
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{
             addListPlanTable(data);
-            Plandata = data;
     });
 }
 getPlanList();
