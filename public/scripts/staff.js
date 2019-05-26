@@ -123,7 +123,8 @@ $(document).on("click",".staffList",function(event){
     $('#detailstaff').show();
     $(this).addClass('selected').siblings().removeClass('selected');
     $.get('/fetchData/staff/FirstName='+this.innerHTML,(data)=>{
-         $('#viewstaffname').text(data[0].FirstName+"      "+data[0].LastName);
+         $('#viewstaffname').text(data[0].FirstName+" "+data[0].LastName);
+         $('#viewstaffdate').text("Date : ");
          $('#viewstaffstarttime').text("Width : ");
          $('#viewstaffendtime').text("Height : ");
     $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
