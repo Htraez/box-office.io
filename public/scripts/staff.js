@@ -102,7 +102,7 @@ function addtotable(){
 function addListStaff(data) {
 data.forEach((value) => {
     //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
-    var shifttableappend = "<li class='staffList'>"+value.FirstName+"&emsp;"+value.LastName+"</li>";
+    var shifttableappend = "<li class='staffList'>"+value.FirstName+"</li>";
     $("#listStaff").append(shifttableappend);
     });
 //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
@@ -114,7 +114,22 @@ function getStaffList(){
     });
 }
 
-$(document).on("click,")
+$(document).on("click",".staffList",function(event){
+    event.stopPropagation();
+    $('#viewstaffname').text('');
+    $('#viewstaffdate').text("Date : ");
+    $('#viewstaffstarttime').text("Start : ");
+    $('#viewstaffendtime').text("End : ")
+    $('#detailstaff').show();
+    $(this).addClass('selected').siblings().removeClass('selected');
+    $.get('/fetchData/staff/FirstName='+this.innerHTML,(data)=>{
+         $('#viewstaffname').text(data[0].FirstName+"      "+data[0].LastName);
+         $('#viewstaffstarttime').text("Width : ");
+         $('#viewstaffendtime').text("Height : ");
+    $(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    });
+})
+
 $(document).on("click","#createstaffshift",staffForm);
 $(document).on("click","#cancelStaff",cancelStaff);
 $(document).on("click","#next",next);
