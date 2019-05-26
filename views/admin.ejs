@@ -34,4 +34,44 @@
         <%- include partials/plan %>
     </div>
     
+        <div class='content-view'>
+                <span class="head-text">Movie&emsp;</span>
+                <button class="btn btn-outline-light btn-white" id="createMovie">Create&emsp;</button> 
+                <select class="form-control-plaintext text-white" id="SelectMovieShow">
+                        <option class="form-control-plaintext"id="Now"value="Now">Now</option>
+                        <option class="form-control-plaintext" id="History"value="History">History</option>
+                    </select>
+                    <ul class='open-list' id='Movie' style="overflow: auto; height: 160px;" ></ul>
+                    <ul class='open-list' id='Schedule'style="overflow: auto; height: 160px;">
+                        <tr>
+                            <th>ScheduleNo</th>
+                            <th>MovieNo</th>
+                            <th>TheatreCode</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Audio</th>
+                            <th>Dimension</th>
+                            <th>Subtitle</th>
+                        </tr>
+                    </ul>
+                    <button class="btn btn-outline-light btn-white" id="AddSchedule">Add&emsp;</button>
+                    <button class="btn btn-outline-light btn-white" id="DeleteSchedule">Delete&emsp;</button>
+                    <ul class='open-list' id='MovieInfo' style="overflow: auto; height: 160px;" ></ul>
+                    <button class="btn btn-outline-light btn-white" id="EditMovie">Edit&emsp;</button>
+                    <button class="btn btn-outline-light btn-white" id="DeleteMovie">Delete&emsp;</button>        
+        </div>
+
+        <div id="movieAndSchduleForm" class="content-form" style="display: none;">
+                <%- include partials/movie-schedule %>
+        </div>
+
+        <div id="EditMovieForm" class="content-form" style="display: none;"  >
+                <%- include partials/edit-movie %>
+        </div>
+    
+        <div id="EditScheduleForm" class="content-form" style="display: none;" >
+                    <%- include partials/add-schedule %>
+        </div>
+
+        
 <%- include partials/foot %> 
