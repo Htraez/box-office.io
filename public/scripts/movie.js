@@ -1,22 +1,30 @@
-
 var theater;
 var branchName;
 var schedule_list =[];
 var test;
 var Movies;
+var MovieSchedule =[];
 
 function ScheduleInfo(cl,data) {
-    var payload = { table:"schedule" };
     $("#Schedule").find('li').remove();
     console.log(cl)
-    $.post('/fetchData',payload,(data)=>{
-        data.forEach((value,key)=>{
-            if(cl==value.MovieNo)
-                {
-                $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>');
-                }
-        });
+    MovieSchedule.forEach((value,key)=>{
+            if(cl==value.MovieNo){
+                $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>'); 
+            }
     });
+    
+}
+
+function MovieInfo(cl,data) {
+    $("#MovieInfo").find('li').remove();
+    console.log(cl)
+    MovieSchedule.forEach((value,key)=>{
+            if(cl==value.MovieNo){
+                $("#MovieInfo").append('<li value="'+value.MovieNo+'">'+value. MovieName+'&emsp;</li>'); 
+            }
+    });
+
     
 }
 function showbranch(data) {
@@ -45,13 +53,38 @@ function showTheater(cl,data) {
 }
 
 function showmovie(data) {
-    var payload = { table:"movie" };
-    
     $.get('/fetchDataMovie',(data)=>{
         data.forEach((value,key)=>{
-            $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+            MovieSchedule.push( {
+                MovieName: value.MovieName,
+                MovieNo: value.MovieNo,
+                Director: value.Director,
+                Casts: value.Casts,
+                Desc: value.Desc,
+                Duration: value.Duration,
+                Rate: value.Rate,
+                Genre: value.Genre,
+                Studio: value.Studio,
+                PosterURL: value.PosterURL,
+                TheatreCode: value.TheatreCode,
+                ScheduleNo:value.ScheduleNo,
+                Date: value.Date,
+                Time: value.Time,
+                Audio: value.Audio,
+                Dimension: value.Dimension,
+                Subtitle: value.Subtitle
+            });
         });
-        console.log(data)
+        //console.log(MovieSchedule)
+        // MovieSchedule.forEach((value,key)=>{
+        //     $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+        // });
+         MovieSchedule.forEach((value,key)=>{
+                // if(MovieSchedule.MovieName!=this.innerHTML){
+                    $("#Movie").append('<li class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+                // }
+         });
+
     });
     
 }
@@ -112,6 +145,11 @@ function updateSchedule_list(data){
     })
 }
 
+function DeleteMovie(data) {
+    payload 
+    
+}
+
 function createAllSchedules(){
     var payload = {
         Movie : {
@@ -166,6 +204,7 @@ function select_Movie(){
     Movies = this.value;
     $('#Schedule').show();
     ScheduleInfo(Movies,);
+    MovieInfo(Movies,);
 }
 
 
@@ -193,13 +232,19 @@ function cancelAllSchedule(){
 
  $(document).on('click',".clickTable", select_theater);
  $(document).on('click',".clickTableBranch", branch);
-$(document).on("click","#createMovie", callMovieForm);
-$(document).on('click',".MovieTable",select_Movie);
 $(document).on('click',"#addSchedule",addScheduleTable);
 $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click",".deleteSchedule",deleteSchedule_list);
 $(document).on("click","#createAllSchedule", createAllSchedules);   
 $(document).on("click","#cancelAllSchedule", cancelAllSchedule);  
-// ScheduleInfo();
+
+// -------admin page-----------
+$(document).on("click","#createMovie", callMovieForm);
+$(document).on("click","#EditMovie", EditMovieForm);
+$(document).on("click","#DeleteMovie", DeleteMovie);
+
+$(document).on('click',".MovieTable",select_Movie);
+
+// ----------------------------
 showbranch();
 showmovie();
