@@ -840,7 +840,7 @@ router.post('/AddNewSchedule', (req,res) => {
     var total=0;
     console.log(data)
     var sql;
-    data.schedule.forEach((value,key)=>{
+    data.schedule.forEach((value)=>{
          sql ="INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
     })
     sql= sql.substring(0, sql.length-1)
