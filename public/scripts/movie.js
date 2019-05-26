@@ -331,7 +331,7 @@ function branch(){
 }
 function select_theater(){
     $(this).addClass('selected').siblings().removeClass('selected')
-    console.log(this.data-st);
+    console.log(this.[data-st]);
     theater = this.innerHTML;
     console.log(theater)
 
