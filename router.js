@@ -710,10 +710,10 @@ router.post('/movies', (req,res) => {
 });
 });
 
-router.get('/Deletemovies', (req,res) => {
+router.post('/Deletemovies', (req,res) => {
     var data = req.body;
-    var sql = "Delete INTO `movies` (MovieNo) VALUES ('"+
-                data.MovieNo+"')";
+    console.log(data)
+    var sql = "Delete  From `movies` where  MovieNo=(MovieNo) VALUES ('"+data.MovieNo+"')";
     mysql.connect(sql)
         .then((resp)=>{
             console.log(resp);

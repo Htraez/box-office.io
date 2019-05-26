@@ -1,6 +1,7 @@
 var theater;
 var branchName;
 var schedule_list =[];
+var Schedule_select;
 var test;
 var Movies;
 var MovieSchedule =[];
@@ -12,7 +13,7 @@ function ScheduleInfo(cl,data) {
     console.log(cl)
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<li value="'+value.ScheduleNo+'">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>'); 
+                $("#Schedule").append('<li value="'+value.ScheduleNo+'" class="scheduleTable">'+value.ScheduleNo+'&emsp;'+value.MovieNo+'&emsp;'+value.TheatreCode+'&emsp;'+value.Date+'&emsp;'+value.Time+'&emsp;'+value.Audio+'&emsp;'+value.Dimension+'&emsp;'+value.Subtitle+'</li>'); 
             }
     });
     
@@ -163,8 +164,9 @@ function updateSchedule_list(data){
 function DeleteMovie(data) {
     console.log(Movies)
     var payload = {MovieNo : Movies}
+    console.log(payload)
     $.ajax({
-        type:"GET",
+        type:"POST",
         url: "/Deletemovies",
         data: payload,
         success: function(data) {
@@ -229,11 +231,17 @@ function select_Movie(){
     MovieInfo(Movies,);
 }
 
+function select_Schedule(){
+    $(this).addClass('selected').siblings().removeClass('selected')
+    console.log(this.value);
+    Schedule_select =(this.value;
+
+}
+
 
 function callMovieForm(){
     $('#movieAndSchduleForm').show();
     $('.content-view').hide();
-    $('#ShowMovieAll').hide();
 }
 
 
@@ -247,21 +255,20 @@ function cancelAllSchedule(){
     $('.content-view').show();
 }
 
-function EditMovieForm(){
+function UpdateDataMovie(){
     $('#EditMovie').show();
     $('.content-view').hide();
 }
 
-function EditSchedule(){
-    $('#EditScheduleForm').show();
+function UpdateDataSchedule(){
+    $('#EditSchedule').show();
     $('.content-view').hide();
 }
 
 
 
-
- $(document).on('click',".clickTable", select_theater);
- $(document).on('click',".clickTableBranch", branch);
+$(document).on('click',".clickTable", select_theater);
+$(document).on('click',".clickTableBranch", branch);
 $(document).on('click',"#addSchedule",addScheduleTable);
 $(document).on("click","#backToAdmin", callBackFromShow);
 $(document).on("click",".deleteSchedule",deleteSchedule_list);
@@ -270,12 +277,11 @@ $(document).on("click","#cancelAllSchedule", cancelAllSchedule);
 
 // -------admin page-----------
 $(document).on("click","#createMovie", callMovieForm);
-$(document).on("click","#EditMovie", EditMovieForm);
+$(document).on("click","#EditMovie", UpdateDataMovie);
 $(document).on("click","#DeleteMovie", DeleteMovie);
-$(document).on("click","#EditSchedule", EditSchedule);
-
 $(document).on('click',".MovieTable",select_Movie);
-
+$(document).on('click',".scheduleTable",select_Schedule);
+$(document).on("click","#EditSchedule", UpdateDataSchedule);
 // ----------------------------
 showbranch();
 showmovie();
