@@ -1,20 +1,38 @@
-var analysisData;
+var analysisData = [];
+var weekday = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 function addAnalysisTable() {
-    console.log(this.getAttribute('value'));
-    $.get('/analysis/'+this.getAttribute('value'),(data)=>{
+    var call = this.getAttribute('value');
         $('#ResultAnalysis').find('li').remove();
         console.log(data);
-        //analysisData = data;
-        data.forEach(value => {
-            //value = value.replace(/,/g,"&emsp13;");
+        analysisData[call].forEach(value => {
             const en = Object.entries(value);
-            $('#ResultAnalysis').append('<li><strong>'+en[0][1]+"</strong>&emsp;"+en[1][0]+" : "+en[1][1]+"&emsp13;"+en[2][0]+" : "+en[2][1]+"&emsp13;"+en[3][0]+" : "+en[3][1]+"&emsp13;"+'</li>');
+            var temp = (parseInt(call)>=7 && parseInt(call)<=8) ? "Week " : "";
+            $('#ResultAnalysis').append('<li><strong>'+temp+((parseInt(call)==9) ? weekday[en[0][1]] : en[0][1])+"</strong>&emsp;"+en[1][0]+" : "+en[1][1]+"&emsp13;"+en[2][0]+" : "+en[2][1]+"&emsp13;"+en[3][0]+" : "+en[3][1]+"&emsp13;"+'</li>');
         });
-    });
-    /*data.forEach((value, key) => {
-        var tableRowappend = "<li class='planTable'>"+value.PlanName+"</li>";
-        $("#listPlanTable").append(tableRowappend);
-    });*/
 }
 
 $(document).on("click",".AnalysisOpt", addAnalysisTable);
+
+$(document).on("click","#showAnalyRe", initdata);
+
+function loadAnaData(i) {
+    $.get('/analysis/'+i,(data)=>{
+        analysisData[i] = data;
+        console.log(i);
+        return (i == 14) ? iziToast.destroy() : loadAnaData(i+1); 
+    });
+}
+
+function initdata() {
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Fetch Data', 
+        color: 'green',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
+    loadAnaData(0);
+}
