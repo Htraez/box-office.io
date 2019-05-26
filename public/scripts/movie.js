@@ -4,6 +4,8 @@ var schedule_list =[];
 var test;
 var Movies;
 var MovieSchedule =[];
+var MovieEdit;
+
 
 function ScheduleInfo(cl,data) {
     $("#Schedule").find('li').remove();
@@ -21,11 +23,18 @@ function MovieInfo(cl,data) {
     console.log(cl)
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#MovieInfo").append('<li value="'+value.MovieNo+'">'+value. MovieName+'&emsp;</li>'); 
-            }
-    });
+                if($(".infotable[mv-uq='"+value.MovieNo+"']").length==0){
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"MovieName:"+value.MovieName+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Director:"+value.Director+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Casts:"+value.Casts+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Rate:"+value.Rate+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Genre:"+value.Genre+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Studio:"+value.Studio+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Duration:"+value.Duration+"min"+'&emsp;</li>');
 
-    
+                }
+            }
+    }); 
 }
 function showbranch(data) {
     var payload = { table:"branch" };
@@ -76,13 +85,23 @@ function showmovie(data) {
             });
         });
          MovieSchedule.forEach((value,key)=>{
-                if(MovieSchedule.MovieName){
-                    $("#Movie").append('<li data-st="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
-                }
+            // if($("#SelectMovieShow[data-st='"++"']").length==0){   
+                if($(".MovieTable[mv-uq='"+value.MovieNo+"']").length==0){
+                    $("#Movie").append('<li data-st="'+value.Date+'"mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'">'+value.MovieName+'</li>');
+                    }
+                // }
+                    
+                
          });
-
+         
     });
     
+}
+
+function EditMovie (cl,data){
+     if(MovieSchedule.MovieNo=cl){
+        console.log(MovieSchedule)
+    }
 }
 
 function compare(temp){
@@ -142,9 +161,19 @@ function updateSchedule_list(data){
 }
 
 function DeleteMovie(data) {
-    payload 
-    
-}
+    console.log(Movies)
+    var payload = {MovieNo : Movies}
+    $.ajax({
+        type:"GET",
+        url: "/Deletemovies",
+        data: payload,
+        success: function(data) {
+            window.location.replace("/admin");  
+        }
+    })
+ }
+ 
+
 
 function createAllSchedules(){
     var payload = {
@@ -175,9 +204,6 @@ function createAllSchedules(){
      else console.log("error")
 }
 
-// function datetime(){
-//     $('#datetime24').combodate();  
-// }
 function branch(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value);
