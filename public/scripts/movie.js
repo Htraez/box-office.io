@@ -186,8 +186,22 @@ function DeleteMovie(data) {
     var payload = {MovieNo : Movies}
     console.log(payload)
     $.ajax({
-        type:"POST",
+        type:"DELETE",
         url: "/Deletemovies",
+        data: payload,
+        success: function(data) {
+            window.location.replace("/admin");  
+        }
+    })
+ }
+
+ function DeleteSchedule(data) {
+    console.log(Schedule_select)
+    var payload = {ScheduleNo : Schedule_select}
+    console.log(payload)
+    $.ajax({
+        type:"DELETE",
+        url: "/DeleteSchedule",
         data: payload,
         success: function(data) {
             window.location.replace("/admin");  
@@ -255,6 +269,7 @@ function select_Schedule(){
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value);
     Schedule_select =(this.value);
+    console.log(Schedule_select);
 
 }
 
@@ -306,6 +321,7 @@ $(document).on("click","#cancelAllSchedule", cancelAllSchedule);
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#EditMovie", UpdateDataMovie);
 $(document).on("click","#DeleteMovie", DeleteMovie);
+$(document).on("click","#DeleteSchedule", DeleteSchedule);
 $(document).on('click',".MovieTable",select_Movie);
 $(document).on('click',".scheduleTable",select_Schedule);
 $(document).on("click","#EditSchedule", AddDataSchedule);

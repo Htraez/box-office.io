@@ -639,9 +639,8 @@ router.post('/movies', (req,res) => {
             console.log(resp);
             // res.redirect('/addSchedule');
                 let MovieNo =resp.insertId;
-
                 var sql2 = "INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES"
-                data.schedule.forEach((value)=>{
+                data.schedule.forEach((value,key)=>{
                 sql2 += "('"+MovieNo+"','"+ value.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
                });
                sql2 = sql2.substring(0,sql2.length-1);
@@ -710,18 +709,30 @@ router.post('/movies', (req,res) => {
 });
 });
 
-router.post('/Deletemovies', (req,res) => {
+router.delete('/Deletemovies', (req,res) => {
     var data = req.body;
     console.log(data)
-    var sql = "Delete  From `movies` where `MovieNo`=(`MovieNo`) VALUES ('"+data.MovieNo+"')";
+    var sql = "Delete  From `movie` where MovieNo= "+data.MovieNo;
+    console.log(sql)
     mysql.connect(sql)
         .then((resp)=>{
             console.log(resp);
             res.sendStatus(200)
         });
     console.log(sql)
+})
 
-
+router.delete('/DeleteSchedule', (req,res) => {
+    var data = req.body;
+    console.log(data)
+    var sql = "Delete  From `schedule` where ScheduleNo= "+data.ScheduleNo;
+    console.log(sql)
+    mysql.connect(sql)
+        .then((resp)=>{
+            console.log(resp);
+            res.sendStatus(200)
+        });
+    console.log(sql)
 })
 
 module.exports = router;
