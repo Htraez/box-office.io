@@ -13,7 +13,7 @@ function ScheduleInfo(cl,data) {
     $("#Schedule").find('tr').remove();
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<tr data-st="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td><span class="badge head-text-badge">'+value.Dimension+'</span></td><td>'+value.Subtitle+'</td></tr>'); 
+                $("#Schedule").append('<tr data-st="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+'-'+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td><span class="badge head-text-badge">'+value.Dimension+'</span></td><td>'+value.Subtitle+'</td></tr>'); 
             }
     });
     
