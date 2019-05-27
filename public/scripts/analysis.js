@@ -1,20 +1,21 @@
 var analysisData = [];
-var weekday = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-var call;
+var weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var unit = ["Person","Person","Year","Year","Baht","Baht","Baht","Baht","Person","Person","Showtime","Showtime","Coupon","Coupon","Minute"]
+var analysisUse;
 function addAnalysisTable() {
-    call = this.getAttribute('value');
+    analysisUse = this.getAttribute('value');
     $(this).addClass('selected').siblings().removeClass('selected');
-    $('#SelectBy').text(Object.keys(analysisData[call][0])[0]);
+    $('#SelectBy').text(Object.keys(analysisData[analysisUse][0])[0]);
     $('#ChooseAnalysis').find('option').remove();
-    analysisData[call].forEach((value,key)=>{
-        $("#ChooseAnalysis").append('<option class="form-control-plaintext" value="'+key+'">'+((parseInt(call)==9) ? weekday[value[Object.keys(analysisData[call][0])[0]]] : value[Object.keys(analysisData[call][0])[0]])+'</option>');
+    analysisData[analysisUse].forEach((value,key)=>{
+        $("#ChooseAnalysis").append('<option class="form-control-plaintext" value="'+key+'">'+((parseInt(analysisUse)==9) ? weekday[value[Object.keys(analysisData[analysisUse][0])[0]]] : value[Object.keys(analysisData[analysisUse][0])[0]])+'</option>');
     });
-    insertAnalysis(analysisData[call][0]);   
+    insertAnalysis(analysisData[analysisUse][0]);   
         /*$('#ResultAnalysis').find('li').remove();
         console.log(data);
-        analysisData[call].forEach(value => {
+        analysisData[analysisUse].forEach(value => {
             const en = Object.entries(value);
-            $('#ResultAnalysis').append('<li><strong>'+temp+((parseInt(call)==9) ? weekday[en[0][1]] : en[0][1])+"</strong>&emsp;"+en[1][0]+" : "+en[1][1]+"&emsp13;"+en[2][0]+" : "+en[2][1]+"&emsp13;"+en[3][0]+" : "+en[3][1]+"&emsp13;"+'</li>');
+            $('#ResultAnalysis').append('<li><strong>'+temp+((parseInt(analysisUse)==9) ? weekday[en[0][1]] : en[0][1])+"</strong>&emsp;"+en[1][0]+" : "+en[1][1]+"&emsp13;"+en[2][0]+" : "+en[2][1]+"&emsp13;"+en[3][0]+" : "+en[3][1]+"&emsp13;"+'</li>');
         });*/
 }
 
@@ -22,10 +23,13 @@ function insertAnalysis(data){
     $('#AnalyMin').text(data.min);
     $('#AnalyAvg').text(data.avg);
     $('#AnalyMax').text(data.max);
+    $('#unit1').text(unit[analysisUse]);
+    $('#unit2').text(unit[analysisUse]);
+    $('#unit3').text(unit[analysisUse]);
 }
 
 $("#ChooseAnalysis").on("change",function(){
-    insertAnalysis(analysisData[call][this.value]);  
+    insertAnalysis(analysisData[analysisUse][this.value]);  
 })
 
 $(document).on("click",".AnalysisOpt", addAnalysisTable);
