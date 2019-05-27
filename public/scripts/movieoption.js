@@ -1,3 +1,5 @@
+$(this).addClass('selected').siblings().removeClass('selected');
+
 function callCouponForm(err,CouponCode = null) {
     
     //Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
@@ -159,7 +161,7 @@ $(document).on("click",".couponTable",function (event){
     $('#viewExpireDate').text("Expire Date :  ");
     $('#viewNumberAvialable').text("NumberAvialable :  ");
     $('#detailCoupon').show();
-    //$(this).addClass('selected').siblings().removeClass('selected');
+    $(this).addClass('selected').siblings().removeClass('selected');
     $.get('/fetchData/coupon/CouponCode='+this.innerHTML,(data)=>{
         console.log(data[0]);
         $('#viewCouponCode').text(data[0].CouponCode);
