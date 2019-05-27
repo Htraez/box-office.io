@@ -136,7 +136,7 @@ function showmovie(data) {
               console.log(str);
              $("[data-st="+str+"]").show();
              (str == 'History') ? $("[data-st='Now']").hide() : $("[data-st='History']").hide();
-             $("#MovieInfo").find('li').remove()
+             $("#MovieInfo").find('li').remove();
              $("#Schedule").find('tr').remove();
              
             })  
