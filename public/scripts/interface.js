@@ -58,6 +58,9 @@ $(document).ready(function(){
             
         }
     }
+    // if(typeof webState.role != 'undefined'){
+    //     if(webState.role )
+    // }
 });
 
 $(document).on("keydown", "form.preventEnter", function(event) { 

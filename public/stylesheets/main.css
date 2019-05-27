@@ -1040,5 +1040,54 @@ input:read-only, textarea:read-only{
 
 #m-schedule-table table tr.selected{
     background:white;
-    color: #000
+    color: #000;
+}
+
+.head-group.big{
+    display: block!important;
+}
+.head-group.big .head-text.level1{
+    font-weight: 900;
+    font-size: 1.4rem;
+    display: inline;
+}
+
+.head-group.big .head-text.level2{
+    font-weight: 500;
+    opacity: .6;
+    display: block;
+    font-size: 1rem;
+    display: block;
+}
+
+.content-view.dashview{
+    border: 1px dashed #ffffff47;
+    padding: 10px;
+    border-radius: .25rem;
+}
+
+.dashview .row{
+    width:100%;
+    margin:0;
+}
+
+.btn-sm{
+    border-radius: 0 !important;
+    display: inline-block!important;
+    height: 25px!important;
+    vertical-align: text-bottom!important;
+    line-height: 1!important;
+}
+
+.dashview label{
+    font-size: .85rem;
+    opacity: .7;
+}
+
+.dashview .open-list .li{
+    border-bottom: 1px solid white;
+}
+
+.dashview .open-list .li:last-of-type{
+    border-bottom: 0;
 }
