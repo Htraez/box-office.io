@@ -1246,3 +1246,28 @@ form#movie .form-group label{
 .seatform-tab:nth-of-type(even){
     background: #ffffff0a!important;
 }
+
+.xtra-ol li label{
+    width: 100%;
+    display: block;
+    margin: 0;
+}
+.xtra-ol li{
+    padding: 0!important;
+}
+.xtra-ol li label input{
+    height: 0;
+    width: 0;
+    border: 0;
+    padding: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+.xtra-ol li input+div{
+    padding: 0 7px;
+}
+.xtra-ol li input:checked+div{
+    background: white!important;
+    opacity: 1!important;
+    color: black;
+}

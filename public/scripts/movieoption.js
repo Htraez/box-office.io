@@ -1,5 +1,9 @@
 $(this).addClass('selected').siblings().removeClass('selected');
 
+$(document).on("click","#callDeleteCouponForm",function(e){e.stopPropagation();});
+$(document).on("click","#showMovieCoupon",function(e){e.stopPropagation();});
+$(document).on("click","#showBranchCoupon",function(e){e.stopPropagation();});
+
 function callCouponForm(err,CouponCode = null) {
     
     //Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
@@ -113,7 +117,7 @@ function toggle(source) {
 
 function addListMovieTable(data) {
     data.forEach((value, key) => {
-        var tableRowappend = '<label class="container text-left"><input class="form-check-input" type="checkbox" name="movieInput" value = "'+value.MovieNo+'" /> '+value.MovieName+'<br/></label>'
+        var tableRowappend = '<li><label><input class="form-check-input" type="checkbox" name="movieInput" value = "'+value.MovieNo+'"/><div>'+value.MovieName+'</div></label></li>'
         $("#listMovieTable").append(tableRowappend);
     });
 }
@@ -136,7 +140,7 @@ function toggle1(source) {
 function addBranchList(){
     $.get('/fetchData/branch/none',(data)=>{
             data.forEach((value,key)=>{
-            $("#TheatreBranchTable").append('<label class="container text-left"><input class="form-check-input" type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /> '+value.BranchName+'<br/></label>');
+            $("#TheatreBranchTable").append('<li><label><input class="form-check-input" type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /><div>'+value.BranchName+'</div></label></li>');
         })
     });
 }
@@ -168,6 +172,7 @@ $(document).on("click",".couponTable",function (event){
     $('#viewMinSpend').text("Min Spend :  Baht");
     $('#viewExpireDate').text("Expire Date :  ");
     $('#viewNumberAvialable').text("NumberAvialable :  ");
+    $('#fromBottom').show();
     $('#detailCoupon').show();
     $(this).addClass('selected').siblings().removeClass('selected');
     $.get('/fetchData/coupon/CouponCode='+this.innerHTML,(data)=>{

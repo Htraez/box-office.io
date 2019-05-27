@@ -1,90 +1,63 @@
-<div class="col-4">    
-
-    <h3 class='head-text'>Coupon</h3>
-        <div class="form-group input-sm nooms row mb-4">
-            <label class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Code  </label>
-            <div class="col-md-10 col-sm-10 col-9">
+   
+    <div class='col-12 head-group'>
+        <span class='head-text level1'>Coupon Form</span>
+        <span class='head-text level2'>Create & Assign Coupon to Movie and Branch</span>
+    </div>
+    
+    <div class='col-6'>
+        <div class='head-group small'>
+            <span class='head-text level1'><span class="badge head-text-badge">1</span>Coupon Requirement</span>
+        </div>
+        <div style='border:1px dashed rgba(255, 255, 255, 0.11);border-radius: .25rem;'>
+            <div class="form-group input-sm nooms row mb-4">
+                <label for='CouponCode'>Code</label>
                 <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="CouponCode" name="CouponCode" style="font-size: .7rem; height: 25px;" placeholder="Input Coupon Code">
             </div>
-        </div>
+            
+            <div class="form-group">
+                <label for='DiscountRate'>Discount Rate(%)</label>
+                <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="DiscountRate" name="DiscountRate">
+            </div>
 
-        <div class="form-group input-sm nooms row mb-4">
-            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Discount Rate  </label>
-            <div class="col-md-8 col-sm-7 col-6 pl-0">
-                <div class="input-group">
-                    <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="DiscountRate" name="DiscountRate">
+            <div class="form-group">
+                <label for='MaxDiscount'>Max Discount(THB.-)</label>
+                <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MaxDiscount" name="MaxDiscount">
+            </div>
+
+            <div class="form-group input-sm nooms row mb-4">
+                <label for='ExpireDate'>Expire Date  </label>
+                <input type="date" class="form-control" style="font-size: .7rem; text-align: center; height: 25px;" id="ExpireDate" name="ExpireDate">
+            </div>
+
+            <div class='form-group'>
+                <label for='agegg'>Age  </label>
+                <div class="input-group" id='agegg'>
+                    <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinAge" name="MinAge">
                     <div class="input-gruop-append">
-                        <label class="mt-2 mb-0" for="PlanHeight">   %</label>
+                        <label class="mt-2 mb-0">To</label>
                     </div>
+                    <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MaxAge" name="MaxAge">
+                    <label class="mt-2 mb-0">   Year</label>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <label for='MinSeat'>Min Seat  </label>
+                <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinSeat" name="MinSeat">
+            </div>
+
+            <div class="form-group">
+                <label for='MinSpend'>Min Spend  </label>
+                <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinSpend" name="MinSpend">
+            </div>
+                
+            <div class="form-group">
+                <label for='Number'>Number  </label>
+                <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="Number" name="Number">
             </div>
         </div>
-
-        <div class="form-group input-sm nooms row mb-4">
-            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Max Discount  </label>
-            <div class="col-md-8 col-sm-7 col-6 pl-0">
-                <div class="input-group">
-                    <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MaxDiscount" name="MaxDiscount">
-                    <div class="input-gruop-append">
-                        <label class="mt-2 mb-0" for="PlanWidth">   Baht</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group input-sm nooms row mb-4">
-                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Expire Date  </label>
-                <div class="col-md-8 col-sm-7 col-6 pl-0">
-                    <div class="input-group">
-                            <input type="date" class="form-control" style="font-size: .7rem; text-align: center; height: 25px;" id="ExpireDate" name="ExpireDate">
-                    </div>
-                </div>
-            </div>
-
-        <div class="form-group input-sm nooms row mb-4">
-                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Age  </label>
-                <div class="col-md-8 col-sm-7 col-6 pl-0">
-                    <div class="input-group">
-                        <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinAge" name="MinAge">
-                        <div class="input-gruop-append">
-                            <label class="mt-2 mb-0" >  To  </label>
-                        </div>
-                        <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MaxAge" name="MaxAge">
-                            <div class="input-gruop-append">
-                                <label class="mt-2 mb-0">   Year</label>
-                            </div>
-                    </div>
-                </div>
-            </div>
-
-        <div class="form-group input-sm nooms row mb-4">
-            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Min Seat  </label>
-            <div class="col-md-8 col-sm-7 col-6 pl-0">
-                <div class="input-group">
-                    <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinSeat" name="MinSeat">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group input-sm nooms row mb-4">
-                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Min Spend  </label>
-                <div class="col-md-8 col-sm-7 col-6 pl-0">
-                    <div class="input-group">
-                        <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="MinSpend" name="MinSpend">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group input-sm nooms row mb-4 md-from">
-                    <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Number  </label>
-                    <div class="col-md-8 col-sm-7 col-6 pl-0">
-                        <div class="input-group">
-                            <input type="number" class="form-control text-white pb-0 text-center" style="font-size: .7rem; height: 25px;" value="0" min="0" id="Number" name="Number">
-                        </div>
-                    </div>
-                </div>
-
     </div>
+
     <%- include branchnmovie %> 
 
 
