@@ -111,13 +111,19 @@
             
                 <div class="col-4">
                         <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Coupon List</div>
-                        <ul class="open-list mb-6" id="listCouponTable" style="overflow: auto; height: 300px;"></ul>
+                        <ul class="open-list mb-6" id="listCouponTable" style="overflow: auto; height: 200px;"></ul>
+                        <div class="col">
+                                <div class="mx-auto mt-3 text-left" id="fromBottom" style="display: none;">
+                                    <button type="button" class="btn-white btn-sm" style="display: inline-block;" id="callEditCouponForm">Edit</button>
+                                    <button type="button" data-popup="delete-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeleteCouponForm">Delete</button>  
+                                </div>
+                            </div>
                     </div>
                 
                 <div class="col-8">
                         <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Coupon Detail</br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Coupon to See This Section)</i></div>
 
-                        <ul class='open-list mb-0' style="padding:2px; overflow: auto; width: 600px; height: 200px;">
+                        <ul class='open-list mb-0' style="padding:2px; overflow: auto; width: 600px; height: 250px;">
                         <div class="container-fluid" id="detailCoupon" style="display: none;">
                             <div class="pt-2">Coupon Code : <span id="viewCouponCode"></span></div>
                             <div id="viewDiscountRate">Discount Rate : </div>
@@ -128,21 +134,16 @@
                             <div id="viewMinSpend">Min Spend : </div>
                             <div id="viewExpireDate">Expire Date : </div>
                             <div id="viewNumberAvialable">Nuber Avialable : </div>
+                            <div class="col">
+                                    <div class="mx-auto mt-3 text-center">
+                                        <button type="button" data-popup="movie-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="showMovieCoupon">Movie</button>
+                                        <button type="button" data-popup="branch-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="showBranchCoupon">Branch</button>
+                                    </div>
+                                </div>
                         </div>
                         </ul>
-                        <!--<button type="button" data-popup="detail-coupon-popup" class="btn-white" style="display: inline-block;" id="detailCoupon">More Detail</button>-->
-                        <div class="col">
-                                <div class="mx-auto mt-3 text-center">
-                                    <button type="button" data-popup="movie-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="showMovieCoupon">Movie</button>
-                                    <button type="button" data-popup="branch-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="showBranchCoupon">Branch</button>
-                                </div>
-                            </div>
-                        <div class="col">
-                            <div class="mx-auto mt-3 text-left">
-                                <button type="button" class="btn-white btn-sm" style="display: inline-block;" id="callEditCouponForm">Edit</button>
-                                <button type="button" data-popup="delete-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeleteCouponForm">Delete</button>  
-                            </div>
-                        </div>
+                        
+                        
                     
                 </div>
             

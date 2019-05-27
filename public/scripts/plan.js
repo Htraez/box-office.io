@@ -594,6 +594,8 @@ getPlanList();
 getTheatreList();
 
 $(window).click(function() {
+    $('#fromBottom').hide();
+    $('#detailCoupon').hide();
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
     $('.planTheatre').removeClass('selected bg-secondary');
