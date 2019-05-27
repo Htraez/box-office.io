@@ -96,6 +96,7 @@ function savedata(){
         
     }
     else{
+
         console.log("Error");  
     }
     
@@ -125,7 +126,16 @@ function assignshiftforstaff(){
     }
     if(temp.Date!=""&&temp.StartHH!=""&&temp.StartMM!=""&&temp.StartSS!=""&&temp.EndHH!=""&&temp.EndMM!=""&&temp.EndSS!=""){
         if(temp.StartHH<0||temp.StartHH>24||temp.StartMM<0||temp.StartMM>60||temp.StartSS<0||temp.StartSS>60||temp.EndHH<0||temp.EndHH>24||temp.EndMM<0||temp.EndMM>60||temp.EndSS<0||temp.EndSS>60){
-        console.log("ERROR");
+            iziToast.destroy();
+            iziToast.show({
+                position: "bottomLeft", 
+                icon: "fas fa-exclamation-triangle",
+                title: 'Warning!', 
+                color: 'orange',
+                timeout: 2000,
+                message: 'You forgot to fill addshift form',
+            });
+            console.log("ERROR");
         }
         else{
         console.log("OK");
@@ -133,16 +143,24 @@ function assignshiftforstaff(){
         }
     }
     else{
+        iziToast.destroy();
+            iziToast.show({
+                position: "bottomLeft", 
+                icon: "fas fa-exclamation-triangle",
+                title: 'Warning!', 
+                color: 'orange',
+                timeout: 2000,
+                message: 'You forgot to fill addshift form',
+            });
         console.log("No data");
     }
-    
     addtotable();
 }
 
 function addtotable(){
-    $('#showdatetime').find("li").remove();
+    $('#showdatetime').find("td").remove();
     addshiftshow.forEach((value,key)=>{
-        var addshifttable = "<li><span>Date: '' </span>"+value.Date+" ''&emsp;&emsp;<span>Start : "+value.StartHH+":"+value.StartMM+":"+value.StartSS+" </span>&emsp; End : "+value.EndHH+":"+value.EndMM+":"+value.EndSS+"</li>"
+        var addshifttable = "<tr><td class='table-center'>"+value.Date+"</td><td class='table-center'>"+value.StartHH+":"+value.StartMM+":"+value.StartSS+"</td><td class='table-center'>"+value.EndHH+":"+value.EndMM+":"+value.EndSS+"</td></tr>";
         $('#showdatetime').append(addshifttable);   
     })
     
@@ -172,20 +190,19 @@ $.get('/shiftapplies/All',(data)=>{
             deletenamestaff = nameParent;
             $('#detailstaff').show();
             $('#showdetailstaff').show();            
-            $("#detailstaff li").siblings().hide(); // ซ่อน Sibling
-            $("#detailstaff li[data-name='"+nameParent+"']").show(); // โชว์ children
+            $("#detailstaff tr").siblings().hide(); // ซ่อน Sibling
+            $("#detailstaff tr[data-name='"+nameParent+"']").show(); // โชว์ children
             $('#button-name').show();
             
         });
 
-
         shiftObj[staffNo].forEach((shift, i)=>{
-                var shiftdetail = "<li data-name='"+staffNo+"' data-shift='"+shift.ShiftNo+"'>Date: "+new Date(shift.Day).getDate()+'/'+(new Date(shift.Day).getMonth()+1)+'/'+new Date(shift.Day).getFullYear()+"&emsp; Start: "+shift.StartTime+"&emsp; End:"+shift.EndTime+"</li>";
+                var shiftdetail = "<tr data-name='"+staffNo+"' data-shift='"+shift.ShiftNo+"' class='shiftTable'><td class='table-center'>"+new Date(shift.Day).getDate()+'/'+(new Date(shift.Day).getMonth()+1)+'/'+new Date(shift.Day).getFullYear()+"</td><td class='table-center'>"+shift.StartTime+"</td><td class='table-center'>"+shift.EndTime+"</td></tr>";
                 $("#detailstaff").append(shiftdetail);
                 $("#detailstaff").children().last().hide(); //ซ่อนทั้งหมด
                 $("#detailstaff").children().last().off('click').click(function(e){
-                    SelectStaffElement[1] = shift.ShiftNo ;
-                    $(this).addClass('selected').siblings().removeClass('selected');
+                SelectStaffElement[1] = shift.ShiftNo ;
+                $(this).addClass('selected').siblings().removeClass('selected');
                     // var data = $(this).data('shift');
                     // console.log(data);
                     // deleteshiftstaff = data;

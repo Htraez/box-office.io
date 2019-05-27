@@ -594,12 +594,15 @@ function getTheatreList(){
     $.get('/fetchData/theatre/none',(data)=>{
             addListPlanTable(data,0);
             Theatredata = data;
+            $(".planTheatre").hide();
     });
 }
 getPlanList();
 getTheatreList();
 
 $(window).click(function() {
+    $('#fromBottom').hide();
+    $('#detailCoupon').hide();
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
     $('.planTheatre').removeClass('selected bg-secondary');

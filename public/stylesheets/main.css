@@ -1109,6 +1109,7 @@ input:read-only, textarea:read-only{
 
 td.table-center, th.table-center{
     text-align: center;
+    vertical-align: middle !important;
 }
 
 .sched-table{
@@ -1245,4 +1246,9 @@ form#movie .form-group label{
 }
 .seatform-tab:nth-of-type(even){
     background: #ffffff0a!important;
+}
+
+table tr.selected {
+    background: white;
+    color: #000;
 }
