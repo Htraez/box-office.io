@@ -450,8 +450,6 @@ router.get('/fetchData/:table/:condition', (req,res) => {
         });
 });
 
-<<<<<<< HEAD
-=======
 router.get('/fetchDataMovie',(req,res)=>{
     console.log("movieWithSchedule");
     var sql = "SELECT * FROM `movie`, `schedule` where schedule.MovieNo = movie.MovieNo ORDER BY schedule.Date DESC";
@@ -462,7 +460,6 @@ router.get('/fetchDataMovie',(req,res)=>{
 });
 
 
->>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
 router.post('/seatclass', (req,res) => {
     var data = req.body;
     var use = 0;
@@ -579,8 +576,6 @@ router.post('/register',(req,res)=>{
     console.log(data);
 })
 
-<<<<<<< HEAD
-=======
 router.get('/analysis/:number',(req,res)=>{
     var sql = [
         "SELECT t.BranchName, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b  WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo GROUP BY sh.MovieNo , th.BranchNo ) AS t GROUP BY t.BranchName",
@@ -604,7 +599,6 @@ router.get('/analysis/:number',(req,res)=>{
             res.send(resp.rows);
         })
 })
->>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
 
 //=======================
 
@@ -714,23 +708,8 @@ router.post("/staff/update",(req,res)=>{
 router.post("/staff", (req, res) =>{
     console.log("staff");
     var data = req.body;
-<<<<<<< HEAD
     var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
                 data.staff.FirstName+"','"+ data.staff.MidName+"','"+data.staff.LastName+"','"+data.staff.BirthDay+"','"+data.staff.CitizenID+"','"+data.staff.Gender+"','"+data.staff.HighestEdu+"','"+data.staff.ImageURL+"','"+data.staff.DateEmployed+"','"+data.staff.Address+"','"+data.staff.PhoneNumber+"','"+data.staff.Marital+"','"+data.staff.Position+"','"+data.staff.BranchNo+"')";
-=======
-    var planWithSchedule =[];
-    var SeatClass =[];
-    var movieNo=data.Movie.MovieNo;
-    var total=0;
-    console.log(data)
-    var sql;
-        sql ="INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES"
-    data.schedule.forEach((value)=>{
-        sql += "('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
-    })
-    sql= sql.substring(0, sql.length-1)
-    console.log(sql)
->>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
     mysql.connect(sql)
         .then((resp)=>{
             var insertID  = { staffid : resp.insertId , shiftid:""}
