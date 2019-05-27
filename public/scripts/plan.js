@@ -1,9 +1,9 @@
-var Theatre = [];
+var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
 var Plandata = [];
 var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
-    Thcount=0
+    Thcount=1
     nowTH=0;
 var renderCount = [1,1,1,1];
 var Theatredata = [];
@@ -16,7 +16,7 @@ function addTable(data) {
          tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
         tableRowappend += '</tr>';
         Thcount++;
-        if(value.Detail.Type!='Delete')$("#MyTableTr").append(tableRowappend);
+        if(value.Detail.Type!='Delete'||key!=0)$("#MyTableTr").append(tableRowappend);
     });
     $('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
 }
@@ -130,12 +130,15 @@ function addBranchOption(){
 
 function planH(){
     PlanHeight = parseFloat(document.getElementById("PlanHeight").value);
+    if(PlanHeight<0) PlanHeight = 0;
     $('#showH')[0].childNodes[0].data = 'Plan Height '+PlanHeight+' m.';
     document.getElementById("PlanHeight").value = PlanHeight;
 }
 
 function planW(){
     PlanWidth = parseFloat(document.getElementById("PlanWidth").value);
+    if(PlanWidth>30) PlanWidth = 30;
+    else if(PlanWidth<0) PlanWidth = 0;
     $('#showW')[0].childNodes[0].data = 'Plan Width '+PlanWidth+' m.';
     document.getElementById("PlanWidth").value = PlanWidth;
     reRenderSeat();
@@ -197,7 +200,7 @@ function appendSeatTH(num){
         }
         var SeatClassData = SeatClass.find((val)=>{ return val.ClassName==$('#SeatClass'+num).val()});
         if(PlanHeight-use>=SeatClassData.Height && SeatClassData.Width<=PlanWidth){
-            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-between" >'
+            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-center" >'
             for (let i = 0; i < PlanWidth/SeatClassData.Width; i++) {
                 seat += '<span class="dot ml-1 mr-1"></span>';
             }
@@ -206,6 +209,8 @@ function appendSeatTH(num){
             $('#render'+num).append(seat);
             renderCount[num-1]++;
             changeValR(1,num);
+            let a = $('#render').offset().left + $('#render').width() / 2;
+            $('#RenderHeight').scrollLeft(a);
         }
     }
     return 1;
@@ -270,7 +275,7 @@ function sentPlanForm() {
         NoRow3: $('#NoRow3').val(),
         SeatClass4: $('#SeatClass4').val(),
         NoRow4: $('#NoRow4').val(),
-        Theatre: temp.slice(1,temp.length)
+        Theatre: temp
     };
     var testP = {SeatClassData : [...SeatClass]};
     if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0 && payload.NoRow1>0){
