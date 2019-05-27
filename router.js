@@ -631,6 +631,9 @@ router.get('/staff/deletename/:name',(req,res)=>{
         });
 })
 
+router.post("/staff/update",(req,res)=>{
+    var data = req.body;
+})
 
 router.post("/staff", (req, res) =>{
     var data = req.body;
