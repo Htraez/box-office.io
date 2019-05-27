@@ -116,30 +116,30 @@
         <div class="row justify-content-start align-items-center">
             
                 <div class="col-4">
-                        <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Coupon List</div>
-                        <ul class="open-list mb-6" id="listCouponTable" style="overflow: auto; height: 200px;"></ul>
-                        <div class="col">
-                                <div class="mx-auto mt-3 text-left" id="fromBottom" style="display: none;">
-                                    <button type="button" class="btn-white btn-sm" style="display: inline-block;" id="callEditCouponForm">Edit</button>
-                                    <button type="button" data-popup="delete-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeleteCouponForm">Delete</button>  
-                                </div>
-                            </div>
+                    <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Coupon List</div>
+                    <ul class="open-list mb-6" id="listCouponTable" style="overflow: auto; height: 200px;"></ul>
+                    <div class="col">
+                        <div class="mx-auto mt-3 text-left" id="fromBottom" style="justify-content: center;display: flex;flex-direction: column;display: none;">
+                            <button type="button" class="btn-white btn-sm" style="display: inline-block;" id="callEditCouponForm">Edit</button>
+                            <button type="button" data-popup="delete-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeleteCouponForm">Delete</button>  
+                        </div>
                     </div>
+                </div>
                 
                 <div class="col-8">
                         <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Coupon Detail</br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Coupon to See This Section)</i></div>
 
                         <ul class='open-list mb-0' style="padding:2px; overflow: auto;">
                         <div class="container-fluid" id="detailCoupon" style="display: none;">
-                            <div class="pt-2">Coupon Code : <span id="viewCouponCode"></span></div>
-                            <div id="viewDiscountRate">Discount Rate : </div>
-                            <div id="viewMaxDiscount">Max Discount : </div>
-                            <div id="viewMinAge">Min Age : </div>
-                            <div id="viewMaxAge">Max Age : </div>
-                            <div id="viewMinSeat">Min Seat : </div>
-                            <div id="viewMinSpend">Min Spend : </div>
-                            <div id="viewExpireDate">Expire Date : </div>
-                            <div id="viewNumberAvialable">Nuber Avialable : </div>
+                            <div class="pt-2"><strong>Coupon Code : </strong><span id="viewCouponCode"></span></div>
+                            <div id="viewDiscountRate"><strong>Discount Rate : </strong></div>
+                            <div id="viewMaxDiscount"><strong>Max Discount : </strong></div>
+                            <div id="viewMinAge"><strong>Min Age : </strong></div>
+                            <div id="viewMaxAge"><strong>Max Age : </strong></div>
+                            <div id="viewMinSeat"><strong>Min Seat : </strong></div>
+                            <div id="viewMinSpend"><strong>Min Spend : </strong></div>
+                            <div id="viewExpireDate"><strong>Expire Date : </strong></div>
+                            <div id="viewNumberAvialable"><strong>Nuber Avialable : </strong></div>
                             <div class="col">
                                     <div class="mx-auto mt-3 text-center">
                                         <button type="button" data-popup="movie-coupon-popup" class="btn-white btn-sm" style="display: inline-block;" id="showMovieCoupon">Movie</button>
