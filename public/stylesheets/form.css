@@ -23,6 +23,11 @@ input[type="text"], input[type="number"], select, textarea {
     border-radius: 1.5rem !important;
 }
 
+.noom { padding:2px solid #ccc; width:300px; height: 200px; overflow-y: scroll;}
+
+.nooms { padding:2px solid #ccc; width:300px; overflow-y: scroll;}
+
+
 .default-mouse {
     cursor: default !important;
 }
@@ -60,9 +65,4 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: #bbb;
     border-radius: 50%;
     display: inline-block;
-<<<<<<< HEAD
 }
-
-=======
-}
->>>>>>> 08f4bc43b7a2bdfca39f3ce07dcf12e24979bf92
