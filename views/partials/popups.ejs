@@ -131,6 +131,103 @@
         </div>
     </div>
 </div>
+
+<!--===========================CouponPopup=====================================-->
+<div class="popup-area" id='delete-coupon-popup' style='display: none;'>
+    <div class="popup-window col-xs-8 col-md-4">
+        <div class="popup-head">
+            <span id='popup-head-text'>Delete Coupon</span>
+            <span id='popup-close'><i class="fas fa-times"></i></span>
+        </div>
+        <div class="popup-body" style="flex-basis: auto;max-height: 80vh;overflow-y: visible;">  
+            <div class="popup-head">
+                <p id='popup-head-text'>Are you sure to delete ?</p>
+            </div>
+            <div class="row">
+                <div class="mx-auto mt-3 text-center">
+                    <button type="button" id="confirmDeleteCoupon" class="btn btn-white btn-outline-light mr-5" style="border-radius: 0 !important;">Yes</button>
+                    <button type="button" id='popup-close' class="btn btn-white btn-outline-light" style="border-radius: 0 !important; position: initial;">No</button>  
+                </div>
+            </div>
+        </div>
+        <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+            
+        </div>
+    </div>    
+</div>
+
+<div class="popup-area" id='movie-coupon-popup' style='display: none;'>
+        <div class="popup-window col-xs-8 col-md-4">
+            <div class="popup-head">
+                <span id='popup-head-text'>Coupon Movie Detail</span>
+                <span id='popup-close'><i class="fas fa-times"></i></span>
+            </div>
+            <div class="popup-body" style="flex-basis: auto;max-height: 80vh;overflow-y: visible;">  
+                <ul class="open-list mb-0" id="listCouponMovieTable" style="overflow: auto; height: 160px;"></ul>
+                </div>
+                <div class="row">
+                    <div class="mx-auto mt-3 text-center">
+                        <button type="button" id='popup-close' class="btn btn-white btn-outline-light" style="border-radius: 0 !important; position: initial;">Back</button>  
+                    </div>
+                </div>
+            </div>
+            <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+                
+            </div>
+        </div>    
+    </div>
+
+    <div class="popup-area" id='branch-coupon-popup' style='display: none;'>
+            <div class="popup-window col-xs-8 col-md-4">
+                <div class="popup-head">
+                    <span id='popup-head-text'>Coupon Branch Detail</span>
+                    <span id='popup-close'><i class="fas fa-times"></i></span>
+                </div>
+                <div class="popup-body" style="flex-basis: auto;max-height: 80vh;overflow-y: visible;">  
+                    <ul class="open-list mb-0" id="listCouponBranchTable" style="overflow: auto; height: 160px;"></ul>
+                    </div>
+                    <div class="row">
+                        <div class="mx-auto mt-3 text-center">
+                            <button type="button" id='popup-close' class="btn btn-white btn-outline-light" style="border-radius: 0 !important; position: initial;">Back</button>  
+                        </div>
+                    </div>
+                </div>
+                <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+                    
+                </div>
+            </div>    
+        </div>
+
+        <div class="popup-area" id='detail-coupon-popup' style='display: none;'>
+                <div class="popup-window col-xs-8 col-md-4" id="detailCoupon">
+                    <div class="popup-head">
+                        <span id='popup-head-text'>Coupon Detail</span>
+                        <span id='popup-close'><i class="fas fa-times"></i></span>
+                    </div>
+                    <div class="container-fluid border border-light" id="detailCoupon" >
+                            <h6 class="pt-2">Coupon Code : <span id="viewCouponCode"></span></h6>
+                            <h6 id="viewDiscountRate">Discount Rate : </h6>
+                            <h6 id="viewMaxDiscount">Max Discount : </h6>
+                            <h6 id="viewMinAge">Min Age : </h6>
+                            <h6 id="viewMaxAge">Max Age : </h6>
+                            <h6 id="viewMinSeat">Min Seat : </h6>
+                            <h6 id="viewMinSpend">Min Spend : </h6>
+                            <h6 id="viewExpireDate">Expire Date : </h6>
+                            <h6 id="viewNumberAvialable">Nuber Avialable : </h6>
+                        </div>
+                        <div class="row">
+                            <div class="mx-auto mt-3 text-center">
+                                <button type="button" id='popup-close' class="btn btn-white btn-outline-light" style="border-radius: 0 !important; position: initial;">Back</button>  
+                            </div>
+                        </div>
+                    </div>
+                    <div class="popup-footer" style='justify-content: space-between;height: fit-content;'>
+                        
+                    </div>
+                </div>    
+            </div>
+<!--===========================CouponPopup=====================================-->
+
 <!-- You can write your own popup by copying the boilerplate below and add your data as you wish -->
 <!-- =======================
 Please Note: Replace 'yourname-popup' in 'popup-area' div to the name of your choice
