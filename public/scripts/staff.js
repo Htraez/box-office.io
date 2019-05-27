@@ -3,10 +3,14 @@ var shiftAppliesData = [];
 var deleteshiftstaff = [];
 var deletenamestaff = [];
 var SelectStaffElement = [];
+var oldDay = null;
+var isEditStaffForm = 0;
+var staffnotemp ; 
 
-function staffForm(){
+function staffForm(e,call = 0){
     $("#staffForm").show();
     $(".content-view").hide();
+    isEditStaffForm=call;
 }
 
 function cancelStaff(){
@@ -33,7 +37,29 @@ function editbutton(){
     $("#addShift2").show();
 }
 
+var Filter=[]
+function getnewdata(){
+        addshiftshow.forEach((val)=>{
+        if(val.Detail) Filter.push(val);
+    })
+}
+
+function pageRedirectT() {
+    window.location.href = "http://localhost:8000/admin";
+} 
+
 function savedata(){
+    iziToast.show({
+        position: "topCenter", 
+        iconUrl: '/assets/images/load_placeholder.svg',
+        title: 'Saving Data', 
+        color: 'blue',
+        message: 'Please Wait',
+        timeout: false,
+        overlay: true,
+        close: false
+    });
+    getnewdata();
     var payload ={
         staff:{
             FirstName:$("#firstName").val(),
@@ -50,17 +76,28 @@ function savedata(){
             Marital:$("#marital").val(),
             Position:$("#position").val(),
             BranchNo:$("#branchNo").val(),
+            StaffNo:staffnotemp
         },
-        shift: [...addshiftshow]
+        shift: [...Filter]
     }
     if(payload.staff.FirstName&&payload.staff.LastName&&payload.staff.BirthDay&&payload.staff.CitizenID&&payload.staff.Gender&&payload.staff.HighestEdu&&payload.staff.ImageURL&&payload.staff.DateEmployed&&payload.staff.Address&&payload.staff.PhoneNumber&&payload.staff.Marital&&payload.staff.Position&&payload.staff.BranchNo){
         console.log(payload);
-        $.post("/staff",payload,(res)=>{
-            //ช่องว่างไว้ใส่ฟังก์ชันที่เราต้องการเรียกใช้หลังจากส่งข้อมูลเสร็จ
-        });
+        if(isEditStaffForm == 0){
+            $.post("/staff",payload,(res)=>{
+                pageRedirectT();
+            });
+        }
+        else{
+            $.post("/staff/update",payload,(res)=>{
+                pageRedirectT();
+            })
+            console.log("payload",payload);
+        }
+        
     }
     else{
-        console.log("Error");  }
+        console.log("Error");  
+    }
     
 }
 
@@ -72,6 +109,8 @@ function fetchbranchforstaff(){
     });
 }
 
+
+
 function assignshiftforstaff(){
     
     var temp = {
@@ -81,16 +120,14 @@ function assignshiftforstaff(){
         StartSS: $('#SSstartTime').val(),
         EndHH: $('#HHendTime').val(),
         EndMM: $('#MMendTime').val(),
-        EndSS: $('#SSendTime').val()
+        EndSS: $('#SSendTime').val(),
+        Detail:"New"
     }
     if(temp.Date!=""&&temp.StartHH!=""&&temp.StartMM!=""&&temp.StartSS!=""&&temp.EndHH!=""&&temp.EndMM!=""&&temp.EndSS!=""){
         if(temp.StartHH<0||temp.StartHH>24||temp.StartMM<0||temp.StartMM>60||temp.StartSS<0||temp.StartSS>60||temp.EndHH<0||temp.EndHH>24||temp.EndMM<0||temp.EndMM>60||temp.EndSS<0||temp.EndSS>60){
         console.log("ERROR");
         }
         else{
-            if(temp.StartHH<10||temp.StartMM<10||temp.StartSS<10||temp.EndHH<10||temp.EndMM<10||temp.EndSS<10){
-                $('#HHstartTime').val()
-            }
         console.log("OK");
         addshiftshow.push(temp);
         }
@@ -104,51 +141,12 @@ function assignshiftforstaff(){
 
 function addtotable(){
     $('#showdatetime').find("li").remove();
-    addshiftshow.forEach((value)=>{
+    addshiftshow.forEach((value,key)=>{
         var addshifttable = "<li><span>Date: '' </span>"+value.Date+" ''&emsp;&emsp;<span>Start : "+value.StartHH+":"+value.StartMM+":"+value.StartSS+" </span>&emsp; End : "+value.EndHH+":"+value.EndMM+":"+value.EndSS+"</li>"
         $('#showdatetime').append(addshifttable);   
     })
     
 }
-
-
-// function addListStaff(data) {
-// data.forEach((value) => {
-//     //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
-//     var shifttableappend = "<li class='staffList' value='"+value.StaffNo+"'>"+value.FirstName+"&emsp;"+value.LastName+"</li>";
-//     $("#listStaff").append(shifttableappend);
-//     });
-// //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
-// }
-
-// function getStaffList(){
-//     $.get('/fetchData/staff/none',(data)=>{
-//             addListStaff(data);
-//     });
-// }
-
-//showstaffshift(data2)
-
-// $(document).on("click",".staffList",function(event){
-//     $('#detailstaff').show();
-//     $.get('/fetchData/shiftapplies/StaffNo='+this.getAttribute("value"),(data)=>{
-       
-//         });
-//     });
-// })
-
-// data.forEach((value)=>{
-//     $.get('/fetchData/shift/ShiftNo='+value.ShiftNo,(data2)=>{
-//         console.log(value.ShiftNo)
-//         console.log(data2);
-//         data2.forEach((value)=>{
-//             var shiftdetail = "<li class='detailshift''>"+new Date(value.Day).getDate()+'/'+(new Date(value.Day).getMonth()+1)+'/'+new Date(value.Day).getFullYear()+"&emsp;"+value.StartTime+"&emsp;"+value.EndTime+"</li>";
-//             $("#detailstaff").append(shiftdetail);
-//         })
-        
-//         //showstaffshift(data2);
-
-//     })
 
 let shiftObj = {};
 $.get('/shiftapplies/All',(data)=>{
@@ -251,10 +249,13 @@ $(document).on("click","#deleteshift",function(event){
     console.log(SelectStaffElement[1]);
 });
 
-function editshift(){
-    staffForm();
+
+
+function editshift(e){
+    staffForm(e,1);
     console.log(shiftObj[SelectStaffElement[0]]);
     var getdata = shiftObj[SelectStaffElement[0]];
+    staffnotemp = getdata[0].StaffNo;
     console.log(getdata);
     $("#firstName").val(getdata[0].FirstName);
     $("#midName").val(getdata[0].MidName.replace("undefined",""));
@@ -277,7 +278,7 @@ function editshift(){
      
     
     getdata.forEach((value)=>{
-       // console.log(value);
+        console.log('value',value);
         var start = value.StartTime.split(':');
         var end = value.EndTime.split(':');
         var temp = value.Day.split("T");
@@ -293,7 +294,8 @@ function editshift(){
         console.log(temp);
         addshiftshow.push(temp);
     });
-    addtotable()
+    addtotable();
+    
 }
 
 
@@ -308,4 +310,4 @@ $(document).on("click","#back",back);
 fetchbranchforstaff();
 //getStaffList();
 $(document).on("click","#savedata",savedata);
-$(document).on("click","#assignShift",assignshiftforstaff)
+$(document).on("click","#assignShift",assignshiftforstaff)  
