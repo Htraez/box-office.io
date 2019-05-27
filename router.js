@@ -525,7 +525,7 @@ router.get('/fetchData/:table/:condition', (req,res) => {
 
 router.get('/fetchDataMovie',(req,res)=>{
     console.log("movieWithSchedule");
-    var sql = "SELECT * FROM `movie`, `schedule` where schedule.MovieNo = movie.MovieNo ORDER BY schedule.Date ASC";
+    var sql = "SELECT * FROM `movie`, `schedule` where schedule.MovieNo = movie.MovieNo ORDER BY schedule.Date DESC";
     mysql.connect(sql)
         .then((resp)=>{
             res.send(resp.rows);
