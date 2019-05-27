@@ -130,8 +130,7 @@ function showmovie(data) {
                     }
          });
          $("[data-st='Now']").show();
-         $('body').on('change','#SelectMovieShow',function(){
-            console.log("ok");  
+         $('body').on('change','#SelectMovieShow',function(){  
             let str = this.value;
               console.log(str);
              $("[data-st="+str+"]").show();

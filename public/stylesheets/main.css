@@ -1037,3 +1037,13 @@ input:read-only, textarea:read-only{
     font-size: .65rem;
     padding: 2px;
 }
+
+#m-schedule-table.non-select li:hover{
+    background: transparent;
+    cursor: unset;
+}
+
+#m-schedule-table table tr.selected{
+    background: white;
+    color: black;
+}
