@@ -716,6 +716,7 @@ input[disabled], input[disabled]:hover{
 .open-list li{
     padding-left: 5px;
     border-radius: .1rem;
+    border-bottom: 1px solid #ffffff2e;
     animation: showNav .3s ease-in-out;
     -webkit-animation: showNav .3s ease-in-out;
     -webkit-border-radius: .1rem;
