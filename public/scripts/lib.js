@@ -108,7 +108,7 @@ class ticketingProcess {
                     required: ""
                 },
                 scheduleNo:{
-                    required: "Please select a schedule to continue"
+                    required: ""
                 },
                 userEmail:{
                     required: "Please enter your email address"
