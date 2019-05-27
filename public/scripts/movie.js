@@ -13,7 +13,7 @@ function ScheduleInfo(cl,data) {
     $("#Schedule").find('tr').remove();
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<tr value="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+value.Date+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td>'+value.Dimension+'</td><td>'+value.Subtitle+'</td></tr>'); 
+                $("#Schedule").append('<tr data-st="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+value.Date+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td>'+value.Dimension+'</td><td>'+value.Subtitle+'</td></tr>'); 
             }
     });
     
@@ -349,8 +349,8 @@ function select_Movie(){
 function select_Schedule(){
     
     $(this).addClass('selected').siblings().removeClass('selected')
-    console.log(this.value);
-    Schedule_select =(this.value);
+    console.log(this.getAttribute("data-st"));
+    Schedule_select =(this.getAttribute("data-st"));
     console.log(Schedule_select);
 
 }

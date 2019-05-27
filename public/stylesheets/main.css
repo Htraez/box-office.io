@@ -1037,3 +1037,8 @@ input:read-only, textarea:read-only{
     font-size: .65rem;
     padding: 2px;
 }
+
+#m-schedule-table table tr.selected{
+    background:white;
+    color: #000
+}
