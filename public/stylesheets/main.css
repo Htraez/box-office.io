@@ -1027,10 +1027,16 @@ input:read-only, textarea:read-only{
 #m-schedule-table{
     height: 250px;
     overflow-y: scroll;
+    background: #ffffff1f;
+}
+
+#m-schedule-table table tbody{
+    background: black;
 }
 
 #m-schedule-table table tr th{
     font-size: .7rem;
+    color: black!important;
 }
 
 #m-schedule-table table tr td{
@@ -1100,6 +1106,9 @@ td.table-center, th.table-center{
     text-align: center;
 }
 
+.sched-table{
+    border-bottom: 1px solid white!important;
+}
 .sched-table tr{
     animation: showNav 250ms ease-in-out both;
     -webkit-animation: showNav 250ms ease-in-out both;
@@ -1107,6 +1116,8 @@ td.table-center, th.table-center{
 
 .sched-table tr th{
     border-right: 1px solid black;
+    color: black!important;
+    z-index: 90!important;
 }
 
 .sched-table thead tr:last-child{
