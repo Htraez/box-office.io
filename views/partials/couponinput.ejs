@@ -1,0 +1,99 @@
+<style>
+    .form-group { padding:2px solid #ccc; width:300px; overflow-y: scroll;}
+    </style>
+
+<div class="container-fluid">
+<div class="row">
+    <div class="container col-xl-3 col-lg-4 col-md-5 col-sm-5 col-6 ">    
+
+        <h3 class='head-text'>Coupon</h3>
+        <div class="form-group row mb-4">
+            <label class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Code</label>
+            <div class="col-md-10 col-sm-10 col-9">
+                <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="CouponCode" name="CouponCode">
+            </div>
+        </div>
+
+        <div class="form-group row mb-4">
+            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Discount Rate</label>
+            <div class="col-md-8 col-sm-7 col-6 pl-0">
+                <div class="input-group">
+                    <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="DiscountRate" name="DiscountRate">
+                    <div class="input-gruop-append">
+                        <label class="mt-2 mb-0" for="PlanHeight">%</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mb-4">
+            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Max Discount</label>
+            <div class="col-md-8 col-sm-7 col-6 pl-0">
+                <div class="input-group">
+                    <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="MaxDiscount" name="MaxDiscount">
+                    <div class="input-gruop-append">
+                        <label class="mt-2 mb-0" for="PlanWidth">Baht</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mb-4">
+                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Expire Date</label>
+                <div class="col-md-8 col-sm-7 col-6 pl-0">
+                    <div class="input-group">
+                            <input type="date" class="form-control" id="ExpireDate" name="ExpireDate">
+                    </div>
+                </div>
+            </div>
+
+        <div class="form-group row mb-4">
+                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Age</label>
+                <div class="col-md-8 col-sm-7 col-6 pl-0">
+                    <div class="input-group">
+                        <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="MinAge" name="MinAge">
+                        <div class="input-gruop-append">
+                            <label class="mt-2 mb-0" for="PlanWidth">To</label>
+                        </div>
+                        <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="MaxAge" name="MaxAge">
+                            <div class="input-gruop-append">
+                                <label class="mt-2 mb-0" for="PlanWidth">Year</label>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+        <div class="form-group row mb-4">
+            <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Min Seat</label>
+            <div class="col-md-8 col-sm-7 col-6 pl-0">
+                <div class="input-group">
+                    <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="MinSeat" name="MinSeat">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row mb-4">
+                <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Min Spend</label>
+                <div class="col-md-8 col-sm-7 col-6 pl-0">
+                    <div class="input-group">
+                        <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="MinSpend" name="MinSpend">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-4">
+                    <label class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Number</label>
+                    <div class="col-md-8 col-sm-7 col-6 pl-0">
+                        <div class="input-group">
+                            <input type="number" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="Number" name="Number">
+                        </div>
+                    </div>
+                </div>
+
+    </div>
+    <%- include branchnmovie %> 
+</div>
+
+</div>
+
+        
