@@ -1,6 +1,6 @@
 var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
 var Plandata = [];
-var oldBranchName=null;
+var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
     Thcount=0
@@ -45,6 +45,7 @@ function removeTh(id){
 
 function editTh(id){
     $('#Th'+id).addClass('bg-secondary').siblings().removeClass('bg-secondary');
+    noweditP = Theatre[id].Name;
     if(id>0){
         $('#NameTheatre').val(Theatre[id].Name);
         $('#TheatreBranch').val(Theatre[id].Branch);
@@ -65,7 +66,7 @@ function saveTheatre(){
     var data = {Name:$('#NameTheatre').val(), Branch:$('#TheatreBranch').val(),Detail:{Type:'Create',Old:''}}
     if(data.Name!='' && data.Branch){
         $.get('/fetchData/theatre/TheatreCode='+data.Name,(getdata)=>{
-            if(getdata.length==0&&!(Theatre.find((val)=>{ return val.Name==data.Name}))){
+            if(getdata.length==0&&!(Theatre.find((val)=>{ return val.Name==data.Name}))||(noweditP==data.Name)){
                 $('#NameTheatre').val('');
                 if(nowTH==0){
                     addTable([data]);
@@ -556,6 +557,7 @@ getPlanList();
 $(window).click(function() {
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
+<<<<<<< HEAD
 });
 
 /*
@@ -578,3 +580,6 @@ GROUP BY t.Genre
 3.อายุของลูกค้าต่อ Genre ต่าง ๆ ของหนัง
 --sql--
 */
+=======
+});
+>>>>>>> f253ba7c144744dbe097b8e09c056433c80c69cc

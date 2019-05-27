@@ -8,10 +8,10 @@
             <div class='head-group' data-color='red' style='padding: 0;border: 1px solid white; margin:3px 0;'>
                 <div class='head-group-highlight'>Movie Schedule</div>
                 <div class='head-group-content' style='padding: 7px 10px;'>
-                    <span class='head-text blk'>Movie Name: <%= data.MovieName%>  <span class='badge head-text-badge'><%= data.Dimension%></span></span>
-                    <span class='head-text blk'>Branch: <%= data.Branch%></span>
-                    <span class='head-text blk'>Schedule: Date (<%= data.PlayDate%>) | Time (<%= data.PlayTime%>)</span>
-                    <span class='head-text blk'>Theatre: <%= data.TheatreName%></span>    
+                    <span class='head-text blk'><strong>Movie Name:</strong> <%= data.MovieName%>  <span class='badge head-text-badge'><%= data.Dimension%></span></span>
+                    <span class='head-text blk'><strong>Branch</strong> <%= data.Branch%></span>
+                    <span class='head-text blk'><strong>Schedule:</strong> Date (<%= data.PlayDate%>) | Time (<%= data.PlayTime%>)</span>
+                    <span class='head-text blk'><strong>Theatre:</strong> <%= data.TheatreName%></span>    
                     <span class='head-text' style='margin-top: 7px; margin-bottom: 0;'>
                         <span class='badge head-text-badge'><%= data.Audio%></span>
                         <span class='badge head-text-badge'><%= data.Genre%></span>
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class='head-group' data-color='red' style='padding: 0;border: 1px solid white; margin:3px 0;'>
-                <div class='head-group-highlight'>Seat Selection</div>
+                <div class='head-group-highlight'>Ticket(s)</div>
                 <div class='head-group-content' style='padding: 7px 10px;'>
                     <%Object.keys(data.SeatList).forEach((className)=>{%>
                     <div>

@@ -45,7 +45,7 @@ $(document).ready(function(){
                     title: 'Cha-ching!~ ',
                     class: 'ticketSuccess',
                     icon: 'fas fa-ticket-alt',
-                    message: 'This Is Your Ticket',
+                    message: 'This Is Your Reservation',
                     position: 'topCenter',
                     color: 'green',
                     displayMode: 1,
@@ -58,6 +58,9 @@ $(document).ready(function(){
             
         }
     }
+    // if(typeof webState.role != 'undefined'){
+    //     if(webState.role )
+    // }
 });
 
 $(document).on("keydown", "form.preventEnter", function(event) { 
@@ -177,7 +180,6 @@ $(document).on("click","#SubRegForm", function () {
             midname : $('#RegisterMidName').val(),
             lastname : $('#RegisterLastName').val(),
             birthday : $('#RegisterBirthDay').val(),
-            age : $('#RegisterAge').val(),
             gender : $('#RegisterGender').val(),
             C_PId : $('#RegisterCID').val(),
             phone : $('#RegisterPhone').val(),
