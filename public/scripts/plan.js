@@ -6,6 +6,7 @@ var OpSeatCount=1
     Thcount=0
     nowTH=0;
 var renderCount = [1,1,1,1];
+var Theatredata = [];
 
 //-------------------------------------Theatre Function--------------------------------------------
 
@@ -406,6 +407,7 @@ function LoadDataEditForm(PlanName){
 
 function cancelPlan() {
     getPlanList();
+    getTheatreList();
     $('.content-view').show();
     $('.content-form').hide();
     $('#listPlanTable').find('li').remove();
@@ -414,6 +416,7 @@ function cancelPlan() {
     $('#viewPlanWidth').text("Width :  m.");
     $('#viewPlanHeight').text("Height :  m.");
     $('#NameTheatre').val('');
+    $('#SelectPlanOrTheatre').val('Plan');
     oldBranchName=null;
 }
 
@@ -456,10 +459,21 @@ function callPlanForm(event,PlanName = null) {
 
 $(document).on("click","#createPlan", callPlanForm);
 
-function addListPlanTable(data) {
+$('#SelectPlanOrTheatre').on("change", function(){
+    if(this.value != "Plan"){
+        $(".planTable").hide();
+        $(".planTheatre").show();
+    }
+    else{
+        $(".planTable").show();
+        $(".planTheatre").hide();
+    }
+});
+
+function addListPlanTable(data,pRt) {
     data.forEach((value, key) => {
         //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
-        var tableRowappend = "<li class='planTable'>"+value.PlanName+"</li>";
+        var tableRowappend = "<li class='"+((pRt) ? "planTable" : "planTheatre")+"' value="+value.PlanName+">"+((pRt) ? value.PlanName : value.TheatreCode)+"</li>";
         $("#listPlanTable").append(tableRowappend);
     });
     //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
@@ -519,6 +533,19 @@ $(document).on("click",".seatClassTable", function(){
 })
 
 
+$(document).on("click",".planTheatre",function (event){
+    event.stopPropagation();
+    $('#viewPlanName').text('');
+    $('#viewPlanWidth').text("Width :  m.");
+    $('#viewPlanHeight').text("Height :  m.");
+    $('#detailPlan').show();
+    $(this).addClass('selected').siblings().removeClass('selected');
+    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanName);
+    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanWidth+" m.");
+    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanHeight+" m.");
+});
+
+
 $(document).on("click",".planTable",function (event){
     event.stopPropagation();
     $('#viewPlanName').text('');
@@ -526,9 +553,9 @@ $(document).on("click",".planTable",function (event){
     $('#viewPlanHeight').text("Height :  m.");
     $('#detailPlan').show();
     $(this).addClass('selected').siblings().removeClass('selected');
-    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.innerHTML).PlanName);
-    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanWidth+" m.");
-    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanHeight+" m.");
+    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanName);
+    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanWidth+" m.");
+    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanHeight+" m.");
 });
 
 $(document).on("click","#callEditPlanForm",function(event){
@@ -552,13 +579,21 @@ $(document).on("click","#CreateSeatClass", addNewSeat)
 
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{
-            addListPlanTable(data);
+            addListPlanTable(data,1);
             Plandata = data;
     });
 }
+function getTheatreList(){
+    $.get('/fetchData/theatre/none',(data)=>{
+            addListPlanTable(data,0);
+            Theatredata = data;
+    });
+}
 getPlanList();
+getTheatreList();
 
 $(window).click(function() {
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
+    $('.planTheatre').removeClass('selected bg-secondary');
 });

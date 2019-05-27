@@ -37,14 +37,16 @@ function sentCouponForm(data) {
     data.Coupon.DiscountRate<=100 && 
     data.Coupon.ExpireDate!='' &&
     data.Coupon.MinAge<data.Coupon.MaxAge && 
+    data.Coupon.MinAge>=0 &&
+    data.Coupon.MaxAge>0 &&
     data.Coupon.MinSeat>=0 &&
     typeof data.Coupon.MinSeat == "number" &&
     data.Coupon.MinSpend>=0 &&
     data.Coupon.Number>=0 &&
     typeof data.Coupon.Number == "number" &&
     data.Coupon.MaxDiscount>0 &&
-    data.MovieInput.length>=0 &&
-    data.BranchInput.length>=0) {
+    data.MovieInput.length>0 &&
+    data.BranchInput.length>0) {
     
     console.log('Valid');
     $.post('/coupon',data,(res)=>{
@@ -59,6 +61,7 @@ function sentCouponForm(data) {
         });
     });
     cancelCoupon();
+    pageRedirect();
 }else{
     console.log(data.Coupon.CouponCode!='' );
     console.log(data.Coupon.CouponCode.length );
@@ -307,6 +310,7 @@ function SelectedAddEdit(){
             code.push(data[i].CouponCode);
           }
         if(code.indexOf(payload.Coupon.CouponCode) > -1 == false){
+            console.log('add');
             sentCouponForm(payload)
         }else{
             console.log('update');
@@ -326,32 +330,35 @@ function EditCoupon(data){
     data.Coupon.DiscountRate<=100 && 
     data.Coupon.ExpireDate!='' &&
     data.Coupon.MinAge<data.Coupon.MaxAge && 
+    data.Coupon.MinAge>=0 &&
+    data.Coupon.MaxAge>0 &&
     data.Coupon.MinSeat>=0 &&
     typeof data.Coupon.MinSeat == "number" &&
     data.Coupon.MinSpend>=0 &&
     data.Coupon.Number>=0 &&
     typeof data.Coupon.Number == "number" &&
     data.Coupon.MaxDiscount>0 &&
-    data.MovieInput.length>=0 &&
-    data.BranchInput.length>=0) {
+    data.MovieInput.length>0 &&
+    data.BranchInput.length>0) {
     
     console.log('Valid Update');
     var deleteCoupon = data.Coupon.CouponCode;
     $.get('/coupon/delete/'+deleteCoupon,(res)=>{
-        $.post('/coupon',data,(res)=>{
-            iziToast.destroy();
-            iziToast.show({
-                position: "topCenter", 
-                icon: "far fa-thumbs-up",
-                title: 'Save!', 
-                color: 'green',
-                timeout: 2000,
-                message: 'You Coupon is update successfully.',
-            });
-        });
-        cancelCoupon();
+        
     });
-    
+    $.post('/coupon',data,(res)=>{
+        iziToast.destroy();
+        iziToast.show({
+            position: "topCenter", 
+            icon: "far fa-thumbs-up",
+            title: 'Save!', 
+            color: 'green',
+            timeout: 2000,
+            message: 'You Coupon is update successfully.',
+        });
+    });
+    cancelCoupon();
+    pageRedirect();
 }else{
     console.log(data.Coupon.CouponCode!='' );
     console.log(data.Coupon.CouponCode.length );

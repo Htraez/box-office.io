@@ -1,16 +1,32 @@
 var analysisData = [];
 var weekday = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+var call;
 function addAnalysisTable() {
-    var call = this.getAttribute('value');
+    call = this.getAttribute('value');
     $(this).addClass('selected').siblings().removeClass('selected');
-        $('#ResultAnalysis').find('li').remove();
+    $('#SelectBy').text(Object.keys(analysisData[call][0])[0]);
+    $('#ChooseAnalysis').find('option').remove();
+    analysisData[call].forEach((value,key)=>{
+        $("#ChooseAnalysis").append('<option class="form-control-plaintext" value="'+key+'">'+((parseInt(call)==9) ? weekday[value[Object.keys(analysisData[call][0])[0]]] : value[Object.keys(analysisData[call][0])[0]])+'</option>');
+    });
+    insertAnalysis(analysisData[call][0]);   
+        /*$('#ResultAnalysis').find('li').remove();
         console.log(data);
         analysisData[call].forEach(value => {
             const en = Object.entries(value);
-            var temp = (parseInt(call)>=7 && parseInt(call)<=8) ? "Week " : "";
             $('#ResultAnalysis').append('<li><strong>'+temp+((parseInt(call)==9) ? weekday[en[0][1]] : en[0][1])+"</strong>&emsp;"+en[1][0]+" : "+en[1][1]+"&emsp13;"+en[2][0]+" : "+en[2][1]+"&emsp13;"+en[3][0]+" : "+en[3][1]+"&emsp13;"+'</li>');
-        });
+        });*/
 }
+
+function insertAnalysis(data){
+    $('#AnalyMin').text(data.min);
+    $('#AnalyAvg').text(data.avg);
+    $('#AnalyMax').text(data.max);
+}
+
+$("#ChooseAnalysis").on("change",function(){
+    insertAnalysis(analysisData[call][this.value]);  
+})
 
 $(document).on("click",".AnalysisOpt", addAnalysisTable);
 
