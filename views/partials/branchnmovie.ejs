@@ -1,21 +1,30 @@
 
-
-<div class="container col-xl-9 col-lg-8 col-md-7 col-sm-7 col-6">
-    <div class="col-6">
-        <h3 class='head-text'>Movie</h3>
-            <div class='col noom' id="listMovieTable">
-                <label class="container text-left"><input type="checkbox" onClick="toggle(this)" /> Select All<br/></label>
-                    <tbody>
-                        </tbody>
-                </div>
-            </div>
-
-        <div class="col-6">
-            <h3 class='head-text'>Branch</h3>
-                <div class='col noom' id="TheatreBranchTable">
-                        <label class="container text-left"><input type="checkbox" onClick="toggle1(this)" /> Select All<br/></label>
+    <div class="col-4">
+        <div class="form-group nooms row mb-4">
+        <h5 class='head-text'>Movie</h5>
+        <div class="col-md-10 col-sm-10 col-9">
+            <div class='col noom open-list' id="listMovieTable" style="height: 400px; overflow: auto;">
+                <label class="container text-left mb-6">
+                    <input class="form-check-input" type="checkbox" onClick="toggle(this)" /> Select All<br/></label>
                         <tbody>
                             </tbody>
-                    </div>
+                </div>
+                </div>
             </div>
+    </div>
+
+
+
+    <div class="col-4">
+        <div class="form-group nooms row mb-4">
+        <h5 class='head-text'>Branch</h5>
+        <div class="col-md-10 col-sm-10 col-9">
+            <div class='col noom open-list ' id="TheatreBranchTable" style="height: 400px; overflow: auto;">
+                <label class="container text-left mb-6">
+                    <input class="form-check-input" type="checkbox" onClick="toggle1(this)" /> Select All<br/></label>
+                        <tbody>
+                            </tbody>
+            </div>
+            </div>
+        </div>
     </div>

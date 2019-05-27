@@ -92,6 +92,11 @@ function sentCouponForm(data) {
 
 }
 
+function quizFrom() {
+    cancelCoupon();
+    pageRedirect();
+}
+
 function cancelCoupon() {
     $('.content-view').show();
     $('.content-form').hide();
@@ -108,7 +113,7 @@ function toggle(source) {
 
 function addListMovieTable(data) {
     data.forEach((value, key) => {
-        var tableRowappend = '<label class="container text-left"><input type="checkbox" name="movieInput" value = "'+value.MovieNo+'" /> '+value.MovieName+'<br/></label>'
+        var tableRowappend = '<label class="container text-left"><input class="form-check-input" type="checkbox" name="movieInput" value = "'+value.MovieNo+'" /> '+value.MovieName+'<br/></label>'
         $("#listMovieTable").append(tableRowappend);
     });
 }
@@ -131,7 +136,7 @@ function toggle1(source) {
 function addBranchList(){
     $.get('/fetchData/branch/none',(data)=>{
             data.forEach((value,key)=>{
-            $("#TheatreBranchTable").append('<label class="container text-left"><input type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /> '+value.BranchName+'<br/></label>');
+            $("#TheatreBranchTable").append('<label class="container text-left"><input class="form-check-input" type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /> '+value.BranchName+'<br/></label>');
         })
     });
 }
@@ -342,23 +347,14 @@ function EditCoupon(data){
     data.BranchInput.length>0) {
     
     console.log('Valid Update');
-    var deleteCoupon = data.Coupon.CouponCode;
-    $.get('/coupon/delete/'+deleteCoupon,(res)=>{
+    $.get('/coupon/delete/'+data.Coupon.CouponCode,(res)=>{
+        $.post('/coupon',data,(res)=>{
         
-    });
-    $.post('/coupon',data,(res)=>{
-        iziToast.destroy();
-        iziToast.show({
-            position: "topCenter", 
-            icon: "far fa-thumbs-up",
-            title: 'Save!', 
-            color: 'green',
-            timeout: 2000,
-            message: 'You Coupon is update successfully.',
         });
+        cancelCoupon();
+        pageRedirect();
     });
-    cancelCoupon();
-    pageRedirect();
+    
 }else{
     console.log(data.Coupon.CouponCode!='' );
     console.log(data.Coupon.CouponCode.length );
