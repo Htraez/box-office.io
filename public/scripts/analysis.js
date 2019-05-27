@@ -35,7 +35,7 @@ $(document).on("click","#showAnalyRe", initdata);
 function loadAnaData(i) {
     $.get('/analysis/'+i,(data)=>{
         analysisData[i] = data;
-        console.log(i);
+        //console.log(i);
         return (i == 14) ? iziToast.destroy() : loadAnaData(i+1); 
     });
 }

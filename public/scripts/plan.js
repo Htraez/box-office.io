@@ -3,7 +3,7 @@ var Plandata = [];
 var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
 var OpSeatCount=1
-    Thcount=1
+    Thcount=0
     nowTH=0;
 var renderCount = [1,1,1,1];
 var Theatredata = [];
@@ -13,10 +13,11 @@ var Theatredata = [];
 function addTable(data) {
     data.forEach((value, key) => {
         var tableRowappend = '<tr id="Th'+Thcount+'" class="default-mouse" ><th onclick="editTh('+Thcount+')" class="text-white pl-3" scope="col">'+value.Name+'</th>'
-         tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
+        if(Thcount>0) tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
+        else tableRowappend += '<th onclick="editTh(0)"></th>';
         tableRowappend += '</tr>';
         Thcount++;
-        if(value.Detail.Type!='Delete'||key!=0)$("#MyTableTr").append(tableRowappend);
+        if(value.Detail.Type!='Delete')$("#MyTableTr").append(tableRowappend);
     });
     $('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
 }
@@ -275,7 +276,7 @@ function sentPlanForm() {
         NoRow3: $('#NoRow3').val(),
         SeatClass4: $('#SeatClass4').val(),
         NoRow4: $('#NoRow4').val(),
-        Theatre: temp
+        Theatre: temp.slice(1,temp.length)
     };
     var testP = {SeatClassData : [...SeatClass]};
     if(payload.PlanName!='' && PlanHeight>0 && PlanWidth>0 && payload.NoRow1>0){
@@ -402,7 +403,7 @@ function LoadDataEditForm(PlanName){
     });
     $.get('/fetchData/theatre/PlanName='+PlanName,(data)=>{
         //console.log(data);
-        Theatre = [];
+        Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
         data.forEach((value)=>{
             Theatre.push({Name: value.TheatreCode, Branch: ''+value.BranchNo+'', Detail:{Type:'Load',Old:''}});
         });
@@ -436,7 +437,7 @@ function callPlanForm(event,PlanName = null) {
         overlay: true,
         close: false
     });
-    Theatre = [];
+    Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
     reRenderTHTable();
     PlanHeight=0;PlanWidth=0;OpSeatCount=1;Thcount=0;nowTH=0;renderCount = [1,1,1,1];
     $('#PlanName').val('');
