@@ -1,100 +1,41 @@
 <%- include('partials/header', {mode: 'admin'});  %>
-    <div class='content-view'>
-        <span class='head-text level0'>Dashboard</span>
-    </div>
-    <div class="content-view input-group">
-        <h3><span class="head-text " >Analysis Report&emsp;</span>
-        <button class="btn btn-white btn-outline-light btn-sm" data-popup='analysis-popup' style="border-radius: 0 !important;" type="button" id="Analysis">Show</button>
-        </h3>
-    </div>
-    <div class="content-view">
-        <h3><span class="head-text " style="vertical-align: sub;">Plan&emsp;</span>
-        <button class="btn-white" id="createPlan" style="display: inline-block;">Create</button></h3>
-        <br>
-        <div class="row justify-content-start align-items-center">
-            <div class="col-4">
-                <ul class="open-list mb-0" id="listPlanTable" style="overflow: auto; height: 160px;"></ul>
-            </div>
-            <div class="col-4">
-                <div class="container-fluid border border-light" id="detailPlan" style="display: none;">
-                    <h6 class="pt-2">Name : <span id="viewPlanName"></span></h6>
-                    <h6 id="viewPlanWidth">Width : </h6>
-                    <h6 id="viewPlanHeight">Height : </h6>
-                    <div class="row pb-2">
-                        <div class="mx-auto mt-3 text-center">
-                            <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
-                            <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="callDeletePlanForm">Delete</button>  
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="content-view">
-        <h3><span class="head-text">Movie&emsp;</span>
-        <div>
-            <button class="btn btn-outline-light btn-white" id="createMovie">Create&emsp;</button>
-            <!-- <button class="btn btn-outline-light btn-white" id="ShowMovie">Show&emsp;</button> -->
-        </div>
-        </h3>
-    </div>
-    <div id="movieAndSchduleForm" class="content-form" style="display: none;">
-        <%- include partials/movie-schedule %>
-    </div>
-    <!-- <div id="ShowMovieAll" class="content-form" style="display: none;">
-        <%- include partials/allMovie %>
-    </div> -->
-    
-    <div id="ShowMovieAll" class="col-sm-5 offset-sm-2 col-md-6 offset-md-0" >
-        <select class="form-control-plaintext text-white" id="SelectMovieShow">
-            <option class="form-control-plaintext">Now</option>
-            <option class="form-control-plaintext">History</option>
-        </select>
-        <ul class='open-list' id='Movie' ></ul>
-        <ul class='open-list' id='Schedule'style="display: none;">
-            <tr>
-                <th>ScheduleNo</th>
-                <th>MovieNo</th>
-                <th>TheatreCode</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Audio</th>
-                <th>Dimension</th>
-                <th>Subtitle</th>
-            </tr>
-        </ul>
-
-    
-    </div>
-
-</div>
-    <div id="planForm" class="content-form" style="display: none;">
-        <%- include partials/plan %>
-    </div>
     <div class="content-view">
         <h3><span class="head-text">Staff Shift&emsp;</span>
         <button class="btn-white" id="createstaffshift" style="display: inline-block;">Create</button></h3>
         <br>
         <div class="row justify-content-start align-items-center">
             <div class="col-4">
-                <ul class="container-fluid border border-light" id="listStaff" style="overflow: auto; height: 160px;"></ul>
+                <ul class="open-list container-fluid border border-light" id="listStaff" style="overflow: auto; height: 160px;"></ul>
             </div>
             <div class="col-4">
-                <div class="container-fluid border border-light" id="detailstaff" style="display: none;">
-                    <h6 class="pt-2">Name : <span id="viewstaffname"></span></h6>
-                    <h6 id="viewstaffdate">Date : </h6>
-                    <h6 id="viewstaffstarttime">Start : </h6>
-                    <h6 id="viewstaffendtime">End : </h6>
+                <div class="container-fluid border border-light" id="showdetailstaff" style="display: none;"> 
+                    <ul class="open-list container-fluid border border-light" style="border: 0px !important;" id="detailstaff" style=" display: none;"></ul>
                     <div class="row pb-2">
                         <div class="mx-auto mt-3 text-center">
-                            <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
-                            <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="callDeletePlanForm">Delete</button>
+                            <button type="button" class="btn-white mr-5" style="display: inline-block;" id="editshift">Edit</button>
+                            <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="deleteshift">Delete</button>  
                         </div>
                     </div>
                 </div>
+                  
             </div>
-                 
+            <!-- <div class="col-4">
+                <ul class="open-list container-fluid border border-light" id="select-shift" style="overflow: auto; height: 160px; display: none;"">
+                        <div class="mx-auto mt-3 text-center " id="button-name">
+                                <button type="button" class="btn-white" style="display: inline-block;" id="deleteshift">Delete</button>
+                        </div>
+                </ul>
+            </div>                -->
         </div>
+        
+        <!-- <div class="mx-auto mt-3 text-center"></div>
+                <div class="row pb-2">
+                    <div class="mx-auto mt-3 text-center">
+                        <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
+                        <button type="button" data-popup="delete-plan-popup" class="btn-white" style="display: inline-block;" id="callDeletePlanForm">Delete</button>
+                    </div>
+                </div>
+            </div>  -->
     </div>
     
     

@@ -569,6 +569,69 @@ router.post('/register',(req,res)=>{
 
 //=======================
 
+router.get('/shiftapplies/All',(req,res)=>{
+    var sql = "SELECT * FROM `staff` s, `shiftapplies` sa, `shift` sh WHERE sa.ShiftNo = sh.ShiftNo AND sa.StaffNo = s.StaffNo";
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.send(resp.rows);
+        })
+})
+
+// router.get('/staff/FirstName',(req,res)=>{
+
+//     var sql = "SELECT Day, StartTime, EndTime FROM staff s, shiftapplies a,shift t WHERE t.ShiftNo = a.ShiftNo AND a.StaffNo = s.StaffNo AND s.StaffNo =;
+//     console.log(sql);
+    // mysql.connect(sql)
+    //     .then((resp)=>{
+    //         res.sendStatus(200);
+    //     })
+    //     .catch((err)=>{
+    //         //console.log('update plan ERROR',err);
+    //         res.sendStatus(500);
+    //     });
+//})
+
+router.get('/staff/delete/:shift',(req,res)=>{
+    var sql = "DELETE FROM `shift` WHERE `shift`.`ShiftNo` = "+req.params.shift+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+router.get('/staff/deleteshift/:shift',(req,res)=>{
+    var sql = "DELETE FROM `shift` WHERE `shift`.`ShiftNo` = "+req.params.shift+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+
+router.get('/staff/deletename/:name',(req,res)=>{
+    var sql = "DELETE FROM `staff` WHERE `staff`.`StaffNo` = "+req.params.name+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+
 router.post("/staff", (req, res) =>{
     var data = req.body;
     var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
