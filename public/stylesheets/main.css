@@ -1027,10 +1027,16 @@ input:read-only, textarea:read-only{
 #m-schedule-table{
     height: 250px;
     overflow-y: scroll;
+    background: #ffffff1f;
+}
+
+#m-schedule-table table tbody{
+    background: black;
 }
 
 #m-schedule-table table tr th{
     font-size: .7rem;
+    color: black!important;
 }
 
 #m-schedule-table table tr td{
@@ -1100,6 +1106,9 @@ td.table-center, th.table-center{
     text-align: center;
 }
 
+.sched-table{
+    border-bottom: 1px solid white!important;
+}
 .sched-table tr{
     animation: showNav 250ms ease-in-out both;
     -webkit-animation: showNav 250ms ease-in-out both;
@@ -1107,6 +1116,8 @@ td.table-center, th.table-center{
 
 .sched-table tr th{
     border-right: 1px solid black;
+    color: black!important;
+    z-index: 90!important;
 }
 
 .sched-table thead tr:last-child{
@@ -1124,4 +1135,77 @@ td.table-center, th.table-center{
 .sched-table tbody tr:hover{
     background: #ffffff38;
     cursor: pointer;
+}
+
+.sched-table tbody tr td.table-placeholder{
+    text-align: center;
+    font-size: .8rem!important;
+    opacity: .6;
+    padding: 20px!important;
+}
+
+.head-group.small .head-text.level1{
+    font-weight: 700;
+    font-size: .85rem;
+    margin-bottom: 5px;
+}
+.head-group.small .head-text.level2{
+    font-weight: 500;
+    font-size: .75rem;
+    opacity: .7;
+    margin-bottom: 5px;
+}
+
+.list-placeholder{
+    font-size: .65rem;
+    font-weight: 500;
+    font-style: italic;
+}
+
+form#movie{
+    padding: 10px;
+}
+
+form#movie .form-group label{
+    width:100%;
+}
+
+.white-ol {
+    background: white!important;
+}
+.white-ol label{
+    color: black!important;
+    font-weight: 700;
+}
+
+.white-ol input{
+    border-radius: .25rem!important;
+    background: #00000014!important;
+    border: 2px solid black!important;
+    border-color: black!important;
+    font-size: .8rem;
+}
+
+.white-ol input:hover{
+    border: 2px solid black!important;
+    background: black!important;
+    color: white!important;
+}
+
+#config-list label{
+    font-size: .8rem!important;
+}
+
+#config-list input, #config-list select, #config-list option{
+    font-size: .7rem!important;
+}
+
+#movieForm button, #createAllSchedule, #cancelAllSchedule{
+    text-transform: capitalize!important;
+}
+
+.new-sched-section{
+    border-style: dashed;
+    padding: 10px;
+    border-color: #ffffff40;
 }
