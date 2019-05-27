@@ -1272,3 +1272,7 @@ form#movie .form-group label{
     opacity: 1!important;
     color: black;
 }
+table tr.selected {
+    background: white;
+    color: #000;
+}
