@@ -781,7 +781,7 @@ input[type=checkbox].seat-dot-checkbox:disabled+.seat-dot:before{
     font-weight: 900;
     font-size: 0.8rem;
 }
-.seat-dot, .seat-dot.available{
+.seat-dot, .seat-dot.available, .dot{
     color: #ffffffa3;
     font-size: .6rem;
     justify-content: center;
@@ -799,6 +799,11 @@ input[type=checkbox].seat-dot-checkbox:disabled+.seat-dot:before{
     -moz-border-radius: .35rem;
     -ms-border-radius: .35rem;
     -o-border-radius: .35rem;
+}
+.dot{
+    min-width: 15px!important;
+    min-height: 15px!important;
+    height: 15px!important;
 }
 .seat-dot:before{
     content: attr(data-seatcode);
@@ -1178,18 +1183,33 @@ form#movie .form-group label{
     font-weight: 700;
 }
 
-.white-ol input{
+.white-ol label:hover+input{
     border-radius: .25rem!important;
     background: #00000014!important;
     border: 2px solid black!important;
     border-color: black!important;
+    color:black!important;
     font-size: .8rem;
 }
 
-.white-ol input:hover{
-    border: 2px solid black!important;
-    background: black!important;
-    color: white!important;
+.white-ol input{
+    border-radius: .25rem!important;
+    background: #00000014!important;
+    border: 2px solid gray!important;
+    border-color: gray!important;
+    color:black!important;
+    font-size: .8rem;
+    padding: 0 10px;
+    text-align: left!important;
+}
+
+.white-ol input:hover, 
+.white-ol input:focus{
+    border: 2px solid var(--color-green)!important;
+    background: var(--color-green-tran-2)!important;
+    color: black!important;
+    font-weight: 600;
+    vertical-align: middle;
 }
 
 #config-list label{
@@ -1208,4 +1228,21 @@ form#movie .form-group label{
     border-style: dashed;
     padding: 10px;
     border-color: #ffffff40;
+}
+
+.step-group{
+    border: 1px dashed rgba(255, 255, 255, 0.253);
+    padding: 4px;
+    margin: 10px 0;
+    border-radius: .25rem;
+}
+
+.seatform-tab{
+    margin:0!important;
+}
+.seatform-tab:nth-of-type(odd){
+    background: #ffffff17!important;
+}
+.seatform-tab:nth-of-type(even){
+    background: #ffffff0a!important;
 }

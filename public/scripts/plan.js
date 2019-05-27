@@ -1,4 +1,4 @@
-var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
+var Theatre = [];
 var Plandata = [];
 var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
@@ -13,8 +13,7 @@ var Theatredata = [];
 function addTable(data) {
     data.forEach((value, key) => {
         var tableRowappend = '<tr id="Th'+Thcount+'" class="default-mouse" ><th onclick="editTh('+Thcount+')" class="text-white pl-3" scope="col">'+value.Name+'</th>'
-        if(Thcount>0) tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
-        else tableRowappend += '<th onclick="editTh(0)"></th>';
+         tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
         tableRowappend += '</tr>';
         Thcount++;
         if(value.Detail.Type!='Delete')$("#MyTableTr").append(tableRowappend);
@@ -159,7 +158,12 @@ function getSeatClass(){
 
 function addSeat() {
     if(OpSeatCount<=4){
-        $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="padding-left: 13px;">Seat Class '+OpSeatCount+'</label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3" style="min-width: 110px;"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
+        let data = {
+            OpSeatCount: OpSeatCount,
+        };
+        let html = new EJS({url:'/client-templates/seat-form'}).render(data);
+        $("#adj").append(html);
+        // $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="display:flex;justify-content:left;padding-left: 13px;"><span class="badge head-text-badge">Seat Class '+OpSeatCount+'</span></label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3" style="min-width: 110px;"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
         if(OpSeatCount>1)appendSeatClass(OpSeatCount);
         OpSeatCount++;
     }
@@ -393,7 +397,7 @@ function LoadDataEditForm(PlanName){
     });
     $.get('/fetchData/theatre/PlanName='+PlanName,(data)=>{
         //console.log(data);
-        Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
+        Theatre = [];
         data.forEach((value)=>{
             Theatre.push({Name: value.TheatreCode, Branch: ''+value.BranchNo+'', Detail:{Type:'Load',Old:''}});
         });
@@ -427,7 +431,7 @@ function callPlanForm(event,PlanName = null) {
         overlay: true,
         close: false
     });
-    Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
+    Theatre = [];
     reRenderTHTable();
     PlanHeight=0;PlanWidth=0;OpSeatCount=1;Thcount=0;nowTH=0;renderCount = [1,1,1,1];
     $('#PlanName').val('');
