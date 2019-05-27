@@ -14,89 +14,107 @@
     <form id="plan">
         <div class="container-fluid">
             <div class="row">
+                <div class="col-12">
+                    <div class='head-group col-12'>
+                            <span class='head-text level1'>Plan & Theatre Form</span>
+                            <span class='head-text level2'>Create/Edit New Plan For Theatre</span>
+                    </div>
+                </div>
                 <div class="container col-xl-3 col-lg-4 col-md-5 col-sm-5 col-6 ">    
-                    <h3 class='head-text'>Plan</h3>
-                    <div class="form-group row mb-3">
-                        <label for="PlanName" class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Name</label>
-                        <div class="col-md-10 col-sm-10 col-9">
-                            <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="PlanName" name="PlanName">
+                    <div class='step-group'>
+                        <div class="head-group small">
+                            <div class='head-text level1'><span class="badge head-text-badge">1</span>Plan</div>
+                            <div class="head-text level2"><i>Specify Plane Name And Dimension Here First</i></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="PlanName">Name</label>
+                            <input type="text" autocomplete="off" class="form-control" id="PlanName" name="PlanName">
+                        </div>
+                        <div class="form-group">
+                            <label for="PlanHeight">Plan Height</label>
+                            
+                            <input type="number" onchange="planH()" class="form-control" value="0" min="0" id="PlanHeight" name="PlanHeight">
+                            <label style='display: inline;' for="PlanHeight">(Meter)</label>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="PlanWidth">Plan Width (0-30 Meter)</label>
+                            <input type="number" onchange="planW()" class="form-control" value="0" min="0" id="PlanWidth" name="PlanWidth">
+                            <label for="PlanWidth">(Meter)</label>
+                            
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
-                        <label for="PlanHeight" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Height</label>
-                        <div class="col-md-8 col-sm-7 col-6 pl-0">
-                            <div class="input-group">
-                                <input type="number" onchange="planH()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="PlanHeight" name="PlanHeight">
-                                <div class="input-gruop-append">
-                                    <label class="mt-2 mb-0" for="PlanHeight">m.</label>
-                                </div>
-                            </div>
+                    
+
+
+                    <div class="step-group">
+                        <div class="head-group small">
+                            <span class="head-text level1"><span class="badge head-text-badge">2</span>Edit Theatre List</span>
+                        </div>
+                        <table class="table" id="MyTableTr" style="border:0">
+                            <thead>
+                                <tr style="background: white; color:black;">
+                                    <th>List of Theatre Using This Plan</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        
+                        <div class="form-group">
+                            <label for="NameTheatre" >Name</label>
+                            <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="NameTheatre" name="NameTheatre">
+                            
+                        </div>
+                        <div class="form-group">
+                            <label for="TheatreBranch" >Branch</label>
+                            <select name="TheatreBranch" id="TheatreBranch" class="form-control text-white" style="font-size: .7rem; height: 30px !important;"></select>
+                            
+                        </div>
+                        <div class="mx-auto mt-4 text-center">
+                            <button type="button" class="btn-white btn-sm" onclick="saveTheatre()" style="border-radius: 0 !important;">Save Theatre</button>
                         </div>
                     </div>
-                    <div class="form-group row mb-3">
-                        <label for="PlanWidth" class="col-md-4 col-sm-5 col-6 mt-2 mb-0 pr-0">Plan Width</label>
-                        <div class="col-md-8 col-sm-7 col-6 pl-0">
-                            <div class="input-group">
-                                <input type="number" onchange="planW()" class="form-control-plaintext text-white pb-0 text-center" value="0" min="0" id="PlanWidth" name="PlanWidth">
-                                <div class="input-gruop-append">
-                                    <label class="mt-2 mb-0" for="PlanWidth">m.</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="container-fluid pl-0 pt-3">
-                        <h3 class="head-text">Add Theatre</h3>
-                    </div>
-                    <table class="table table-sm table-hover table-dark" id="MyTableTr" style="border:0">
-                        <tbody>
-                        </tbody>
-                    </table>
-                    <!-- <div id="TH-alert" class="alert alert-warning alert-dismissible fade show small" style="display:none" role="alert">
-                        <strong>Warning!</strong> You should check input in on some of those fields below.
-                        <button type="button" class="close " onclick="$('.alert').hide()" >
-                                <i class="material-icons" >remove_circle</i>
-                        </button>
-                    </div>
-                    <div id="TH-success" class="alert alert-success alert-dismissible fade show small pr-2" style="display:none" role="alert">
-                        <strong>Save!</strong> You Theatre is save successfully.
-                        <button type="button" class="close " onclick="$('.alert').hide()" >
-                                <i class="material-icons" >remove_circle</i>
-                        </button>
-                    </div> -->
-                    <div class="form-group row mb-3">
-                        <label for="NameTheatre"  class="col-md-2 col-sm-2 col-3 mt-2 mb-0">Name</label>
-                        <div class="col-md-10 col-sm-10 col-9">
-                            <input type="text" autocomplete="off" class="form-control-plaintext text-white pb-0 text-center" id="NameTheatre" name="NameTheatre">
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label for="TheatreBranch" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">Branch</label>
-                        <div class="col-md-10 col-sm-9 col-9">
-                            <select name="TheatreBranch" id="TheatreBranch" class="form-control-plaintext text-white"></select>
-                        </div>
-                    </div>
-                    <div class="mx-auto mt-4 text-center">
-                        <button type="button" class="btn btn-outline-light btn-white" onclick="saveTheatre()" style="border-radius: 0 !important;">Save Theatre</button>
-                    </div>
+                    
 
                 </div>
                 <div class="container col-xl-9 col-lg-8 col-md-7 col-sm-7 col-6">
-                    <div class="mx-auto mt-4 text-center">
-                        <button type="button" style="width:70%" class="btn btn-white-rounded default-mouse">SCREEN</button>
-                        <div id="render" class="container mt-3 mb-3" >
-                            <div id="render1" class="renderSeatPlan"></div>
-                            <div id="render2" class="renderSeatPlan"></div>
-                            <div id="render3" class="renderSeatPlan"></div>
-                            <div id="render4" class="renderSeatPlan"></div>
+                    <div class="row">
+                        <!-- seat render area -->
+                        <div class="step-group col-12">
+                            <div class='row'>
+                                <div class='col-12' style='justify-content:center;'>
+                                    <div style='width:100%;height:20px;align-item:center;text-align:center;font-size:.7rem;border:1px solid white;border-radius:.4rem;'>Screen</div>    
+                                </div> 
+                                <div class='col-12' style='overflow:auto; height: 280px;' id="RenderHeight">
+                                    <div id="render" class="mt-3 mb-3" >
+                                        <div id="render1" class="renderSeatPlan"></div>
+                                        <div id="render2" class="renderSeatPlan"></div>
+                                        <div id="render3" class="renderSeatPlan"></div>
+                                        <div id="render4" class="renderSeatPlan"></div>
+                                    </div>
+                                </div>
+                                <div class='col-12'>
+                                    <div class="container-fluid">
+                                        <p class="default-mouse"><span id="showW" style='font-size: .75rem;'>Plan Width 0 m.</span><span>&emsp;x&emsp;</span>
+                                        <span id="showH" style='font-size: .75rem;'>Plan Height 0 m.</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                            
                         </div>
-                        <div class="container-fluid">
-                            <p class="default-mouse"><span id="showW">Plan Width 0 m.</span><span>&emsp;x&emsp;</span>
-                            <span id="showH">Plan Height 0 m.</span></p>
-                        </div>
-                        <div class="container">
+                        
+                        <!-- seat class form area -->
+                        <div class="step-group col-12">
                             <div class="btn-toolbar justify-content-between " role="toolbar" aria-label="Toolbar with button groups">
-                                <div class="btn-group mr-2" role="group" aria-label="First group">
-                                    <h3 class="text-left head-text">Seat Class</h3>
+                                <div class="head-group small" role="group" aria-label="First group" style='width:100%;'>
+                                    <span class="head-text level1" style='text-align:left;'><span class="badge head-text-badge">3</span> Seat Class Arrangement</span>
+                                    
+                                    <span class="head-text level2" style='text-align:left;'>Add/Remove New Seat Class to Plan</span>
                                     <div class="btn text-white" ><i class="material-icons pointer" onclick="addSeat()">add_circle</i></div>
                                     <div class="btn text-white"><i class="material-icons pointer" onclick="removeSeat()">remove_circle</i></div>
                                 </div>
@@ -106,26 +124,16 @@
                                 <div class="btn-group" role="group" aria-label="Third group">
                                         
                                 </div> -->
-                                <div class="input-group">
-                                    <button class="btn btn-white btn-outline-light btn-sm" data-popup='seat-class-popup' style="border-radius: 0 !important;" type="button" id="seatClassOption">Seat Class Option</button>
-                                </div>
+                                
+                            </div>
+                            <div id="adj" style='padding:0!important;'>
+                                
+                            </div>
+                            <div class="input-group">
+                                <button class="btn btn-white btn-outline-light btn-sm" data-popup='seat-class-popup' style="border-radius: 0 !important;" type="button" id="seatClassOption">Available Seat Type</button>
                             </div>
                         </div>
-                        <div id="adj" class="container">
-                                <!-- <div class="form-group row mb-0">
-                                    <label for="SeatClass" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">Seat Class 1</label>
-                                    <div class="col-md-3 col-sm-3 col-3">
-                                        <select name="SeatClass1" id="SeatClass1" class="form-control-plaintext text-white"></select>
-                                    </div>
-                                    <label for="NoRow1" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label>
-                                    <div class="col-md-3 col-sm-3 col-3">
-                                        <button type="button" onclick="deleteSeatTH('1')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button>
-                                        <input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px;" min="0" value="0" id="NoRow1" name="NoRow1">
-                                        <button type="button" onclick="appendSeatTH('1')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >+</button>
-                                    </div>
-                                    <div class="btn text-white"><i class="material-icons" onclick="addSeat()">add_circle</i></div>
-                                </div> -->
-                        </div>
+                        
                     </div>
                 </div>
             </div>

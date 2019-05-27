@@ -450,6 +450,19 @@ router.get('/fetchData/:table/:condition', (req,res) => {
         });
 });
 
+<<<<<<< HEAD
+=======
+router.get('/fetchDataMovie',(req,res)=>{
+    console.log("movieWithSchedule");
+    var sql = "SELECT * FROM `movie`, `schedule` where schedule.MovieNo = movie.MovieNo ORDER BY schedule.Date DESC";
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.send(resp.rows);
+        });
+});
+
+
+>>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
 router.post('/seatclass', (req,res) => {
     var data = req.body;
     var use = 0;
@@ -566,6 +579,32 @@ router.post('/register',(req,res)=>{
     console.log(data);
 })
 
+<<<<<<< HEAD
+=======
+router.get('/analysis/:number',(req,res)=>{
+    var sql = [
+        "SELECT t.BranchName, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b  WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo GROUP BY sh.MovieNo , th.BranchNo ) AS t GROUP BY t.BranchName",
+        "SELECT t.Genre, MIN(t.CusCount) AS min, AVG(t.CusCount) AS avg, MAX(t.CusCount) AS max FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `movie` m WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo GROUP BY m.Genre , th.BranchNo ) AS t GROUP BY t.Genre",
+        "SELECT temp.MovieName, MIN(temp.Age) AS min, AVG(temp.Age) AS avg, MAX(temp.Age) AS max FROM    (SELECT TIMESTAMPDIFF(year,c.`BirthDate`,now()) AS Age, m.`MovieName` FROM schedule s, movie m, customer c, reservation r WHERE c.`CustomerNo` = r.`CustomerNo` AND s.`ScheduleNo` = r.`ScheduleNo` AND m.`MovieNo` = s.`MovieNo`) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.Age) AS min, AVG(temp.Age) AS avg, MAX(temp.Age) AS max FROM    (SELECT TIMESTAMPDIFF(year,c.`BirthDate`,now()) AS Age, m.Genre FROM schedule s, movie m, customer c, reservation r WHERE c.`CustomerNo` = r.`CustomerNo` AND s.`ScheduleNo` = r.`ScheduleNo` AND m.`MovieNo` = s.`MovieNo`) AS temp GROUP BY temp.Genre",
+        "SELECT temp.MovieName, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg , MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice , b.BranchNo, b.BranchName, m.MovieNo, m.MovieName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM (SELECT SUM(sc.Price) AS tPrice, m.Genre, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.Genre) AS temp GROUP BY temp.Genre",
+        "SELECT temp.Studio, MIN(temp.tPrice) AS min, AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice, m.Studio, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, movie m, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo AND s.MovieNo = m.MovieNo GROUP BY b.BranchNo, m.Studio) AS temp GROUP BY temp.Studio",
+        "SELECT temp.BranchName, MIN(temp.tPrice) AS min , AVG(temp.tPrice) AS avg, MAX(temp.tPrice) AS max FROM    (SELECT SUM(sc.Price) AS tPrice, WEEK(r.DateCreated) as WeekOfYear, b.BranchNo, b.BranchName FROM reservation_items i, reservation r, seatclass sc, schedule s, branch b, theatre t WHERE i.ReservationNo = r.ReservationNo AND sc.ClassName = i.SeatClass AND r.ScheduleNo = s.ScheduleNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY WeekOfYear, b.BranchNo) AS temp GROUP BY temp.branchNo",
+        "SELECT temp.BranchName, MIN(CusCount) AS min, AVG(CusCount) avg, MAX(CusCount) max FROM	(SELECT b.BranchName, b.BranchNo, WEEK(r.DateCreated) AS WeekNoOfYear , COUNT(YEAR(r.DateCreated)) AS CusCount FROM schedule s, reservation r, theatre t, branch b WHERE  r.`ScheduleNo` = s.`ScheduleNo` AND s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo GROUP BY b.BranchNo,  WeekNoOfYear) AS temp GROUP BY temp.BranchNo",
+        "SELECT temp.WeekDay, MIN(CusCount) AS min, AVG(CusCount) avg, MAX(CusCount) max FROM	(SELECT COUNT(c.CustomerNo) AS CusCount, b.BranchName, DAYOFWEEK(r.DateCreated) as WeekDay FROM schedule s, reservation r, theatre t, branch b, customer c WHERE s.`ScheduleNo` = r.`ScheduleNo` AND s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND r.CustomerNo = c.CustomerNo GROUP BY WeekDay, BranchName) AS temp GROUP BY temp.WeekDay",
+        "SELECT temp.MovieName, MIN(temp.shCount) AS min, AVG(temp.shCount) AS avg, MAX(temp.shCount) AS max FROM    (SELECT COUNT(s.ScheduleNo) AS shCount, m.MovieNo, m.MovieName, b.BranchNo, b.BranchName FROM schedule s, theatre t, branch b, movie m WHERE s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND m.MovieNo = s.MovieNo GROUP BY m.MovieNo , b.BranchNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.Genre, MIN(temp.shCount) AS min, AVG(temp.shCount) AS avg, MAX(temp.shCount) AS max FROM    (SELECT COUNT(s.ScheduleNo) AS shCount, m.Genre, b.BranchNo, b.BranchName FROM schedule s, theatre t, branch b, movie m WHERE s.TheatreCode = t.TheatreCode AND b.BranchNo = t.BranchNo AND m.MovieNo = s.MovieNo GROUP BY b.BranchNo, m.Genre) AS temp GROUP BY temp.Genre",
+        "SELECT temp.MovieName, MIN(temp.cuCount) AS min, AVG(temp.cuCount) AS avg , MAX(temp.cuCount) AS max FROM (SELECT COUNT(cu.CouponUsageNo) AS cuCount , m.MovieName, m.MovieNo FROM couponusage cu, reservation r, schedule s, theatre t, branch b, movie m WHERE cu.ReservationNo = r.ReservationNo AND r.ScheduleNo = s.ScheduleNo AND s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.MovieName",
+        "SELECT temp.BranchName, MIN(temp.cuCount) AS min, AVG(temp.cuCount) AS avg , MAX(temp.cuCount) AS max FROM (SELECT COUNT(cu.CouponUsageNo) AS cuCount , m.MovieName, m.MovieNo, b.BranchName, b.BranchNo FROM couponusage cu, reservation r, schedule s, theatre t, branch b, movie m WHERE cu.ReservationNo = r.ReservationNo AND r.ScheduleNo = s.ScheduleNo AND s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY b.BranchNo, m.MovieNo) AS temp GROUP BY temp.BranchNo",
+        "SELECT temp.MovieName, MIN(Duration) AS min, AVG(Duration) AS avg, MAX(Duration) AS max FROM (SELECT TIMESTAMPDIFF(day,MIN(s.Date) , MAX(s.Date) )+1 AS Duration, m.MovieNo, m.MovieName, b.BranchNo, b.BranchName FROM schedule s, movie m, theatre t, branch b WHERE s.MovieNo = m.MovieNo AND s.TheatreCode = t.TheatreCode AND t.BranchNo = b.BranchNo GROUP BY m.MovieNo, b.BranchNo) AS temp GROUP BY temp.MovieName"
+    ];
+    mysql.connect(sql[req.params.number])
+        .then((resp)=>{
+            res.send(resp.rows);
+        })
+})
+>>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
 
 //=======================
 
@@ -675,8 +714,23 @@ router.post("/staff/update",(req,res)=>{
 router.post("/staff", (req, res) =>{
     console.log("staff");
     var data = req.body;
+<<<<<<< HEAD
     var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
                 data.staff.FirstName+"','"+ data.staff.MidName+"','"+data.staff.LastName+"','"+data.staff.BirthDay+"','"+data.staff.CitizenID+"','"+data.staff.Gender+"','"+data.staff.HighestEdu+"','"+data.staff.ImageURL+"','"+data.staff.DateEmployed+"','"+data.staff.Address+"','"+data.staff.PhoneNumber+"','"+data.staff.Marital+"','"+data.staff.Position+"','"+data.staff.BranchNo+"')";
+=======
+    var planWithSchedule =[];
+    var SeatClass =[];
+    var movieNo=data.Movie.MovieNo;
+    var total=0;
+    console.log(data)
+    var sql;
+        sql ="INSERT INTO `schedule` (`MovieNo`, `TheatreCode`, `Date`, `Time`,`Audio`,`Dimension`,`Subtitle`) VALUES"
+    data.schedule.forEach((value)=>{
+        sql += "('"+data.Movie.MoveNo+"','"+data.Movie.TheatreCode+"','"+value.Date+"','"+value.Time+":00"+"','"+value.Audio+"','"+value.Dimension+"','"+value.Subtitle+"'),";
+    })
+    sql= sql.substring(0, sql.length-1)
+    console.log(sql)
+>>>>>>> 26ab45ba5c3c019aa80fdeb1fa98b1c1a90063a5
     mysql.connect(sql)
         .then((resp)=>{
             var insertID  = { staffid : resp.insertId , shiftid:""}
@@ -715,6 +769,57 @@ router.post("/staff", (req, res) =>{
 router.get('/admin', checkAuthentication, (req,res) => {
     res.render('admin',{auth:true});
 });
+
+router.post('/coupon',(req, res) => {
+    var data = req.body;
+    console.log(data);
+    
+    var sql = "INSERT INTO `coupon` (`CouponCode`, `Discount`, `MaxDiscount`, `EXPDate`, `MinSpend`, `MinSeat`, `MinAge`, `MaxAge`,`NoAvailable`) VALUES ('"+
+                data.Coupon.CouponCode+"','"+ data.Coupon.DiscountRate/100 +"','"+data.Coupon.MaxDiscount+"','"+data.Coupon.ExpireDate+"','"+data.Coupon.MinSpend+"','"+data.Coupon.MinSeat+"','"+data.Coupon.MinAge+"','"+data.Coupon.MaxAge+"','"+data.Coupon.Number+"')";
+    mysql.connect(sql).then((resp)=>{
+            console.log(resp);
+            //let CouponBranchNo =resp.insertId;
+            //var BranchId = data.BranchInput;
+            var sql2 = "INSERT INTO `coupon_branch` (`BranchNo`, `CouponCode`) VALUES"
+                data.BranchInput.forEach((value)=>{
+                sql2 += "('"+ value+"','"+data.Coupon.CouponCode+"'),";
+               });
+            sql2 = sql2.substring(0,sql2.length-1);
+                console.log(sql2)
+                  mysql.connect(sql2).then((resp)=>{
+                      //let CouponMovieNo =resp.insertId;
+                      //var MovieId = data.MovieInput;
+                      var sql3 = "INSERT INTO `coupon_movie` ( `MovieNo`, `CouponCode`) VALUES"
+                data.MovieInput.forEach((value)=>{
+                sql3 += "('"+ value+"','"+data.Coupon.CouponCode+"'),";
+               });
+            sql3 = sql3.substring(0,sql3.length-1);
+                console.log(sql3)
+                  mysql.connect(sql3).then((resp)=>{
+                      console.log("success")
+                     })
+                    .catch((err)=>{
+                         console.log('error',err);
+                     });
+            });
+    });     
+});
+
+router.get('/coupon/delete/:coupon',(req,res)=>{
+    var sql = "DELETE FROM `coupon` WHERE `coupon`.`CouponCode` = '"+req.params.coupon+"'";
+    console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+
+module.exports = router;
 
 router.post('/login', 
     passport.authenticate('local', { 

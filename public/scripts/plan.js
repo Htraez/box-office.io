@@ -6,6 +6,7 @@ var OpSeatCount=1
     Thcount=0
     nowTH=0;
 var renderCount = [1,1,1,1];
+var Theatredata = [];
 
 //-------------------------------------Theatre Function--------------------------------------------
 
@@ -130,12 +131,15 @@ function addBranchOption(){
 
 function planH(){
     PlanHeight = parseFloat(document.getElementById("PlanHeight").value);
+    if(PlanHeight<0) PlanHeight = 0;
     $('#showH')[0].childNodes[0].data = 'Plan Height '+PlanHeight+' m.';
     document.getElementById("PlanHeight").value = PlanHeight;
 }
 
 function planW(){
     PlanWidth = parseFloat(document.getElementById("PlanWidth").value);
+    if(PlanWidth>30) PlanWidth = 30;
+    else if(PlanWidth<0) PlanWidth = 0;
     $('#showW')[0].childNodes[0].data = 'Plan Width '+PlanWidth+' m.';
     document.getElementById("PlanWidth").value = PlanWidth;
     reRenderSeat();
@@ -158,7 +162,12 @@ function getSeatClass(){
 
 function addSeat() {
     if(OpSeatCount<=4){
-        $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="padding-left: 13px;">Seat Class '+OpSeatCount+'</label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3" style="min-width: 110px;"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
+        let data = {
+            OpSeatCount: OpSeatCount,
+        };
+        let html = new EJS({url:'/client-templates/seat-form'}).render(data);
+        $("#adj").append(html);
+        // $("#adj").append('<div id="SeatForm'+OpSeatCount+'" class="form-group row mb-0"><label for="SeatClass'+OpSeatCount+'" class="col-md-2 mt-2 mb-0" style="display:flex;justify-content:left;padding-left: 13px;"><span class="badge head-text-badge">Seat Class '+OpSeatCount+'</span></label><div class="col-md-3 col-sm-3 col-3"><select name="SeatClass'+OpSeatCount+'" id="SeatClass'+OpSeatCount+'" onchange="reRenderSeat()" class="form-control-plaintext text-white"></select></div><label for="NoRow'+OpSeatCount+'" class="col-md-2 col-sm-3 col-3 mt-2 mb-0">No.Row</label><div class="col-md-3 col-sm-3 col-3" style="min-width: 110px;"><button type="button" onclick="deleteSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 20px !important; min-width: 0px;" >-</button><input type="number" class="mt-2 custom-range text-white" readonly="readonly" style="text-align: center;width: 27px; border: 0px;" min="0" value="0" id="NoRow'+OpSeatCount+'" name="NoRow'+OpSeatCount+'"><button type="button" onclick="appendSeatTH('+OpSeatCount+')" class="btn text-center text-white btn-white-rounded m-0 pl-2" style="width: 24px !important; min-width: 0px;" >+</button></div><div></div></div>');
         if(OpSeatCount>1)appendSeatClass(OpSeatCount);
         OpSeatCount++;
     }
@@ -192,7 +201,7 @@ function appendSeatTH(num){
         }
         var SeatClassData = SeatClass.find((val)=>{ return val.ClassName==$('#SeatClass'+num).val()});
         if(PlanHeight-use>=SeatClassData.Height && SeatClassData.Width<=PlanWidth){
-            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-between" >'
+            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-center" >'
             for (let i = 0; i < PlanWidth/SeatClassData.Width; i++) {
                 seat += '<span class="dot ml-1 mr-1"></span>';
             }
@@ -201,6 +210,8 @@ function appendSeatTH(num){
             $('#render'+num).append(seat);
             renderCount[num-1]++;
             changeValR(1,num);
+            let a = $('#render').offset().left + $('#render').width() / 2;
+            $('#RenderHeight').scrollLeft(a);
         }
     }
     return 1;
@@ -402,6 +413,7 @@ function LoadDataEditForm(PlanName){
 
 function cancelPlan() {
     getPlanList();
+    getTheatreList();
     $('.content-view').show();
     $('.content-form').hide();
     $('#listPlanTable').find('li').remove();
@@ -410,6 +422,7 @@ function cancelPlan() {
     $('#viewPlanWidth').text("Width :  m.");
     $('#viewPlanHeight').text("Height :  m.");
     $('#NameTheatre').val('');
+    $('#SelectPlanOrTheatre').val('Plan');
     oldBranchName=null;
 }
 
@@ -452,10 +465,22 @@ function callPlanForm(event,PlanName = null) {
 
 $(document).on("click","#createPlan", callPlanForm);
 
-function addListPlanTable(data) {
+$('#SelectPlanOrTheatre').on("change", function(e){
+    e.stopPropagation();
+    if(this.value != "Plan"){
+        $(".planTable").hide();
+        $(".planTheatre").show();
+    }
+    else{
+        $(".planTable").show();
+        $(".planTheatre").hide();
+    }
+});
+
+function addListPlanTable(data,pRt) {
     data.forEach((value, key) => {
         //var tableRowappend = '<tr class="default-mouse planTable" ><th style="border:1px solid white;" class="text-white pl-3" scope="col">'+value.PlanName+'</th></tr>'
-        var tableRowappend = "<li class='planTable'>"+value.PlanName+"</li>";
+        var tableRowappend = "<li class='"+((pRt) ? "planTable" : "planTheatre")+"' value="+value.PlanName+">"+((pRt) ? value.PlanName : value.TheatreCode)+"</li>";
         $("#listPlanTable").append(tableRowappend);
     });
     //$('#Th'+nowTH).addClass('bg-secondary').siblings().removeClass('bg-secondary');
@@ -515,6 +540,19 @@ $(document).on("click",".seatClassTable", function(){
 })
 
 
+$(document).on("click",".planTheatre",function (event){
+    event.stopPropagation();
+    $('#viewPlanName').text('');
+    $('#viewPlanWidth').text("Width :  m.");
+    $('#viewPlanHeight').text("Height :  m.");
+    $('#detailPlan').show();
+    $(this).addClass('selected').siblings().removeClass('selected');
+    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanName);
+    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanWidth+" m.");
+    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanHeight+" m.");
+});
+
+
 $(document).on("click",".planTable",function (event){
     event.stopPropagation();
     $('#viewPlanName').text('');
@@ -522,9 +560,9 @@ $(document).on("click",".planTable",function (event){
     $('#viewPlanHeight').text("Height :  m.");
     $('#detailPlan').show();
     $(this).addClass('selected').siblings().removeClass('selected');
-    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.innerHTML).PlanName);
-    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanWidth+" m.");
-    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.innerHTML).PlanHeight+" m.");
+    $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanName);
+    $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanWidth+" m.");
+    $('#viewPlanHeight').text("Height : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanHeight+" m.");
 });
 
 $(document).on("click","#callEditPlanForm",function(event){
@@ -548,38 +586,21 @@ $(document).on("click","#CreateSeatClass", addNewSeat)
 
 function getPlanList(){
     $.get('/fetchData/plan/none',(data)=>{
-            addListPlanTable(data);
+            addListPlanTable(data,1);
             Plandata = data;
     });
 }
+function getTheatreList(){
+    $.get('/fetchData/theatre/none',(data)=>{
+            addListPlanTable(data,0);
+            Theatredata = data;
+    });
+}
 getPlanList();
+getTheatreList();
 
 $(window).click(function() {
     $('#detailPlan').hide();
     $('.planTable').removeClass('selected bg-secondary');
-<<<<<<< HEAD
+    $('.planTheatre').removeClass('selected bg-secondary');
 });
-
-/*
-1.จำนวนลูกค้าต่อ Branch ของหนังแต่ละเรื่อง
---sql--
-SELECT t.BranchName, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , sh.MovieNo, b.BranchName  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `branch` b
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND b.BranchNo = th.BranchNo
-    GROUP BY sh.MovieNo , th.BranchNo ) AS t
-GROUP BY t.BranchName
-2.จำนวนลูกค้าต่อ Genre ต่าง ๆ ของหนังต่อ Branch
---sql--
-SELECT t.Genre, MIN(t.CusCount), AVG(t.CusCount), MAX(t.CusCount)
-FROM	(SELECT COUNT(ri.RecordIndex) AS CusCount , th.BranchNo, m.Genre  
-    FROM `reservation_items`ri, `reservation` r ,  `schedule` sh, `theatre` th, `movie` m
-    WHERE ri.ReservationNo = r.ReservationNo AND r.ScheduleNo = sh.ScheduleNo AND sh.TheatreCode = th.TheatreCode AND m.MovieNo = sh.MovieNo
-    GROUP BY m.Genre , th.BranchNo ) AS t
-GROUP BY t.Genre
-3.อายุของลูกค้าต่อ Genre ต่าง ๆ ของหนัง
---sql--
-*/
-=======
-});
->>>>>>> f253ba7c144744dbe097b8e09c056433c80c69cc
