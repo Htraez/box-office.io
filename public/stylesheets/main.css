@@ -1125,3 +1125,10 @@ td.table-center, th.table-center{
     background: #ffffff38;
     cursor: pointer;
 }
+
+.sched-table tbody tr td.table-placeholder{
+    text-align: center;
+    font-size: .8rem!important;
+    opacity: .6;
+    padding: 20px!important;
+}
