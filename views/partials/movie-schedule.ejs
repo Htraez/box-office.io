@@ -22,12 +22,14 @@
                                                 </div>
                                                 <div class="form-group col-12" style='width: 100%;'>
                                                         <label for='Cast' class='head-text level3'>Casts</l>
-                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Casts"  name="Casts"required>
+                                                        <textarea autocomplete="off" class="form-control text-white pb-0 text-center" id="Casts"  name="Casts"style="border-radius: .25rem!important;
+                                                        background: #00000014!important;border: 2px solid gray!important;border-color: gray!important;color: black!important;font-size: .8rem;"required></textarea>
                                                 </div>
         
                                                 <div class="form-group col-12" style='width: 100%;'>
                                                         <label for='Desc' class='head-text level3'>Description</label>
-                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Desc"  name="Desc"required>
+                                                        <textarea autocomplete="off" class="form-control text-white pb-0 text-center" id="Desc" name="Desc" style="border-radius: .25rem!important;
+                                                        background: #00000014!important;border: 2px solid gray!important;border-color: gray!important;color: black!important;font-size: .8rem;"required></textarea>
                                                 </div>
                                                 
                                                 <div class="form-group col-md-4 col-sm-6" style='width: 100%;'>
@@ -52,11 +54,6 @@
                                                         <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="PosterURL"  name="PosterURL"required>
                                                 </div>
                                         </div>
-                                        
-                                        
-                                        <!-- <span class='head-text level3'>branch</span>
-                                        <select name="Branch" id="Branch" class="form-control-plaintext text-white"></select>
-                                                <br><br>   เปลี่ยนไปใช้ ul-liแทน -->
                                 </form>
                         </ul>
                 </div>
@@ -66,9 +63,26 @@
                                 <span class='head-text level1'>Schedule Bucket</span>
                                 <span class='head-text level2'><i>(Create New Scheduling Below)</i></span>
                         </div>
-                        <ul class='open-list' id="schedule-list" style='min-height: 160px;'>
-                                <li class="list-placeholder"> No Information Yet </li>
-                        </ul>
+                        <!-- <ul class='open-list' id="schedule-list" style='min-height: 160px;'>
+                                <tr class="list-placeholder"> No Information Yet </li>
+                        </ul> -->
+                        <table class="table sched" id="schedule-list" style="border:none;word-wrap:break-word;">
+                                <thead>
+                                        <tr style="background: white; color:black; font-weight:700; font-size: .7rem;">
+                                                <th class='table-center' style='position: sticky;top: 0;background: white'>Theatre</th>
+                                                <th style='position: sticky;top: 0;background: white'>Date</th>
+                                                <th style='position: sticky;top: 0;background: white'>Time</th>
+                                                <th class='table-center' style='position: sticky;top: 0;background: white'>Audio</th>
+                                                <th class='table-center' style='position: sticky;top: 0;background: white'>3D / 2D</th>
+                                                <th class='table-center' style='position: sticky;top: 0;background: white'>Subtitle</th>
+                                        </tr>
+                                </thead>
+                                <tbody id='Schedule'>
+                                    <tr>
+                                        <td class='table-placeholder' colspan="8">No information yet, select schedule above to see more</td>
+                                    </tr>
+                                </tbody>
+                        </table>
                 </div>
         </div>
         <div class="col-12" style='padding: 0;'>
