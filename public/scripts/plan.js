@@ -459,7 +459,8 @@ function callPlanForm(event,PlanName = null) {
 
 $(document).on("click","#createPlan", callPlanForm);
 
-$('#SelectPlanOrTheatre').on("change", function(){
+$('#SelectPlanOrTheatre').on("change", function(e){
+    e.stopPropagation();
     if(this.value != "Plan"){
         $(".planTable").hide();
         $(".planTheatre").show();
