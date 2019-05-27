@@ -128,9 +128,9 @@ function showmovie(data) {
                     // console.log('movie schedule==>',value);
                     let tempDate = new Date(value.Date)
                     let today = new Date()
-                    let isHist = tempDate < today;
-                    let histStatus = 'Now';
-                    if(isHist) histStatus = 'History';
+                    let isHist = tempDate > today;
+                    let histStatus = 'History';
+                    if(isHist) histStatus = 'Now';
                     $("#Movie").append('<li data-st="'+histStatus+'" mv-uq="'+value.MovieNo+'" class="MovieTable" value="'+value.MovieNo+'" style="display: none;"  ><strong>Movie Name: </strong>'+value.MovieName+'<span class="badge head-text-badge">'+value.Rate+'</span></li>');
                     }
          });
