@@ -92,6 +92,11 @@ function sentCouponForm(data) {
 
 }
 
+function quizFrom() {
+    cancelCoupon();
+    pageRedirect();
+}
+
 function cancelCoupon() {
     $('.content-view').show();
     $('.content-form').hide();
