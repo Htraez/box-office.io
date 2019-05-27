@@ -9,6 +9,9 @@ var MovieSchedule =[];
 var MovieEdit;
 var Branch =[];
 var TheatreA =[];
+$('.changeMovie').hide()
+$(".DeleteSch").hide()
+$(".AddSch").hide()
 
 function ScheduleInfo(cl,data) {
     $("#Schedule").find('tr').remove();
@@ -139,6 +142,9 @@ function showmovie(data) {
              (str == 'History') ? $("[data-st='Now']").hide() : $("[data-st='History']").hide();
              $("#MovieInfo").find('li').remove();
              $("#Schedule").find('tr').remove();
+             $('.changeMovie').hide()
+             $('.AddSch').hide()
+             $(".DeleteSch").hide()
              
             })  
         });
@@ -245,19 +251,6 @@ function addScheduleTable_add(){
     // updateSchedule_list(schedule_list);
 }
 
-
-// function deleteSchedule_list(){
-//         //$(this).addClass('selected').siblings().removeClass('selected')
-//         //console.log(this.innerHTML);
-//         //console.log($(this).attr('value'));
-//         console("come Func")
-//         console.log(this.getAttribute("data-st"));
-//         console.log(this.innerHTML)
-//         delete schedule_list[(this.getAttribute("data-st"))];
-//         updateSchedule_list(schedule_list);
-// }
-
-
 function updateSchedule_list_add(data){
     $("#schedule-list-add").find("td").remove();
     console.log('okkk')
@@ -345,6 +338,8 @@ function select_theater(){
 }
 
 function select_Movie(){
+    $('.changeMovie').show()
+    $('.AddSch').show()
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.value)
     Movies = this.value;
@@ -354,7 +349,7 @@ function select_Movie(){
 }
 
 function select_Schedule(){
-    
+    $(".DeleteSch").show()
     $(this).addClass('selected').siblings().removeClass('selected')
     console.log(this.getAttribute("data-st"));
     Schedule_select =(this.getAttribute("data-st"));
