@@ -13,7 +13,7 @@ function ScheduleInfo(cl,data) {
     $("#Schedule").find('tr').remove();
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
-                $("#Schedule").append('<tr data-st="'+value.ScheduleNo+'" class="scheduleTable"><td>'+value.ScheduleNo+'</td><td>'+value.MovieNo+'</td><td>'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td>'+value.Audio+'</td><td><span class="badge head-text-badge">'+value.Dimension+'</span></td><td>'+value.Subtitle+'</td></tr>'); 
+                $("#Schedule").append('<tr data-st="'+value.ScheduleNo+'" class="scheduleTable"><td class="table-center">'+value.ScheduleNo+'</td><td class="table-center">'+value.MovieNo+'</td><td class="table-center">'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+'-'+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td class="table-center">'+value.Audio+'</td><td class="table-center"><span class="badge head-text-badge">'+value.Dimension+'</span></td><td class="table-center">'+value.Subtitle+'</td></tr>'); 
             }
     });
     
@@ -24,13 +24,13 @@ function MovieInfo(cl,data) {
     MovieSchedule.forEach((value,key)=>{
             if(cl==value.MovieNo){
                 if($(".infotable[mv-uq='"+value.MovieNo+"']").length==0){
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"MovieName:"+value.MovieName+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Director:"+value.Director+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Casts:"+value.Casts+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Rate:"+value.Rate+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Genre:"+value.Genre+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Studio:"+value.Studio+'&emsp;</li>');
-                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"Duration:"+value.Duration+"min"+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Movie Name: </strong></br>"+value.MovieName+'</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Director: </strong>"+value.Director+'</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Casts: </strong></br>"+value.Casts+'</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Rate: </strong><span class='badge head-text-badge'>"+value.Rate+'</span></li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Genre: </strong><span class='badge head-text-badge'>"+value.Genre+'</span></li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Studio: </strong>"+value.Studio+'&emsp;</li>');
+                    $("#MovieInfo").append('<li class="infotable"mv-uq="'+value.MovieNo+'">'+"<strong>Duration: </strong>"+value.Duration+"min"+'&emsp;</li>');
 
                 }
             }

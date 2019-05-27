@@ -17,21 +17,26 @@
         </div>
         <div class="row justify-content-start align-items-center">
             <div class="col-4" style='padding-left: 0;'>
+                    <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Select Plane By Name</div>
                 <ul class="open-list mb-0" id="listPlanTable" style="overflow: auto; height: 160px;"></ul>
             </div>
-            <div class="open-list col-8" style="padding: 0;font-size:.75rem;min-height:160px;">
-                <div class="container-fluid" id="detailPlan" style="display: none;">
-                    <div class="pt-2">Name : <span id="viewPlanName"></span></div>
-                    <div id="viewPlanWidth">Width : </div>
-                    <div id="viewPlanHeight">Height : </div>
-                    <div class="row pb-2">
-                        <div class="mx-auto mt-3 text-center">
-                            <button type="button" class="btn-white btn-sm mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
-                            <button type="button" data-popup="delete-plan-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeletePlanForm">Delete</button>  
+            <div class="col-8">
+                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Plan Information</div>
+                <div class="open-list" style="padding: 0;font-size:.75rem;min-height:160px;">
+                    <div class="container-fluid" id="detailPlan" style="display: none;">
+                        <div class="pt-2">Name : <span id="viewPlanName"></span></div>
+                        <div id="viewPlanWidth">Width : </div>
+                        <div id="viewPlanHeight">Height : </div>
+                        <div class="row pb-2">
+                            <div class="mx-auto mt-3 text-center">
+                                <button type="button" class="btn-white btn-sm mr-5" style="display: inline-block;" id="callEditPlanForm">Edit</button>
+                                <button type="button" data-popup="delete-plan-popup" class="btn-white btn-sm" style="display: inline-block;" id="callDeletePlanForm">Delete</button>  
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
     <div id="planForm" class="content-form" style="display: none;">
@@ -47,7 +52,7 @@
             </div>
 
             <div class="col-6">
-                <div class="head-text level1" style='font-size: .85rem;font-weight: 900;'>Select Schedule By Status</div>
+                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Select Schedule By Status</div>
                 <select id='mode-select-sched' class="form-control text-white" id="SelectMovieShow" style='margin-bottom: 10px;font-size: .8rem;    height: 30px!important;'>
                     <option class="form-control"id="Now"value="Now">Now</option>
                     <option class="form-control" id="History"value="History">History</option>
@@ -56,23 +61,25 @@
                 <ul class='open-list' id='Movie' style="overflow: auto; height: 160px;" ></ul>
             </div>
             <div class="col-6">
+                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Movie Info. </br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Schedule to See This Section)</i></div>
                 <ul class='open-list' id='MovieInfo' style="overflow: auto; height: 160px;" ></ul>
                 <button class="btn-white btn-sm" id="EditMovie">Edit</button>
                 <button class="btn-white btn-sm" id="DeleteMovie">Delete</button>
             </div>
             <div class="col-12" style='padding: 0;'>
-                <div id='m-schedule-table' style='border:1px solid white;'>
-                    <table class="table" style="border:none;word-wrap:break-word;table-layout: fixed;">
+                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Movie Schedule </br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Schedule to See This Section)</i></div>
+                <div id='m-schedule-table' style='border:1px solid white;'>    
+                    <table class="table sched-table" style="border:none;word-wrap:break-word;table-layout: fixed;">
                         <thead>
                             <tr style="background: white; color:black; font-weight:700; font-size: .7rem;">
-                                <th style='position: sticky;top: 0;background: white'>Schedule Number</th>
-                                <th style='position: sticky;top: 0;background: white'>Movie</br>Number</th>
-                                <th style='position: sticky;top: 0;background: white'>Theatre</br>Code</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>Schedule</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>Movie No.</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>Theatre</th>
                                 <th style='position: sticky;top: 0;background: white'>Date</th>
                                 <th style='position: sticky;top: 0;background: white'>Time</th>
-                                <th style='position: sticky;top: 0;background: white'>Audio</th>
-                                <th style='position: sticky;top: 0;background: white'>3D/2D</th>
-                                <th style='position: sticky;top: 0;background: white'>Subtitle</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>Audio</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>3D / 2D</th>
+                                <th class='table-center' style='position: sticky;top: 0;background: white'>Subtitle</th>
                             </tr>
                         </thead>
                         <tbody id='Schedule'>
@@ -87,6 +94,53 @@
         </div>              
     </div>
 
+    <div class="content-view dashview">
+        <div class="head-group big" style='width:100%;'>
+            <span class="head-text level1">Coupon&emsp;</span>
+            <button class="btn-white btn-sm" id="addCoupon">Add</button> 
+            <span class="head-text level2">Manage Coupon Info</span>
+        </div>
+
+        <div class="row justify-content-start align-items-center">
+            
+                <div class="col-4">
+                        <ul class="open-list mb-6" id="listCouponTable" style="overflow: auto; height: 200px;"></ul>
+                    </div>
+                
+                <div class="col-6">
+                    <div class="container-fluid  border border-light" id="detailCoupon" style="display: none;">
+                        <div class="col">
+                        <ul class='open-list mb-0' style="padding:2px; overflow: auto; height: 100px;">
+                        <li class="pt-2">Coupon Code : <span id="viewCouponCode"></span></li>
+                        <li id="viewDiscountRate">Discount Rate : </li>
+                        <li id="viewMaxDiscount">Max Discount : </li>
+                        <li id="viewMinAge">Min Age : </li>
+                        <li id="viewMaxAge">Max Age : </li>
+                        <li id="viewMinSeat">Min Seat : </li>
+                        <li id="viewMinSpend">Min Spend : </li>
+                        <li id="viewExpireDate">Expire Date : </li>
+                        <li id="viewNumberAvialable">Nuber Avialable : </li>
+                        </ul></div>
+                        <!--<button type="button" data-popup="detail-coupon-popup" class="btn-white" style="display: inline-block;" id="detailCoupon">More Detail</button>-->
+                        <div class="col">
+                                <div class="mx-auto mt-3 text-center">
+                                    <button type="button" data-popup="movie-coupon-popup" class="btn-white" style="display: inline-block;" id="showMovieCoupon">Movie</button>
+                                    <button type="button" data-popup="branch-coupon-popup" class="btn-white" style="display: inline-block;" id="showBranchCoupon">Branch</button>
+                                </div>
+                            </div>
+                        <div class="col">
+                            <div class="mx-auto mt-3 text-center">
+                                <button type="button" class="btn-white mr-5" style="display: inline-block;" id="callEditCouponForm">Edit</button>
+                                <button type="button" data-popup="delete-coupon-popup" class="btn-white" style="display: inline-block;" id="callDeleteCouponForm">Delete</button>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        
+    </div>
+
     <div id="movieAndSchduleForm" class="content-form" style="display: none;">
             <%- include partials/movie-schedule %>
     </div>
@@ -98,6 +152,11 @@
     <div id="EditScheduleForm" class="content-form" style="display: none;" >
                 <%- include partials/add-schedule %>
     </div>
+
+    <div id="couponForm" class="content-form" style="display: none;">
+        <%- include partials/coupon %>
+    </div>
+    <script src="scripts/movieoption.js"></script>
 
         
 <%- include partials/foot %> 

@@ -2,6 +2,7 @@ var analysisData = [];
 var weekday = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 function addAnalysisTable() {
     var call = this.getAttribute('value');
+    $(this).addClass('selected').siblings().removeClass('selected');
         $('#ResultAnalysis').find('li').remove();
         console.log(data);
         analysisData[call].forEach(value => {

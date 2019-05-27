@@ -1091,3 +1091,37 @@ input:read-only, textarea:read-only{
 .dashview .open-list .li:last-of-type{
     border-bottom: 0;
 }
+
+.infotable:hover{
+    background: black!important;
+}
+
+td.table-center, th.table-center{
+    text-align: center;
+}
+
+.sched-table tr{
+    animation: showNav 250ms ease-in-out both;
+    -webkit-animation: showNav 250ms ease-in-out both;
+}
+
+.sched-table tr th{
+    border-right: 1px solid black;
+}
+
+.sched-table thead tr:last-child{
+    border-right: 0;
+}
+
+.sched-table tr td{
+    border-right: 1px solid white;
+}
+
+.sched-table tbody tr:last-child{
+    border-right: 0;
+}
+
+.sched-table tbody tr:hover{
+    background: #ffffff38;
+    cursor: pointer;
+}
