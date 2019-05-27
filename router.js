@@ -673,6 +673,152 @@ router.get('/analysis/:number',(req,res)=>{
         })
 })
 
+router.get('/shiftapplies/All',(req,res)=>{
+    var sql = "SELECT * FROM `staff` s, `shiftapplies` sa, `shift` sh WHERE sa.ShiftNo = sh.ShiftNo AND sa.StaffNo = s.StaffNo";
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.send(resp.rows);
+        })
+})
+
+// router.get('/staff/FirstName',(req,res)=>{
+
+//     var sql = "SELECT Day, StartTime, EndTime FROM staff s, shiftapplies a,shift t WHERE t.ShiftNo = a.ShiftNo AND a.StaffNo = s.StaffNo AND s.StaffNo =;
+//     console.log(sql);
+    // mysql.connect(sql)
+    //     .then((resp)=>{
+    //         res.sendStatus(200);
+    //     })
+    //     .catch((err)=>{
+    //         //console.log('update plan ERROR',err);
+    //         res.sendStatus(500);
+    //     });
+//})
+
+router.get('/staff/delete/:shift',(req,res)=>{
+    var sql = "DELETE FROM `shift` WHERE `shift`.`ShiftNo` = "+req.params.shift+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+router.get('/staff/deleteshift/:shift',(req,res)=>{
+    var sql = "DELETE FROM `shift` WHERE `shift`.`ShiftNo` = "+req.params.shift+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+
+router.get('/staff/deletename/:name',(req,res)=>{
+    var sql = "DELETE FROM `staff` WHERE `staff`.`StaffNo` = "+req.params.name+"";
+    //console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            //console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+// router.post("/staff/update",(req,res)=>{
+//     var data = req.body;
+//     var sql = "INSERT INTO `shift` (`Day`,`StartTime`,`EndTime`) VALUE ('"+data.Day+"','"+data.StartTime+"','"+data.EndTime+"')"; 
+//     console.log(sql);
+// })
+
+router.post("/staff/update",(req,res)=>{
+    var data = req.body;
+    var sql = "UPDATE `staff` SET `FirstName` = '"+data.staff.FirstName+"',`MidName` = '"+data.staff.MidName+"',`LastName` = '"+data.staff.LastName+"',`BirthDay`='"+data.staff.BirthDay+"',`CitizenID` = '"+data.staff.CitizenID+"',`Gender` ='"+data.staff.Gender+"',`HighestEdu`='"+data.staff.HighestEdu+"', `ImageURL` = '"+data.staff.ImageURL+"',`DateEmployed`='"+data.staff.DateEmployed+"', `Address`= '"+data.staff.Address+"', `PhoneNumber`='"+data.staff.PhoneNumber+"', `Marital`='"+data.staff.Marital+"', `Position` ='"+data.staff.Position+"', `BranchNo`='"+data.staff.BranchNo+"' WHERE `StaffNo` = '"+data.staff.StaffNo+"'";
+    //console.log("SQL",sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            console.log(data);
+            if(data.shift){
+                var insertID  = { staffid : resp.insertId , shiftid:""}
+                var sql = "INSERT INTO `shift` (`Day`,`StartTime`,`EndTime`) VALUE ";
+                    data.shift.forEach((value)=>{
+                        var timestart = value.StartHH+":"+value.StartMM+":"+value.StartSS;
+                        var timeend = value.EndHH+":"+value.EndMM+":"+value.EndSS;
+                        sql += " ('"+value.Date+"','"+timestart+"','"+timeend+"'),";
+                    });
+                sql = sql.substring(0,sql.length-1);
+                //console.log(sql);
+                mysql.connect(sql)
+                .then((resp)=>{
+                //console.log(resp);
+                insertID.shiftid = parseInt(resp.insertId);
+                        var sql = "INSERT INTO `shiftapplies`(`StaffNo`, `ShiftNo`) VALUE";
+                            for(var i=0; i<resp.rows.affectedRows;i++){
+                                var real = insertID.shiftid+i;
+                                sql += "('"+data.staff.StaffNo+"','"+real+"'),"
+                            }
+                            sql = sql.substring(0,sql.length-1);
+                            console.log(sql);
+                            mysql.connect(sql)
+                            .then((resp)=>{
+                                res.sendStatus(200);
+                            })
+                })
+            }
+            else res.sendStatus(200);
+            
+        })
+
+})
+
+router.post("/staff", (req, res) =>{
+    console.log("staff");
+    var data = req.body;
+    var sql = "INSERT INTO `staff` (`FirstName`, `MidName`, `LastName`, `BirthDay`, `CitizenID`, `Gender`, `HighestEdu`, `ImageURL`, `DateEmployed`, `Address`, `PhoneNumber`, `Marital`, `Position` , `BranchNo`) VALUES ('"+
+                data.staff.FirstName+"','"+ data.staff.MidName+"','"+data.staff.LastName+"','"+data.staff.BirthDay+"','"+data.staff.CitizenID+"','"+data.staff.Gender+"','"+data.staff.HighestEdu+"','"+data.staff.ImageURL+"','"+data.staff.DateEmployed+"','"+data.staff.Address+"','"+data.staff.PhoneNumber+"','"+data.staff.Marital+"','"+data.staff.Position+"','"+data.staff.BranchNo+"')";
+    mysql.connect(sql)
+        .then((resp)=>{
+            if(data.shift){
+                var insertID  = { staffid : resp.insertId , shiftid:""}
+                var sql = "INSERT INTO `shift` (`Day`,`StartTime`,`EndTime`) VALUE";
+                    data.shift.forEach((value)=>{
+                        var timestart = value.StartHH+":"+value.StartMM+":"+value.StartSS;
+                        var timeend = value.EndHH+":"+value.EndMM+":"+value.EndSS;
+                        sql += " ('"+value.Date+"','"+timestart+"','"+timeend+"'),";
+                    });
+                sql = sql.substring(0,sql.length-1);
+                console.log(sql);
+                mysql.connect(sql)
+                .then((resp)=>{
+                        //console.log(resp);
+                        insertID.shiftid = parseInt(resp.insertId);
+                        var sql = "INSERT INTO `shiftapplies`(`StaffNo`, `ShiftNo`) VALUE";
+                        for(var i=0; i<resp.rows.affectedRows;i++){
+                            var real = insertID.shiftid+i;
+                            sql += "('"+insertID.staffid+"','"+real+"'),"
+                        }
+                        sql = sql.substring(0,sql.length-1);
+                        console.log(sql);
+                        mysql.connect(sql)
+                        .then((resp)=>{
+                            res.sendStatus(200);
+                        })
+                    })
+            }
+            else res.sendStatus(200)
+        })
+    });
+
 //=======================
 
 // router.all('/', (req, res) => {
