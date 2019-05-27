@@ -293,7 +293,7 @@ function editshift(){
         console.log(temp);
         addshiftshow.push(temp);
     });
-    addtotable();
+    addtotable()
 }
 
 
