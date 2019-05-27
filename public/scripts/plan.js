@@ -594,6 +594,7 @@ function getTheatreList(){
     $.get('/fetchData/theatre/none',(data)=>{
             addListPlanTable(data,0);
             Theatredata = data;
+            $(".planTheatre").hide();
     });
 }
 getPlanList();
