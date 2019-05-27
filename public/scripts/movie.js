@@ -131,7 +131,7 @@ function showmovie(data) {
                     }
          });
          $("[data-st='Now']").show();
-         $('body').on('change','#SelectMovieShow',function(){  
+         $('body').on('change','#mode-select-sched',function(){  
             let str = this.value;
               console.log(str);
              $("[data-st="+str+"]").show();
