@@ -1267,6 +1267,7 @@ form#movie .form-group label{
     padding: 0 7px;
 }
 .xtra-ol li input:checked+div{
-    background: white;
+    background: white!important;
+    opacity: 1!important;
     color: black;
 }
