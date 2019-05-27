@@ -11,45 +11,48 @@
                         
                         <ul class='open-list white-ol'>
                                 <form id="movie">
-                                        <div class="form-group">
-                                                <label for='MovieName' class='head-text level3'>MovieName</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="MovieName"  name="MovieName"required>
-                                        </div>
-                                        <div class="form-group">
-                                                <label for='Director' class='head-text level3'>Director</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Director" name="Director"required>
-                                        </div>
-                                        <div class="form-group">
-                                                <label for='Cast' class='head-text level3'>Casts</l>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Casts"  name="Casts"required>
-                                        </div>
-
-                                        <div class="form-group">
-                                                <label for='Desc' class='head-text level3'>Desc</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Desc"  name="Desc"required>
+                                        <div class="row" style='padding: 0 7px; justify-content:center;'>
+                                                <div class="form-group col-md-6 col-sm-12" style='width: 100%;'>
+                                                        <label for='MovieName' class='head-text level3'>MovieName</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="MovieName"  name="MovieName"required>
+                                                </div>
+                                                <div class="form-group col-md-6 col-sm-12" style='width: 100%;'>
+                                                        <label for='Director' class='head-text level3'>Director</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Director" name="Director"required>
+                                                </div>
+                                                <div class="form-group col-12" style='width: 100%;'>
+                                                        <label for='Cast' class='head-text level3'>Casts</l>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Casts"  name="Casts"required>
+                                                </div>
+        
+                                                <div class="form-group col-12" style='width: 100%;'>
+                                                        <label for='Desc' class='head-text level3'>Desc</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Desc"  name="Desc"required>
+                                                </div>
+                                                
+                                                <div class="form-group col-md-4 col-sm-6" style='width: 100%;'>
+                                                        <label for='Duration' class='head-text level3'>Duration</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Duration"  name="Duration"required>
+                                                </div>
+                                                <div class="form-group col-md-4 col-sm-6" style='width: 100%;'>
+                                                        <label for='Rate' class='head-text level3'>Rate</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Rate"  name="Rate"required>
+                                                </div>
+                                                <div class="form-group col-md-4 col-sm-12" style='width: 100%;'>
+                                                        <label for='Genre' class='head-text level3'>Genre</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Genre"  name="Genre"required>
+                                                </div>
+                                                <div class="form-group col-12" style='width: 100%;'>
+                                                        <label for='Studio' class='head-text level3'>Studio</label>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Studio"  name="Studio"required>
+                                                </div>
+                                                
+                                                <div class="form-group" style='width: 100%;'>
+                                                        <label for='PosterURL' class='head-text level3'>PosterURL</l>
+                                                        <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="PosterURL"  name="PosterURL"required>
+                                                </div>
                                         </div>
                                         
-                                        <div class="form-group">
-                                                <label for='Duration' class='head-text level3'>Duration</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Duration"  name="Duration"required>
-                                        </div>
-                                        <div class="form-group">
-                                                <label for='Rate' class='head-text level3'>Rate</l>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Rate"  name="Rate"required>
-                                        </div>
-                                        <div class="form-group">
-                                                <label for='Genre' class='head-text level3'>Genre</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Genre"  name="Genre"required>
-                                        </div>
-                                        <div class="form-group">
-                                                <label for='Studio' class='head-text level3'>Studio</label>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="Studio"  name="Studio"required>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                                <label for='PosterURL' class='head-text level3'>PosterURL</l>
-                                                <input type="text" autocomplete="off" class="form-control text-white pb-0 text-center" id="PosterURL"  name="PosterURL"required>
-                                        </div>
                                         
                                         <!-- <span class='head-text level3'>branch</span>
                                         <select name="Branch" id="Branch" class="form-control-plaintext text-white"></select>
@@ -57,7 +60,7 @@
                                 </form>
                         </ul>
                 </div>
-                <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0">
+                <div class="col-sm-5 offset-sm-2 col-md-6 offset-md-0" style='padding: 0;'>
                         <!-- schedule list -->
                         <div class='head-group small'>
                                 <span class='head-text level1'>Schedule Bucket</span>
@@ -95,17 +98,17 @@
                                         </div>
                                         
                                         <ul id="config-list" class='open-list'>
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label >Start Date</label>
                                                         <input name="DateStart" id="DateStart" class="form-control text-white" type="date"required></input>
                                                 </div>
                                                 
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label >End Date</label>
                                                         <input name="DateEnd" id="DateEnd" class="form-control text-white" type="date"></input>
                                                 </div>
                                                 
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label >Audio</label>
                                                         <select name="Audio" id="Audio" class="form-control text-white">
                                                         <option class="form-control-plaintext" value="Thai">Thai</option>
@@ -113,12 +116,12 @@
                                                         </select>
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label >Start Time</label>
                                                         <input type="time" id="datetime24"class="form-control text-white " data-format="HH:mm" data-template="HH : mm" name="StartTime" value="10:30"required>
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label >Subtitle</label>
                                                         <select name="SubTitle" id="SubTitle" class="form-control text-white ">
                                                         <option class="form-control" value="Thai">Thai</option>
@@ -126,7 +129,7 @@
                                                         </select>
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group" style='width: 100%;'>
                                                         <label ><strong>Dimension</strong></label>
                                                         <select class="form-control text-white" id="Dimension"  name="Dimension">
                                                                 <option class="form-control" value="2D">2D</option>
