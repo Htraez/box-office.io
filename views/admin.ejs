@@ -13,11 +13,15 @@
         <div class="head-group big">
             <span class="head-text level1" style="vertical-align: sub;">Plan&emsp;</span>
             <button class="btn-white btn-sm" id="createPlan" style="display: inline-block;">Create</button>
-            <span class="head-text level2" >Manage Theatre Plan And Branch Assignment</span>
+            <span class="head-text level2" >Manage Theatre Plan And Seatclass Assignment</span>
         </div>
         <div class="row justify-content-start align-items-center">
             <div class="col-4" style='padding-left: 0;'>
-                    <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Select Plane By Name</div>
+                    <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Select By</div>
+                    <select class="form-control text-white" id="SelectPlanOrTheatre" style='margin-bottom: 10px;font-size: .8rem;  height: 30px!important;' >
+                        <option class="form-control" value="Plan">Plan</option>
+                        <option class="form-control" value="Theatre">Theatre</option>
+                    </select>
                 <ul class="open-list mb-0" id="listPlanTable" style="overflow: auto; height: 160px;"></ul>
             </div>
             <div class="col-8">
