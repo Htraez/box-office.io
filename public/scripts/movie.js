@@ -138,6 +138,7 @@ function showmovie(data) {
              (str == 'History') ? $("[data-st='Now']").hide() : $("[data-st='History']").hide();
              $("#MovieInfo").find('li').remove();
              $("#Schedule").find('tr').remove();
+             
             })  
         });
         //  $(document).on('change','#his',function(){
