@@ -1,3 +1,4 @@
+var CouponTemp = [];
 $(this).addClass('selected').siblings().removeClass('selected');
 
 $(document).on("click","#callDeleteCouponForm",function(e){e.stopPropagation();});
@@ -160,12 +161,16 @@ function getCouponList(){
 }
 getCouponList();
 
+$.get('/fetchData/coupon/none',(data)=>{
+    CouponTemp = data;
+    console.log(CouponTemp);
+});
+
 $(document).on("click",".couponTable",function (event){
     event.stopPropagation();
     $('#viewCouponCode').text('');
     $('#viewDiscountRate').text("Discount Rate :  %");
     $('#viewMaxDiscount').text("Max Discount :  Baht");
-
     $('#viewMinAge').text("Min Age :  Year");
     $('#viewMaxAge').text("Max Age :  Year");
     $('#viewMinSeat').text("Min Seat :  ");
@@ -175,24 +180,19 @@ $(document).on("click",".couponTable",function (event){
     $('#fromBottom').show();
     $('#detailCoupon').show();
     $(this).addClass('selected').siblings().removeClass('selected');
-    $.get('/fetchData/coupon/CouponCode='+this.innerHTML,(data)=>{
-        console.log(data[0]);
-        $('#viewCouponCode').text(data[0].CouponCode);
-        $('#viewDiscountRate').text("Discount Rate : "+data[0].Discount*100+" %");
-        $('#viewMaxDiscount').text("Max Discount : "+data[0].MaxDiscount+" Baht");
-        
-        $('#viewMinAge').text("Min Age : "+data[0].MinAge+" Year");
-        $('#viewMaxAge').text("Max Age : "+data[0].MaxAge+" Year");
-        $('#viewMinSeat').text("Min Seat : "+data[0].MinSeat+" ");
-        $('#viewMinSpend').text("Min Spend : "+data[0].MinSpend+" Baht");
-        $('#viewExpireDate').text("Expire Date : "+data[0].EXPDate.slice(0, 10)+" ");
-        $('#viewNumberAvialable').text("NumberAvialable : "+data[0].NoAvailable+" ");
-        //$(this).addClass('bg-secondary').siblings().removeClass('bg-secondary');
-        //console.log(data[0].CouponCode);
-        getCouponBranchList(data[0].CouponCode)
-        getCouponMovieList(data[0].CouponCode)
-    });
+    $('#viewCouponCode').text(CouponTemp.find(item => item.CouponCode === this.innerHTML).CouponCode);
+    $('#viewDiscountRate').text("Discount Rate : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).Discount*100+" %");
+    $('#viewMaxDiscount').text("Max Discount : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).MaxDiscount+" Baht");
+    $('#viewMinAge').text("Min Age : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).MinAge+" Year");
+    $('#viewMaxAge').text("Max Age : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).MaxAge+" Year");
+    $('#viewMinSeat').text("Min Seat : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).MinSeat+" ");
+    $('#viewMinSpend').text("Min Spend : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).MinSpend+" Baht");
+    $('#viewExpireDate').text("Expire Date : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).EXPDate.slice(0, 10)+" ");
+    $('#viewNumberAvialable').text("NumberAvialable : "+CouponTemp.find(item => item.CouponCode === this.innerHTML).NoAvailable+" ");
+    getCouponBranchList(CouponTemp.find(item => item.CouponCode === this.innerHTML).CouponCode);
+    getCouponMovieList(CouponTemp.find(item => item.CouponCode === this.innerHTML).CouponCode);
 });
+
 //---------------------Popup------------------//
 function addListCouponBranchTable(data) {
     //console.log(data);

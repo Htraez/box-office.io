@@ -546,6 +546,7 @@ $(document).on("click",".planTheatre",function (event){
     $('#viewPlanWidth').text("Width :  m.");
     $('#viewPlanHeight').text("Height :  m.");
     $('#detailPlan').show();
+    console.log(this.getAttribute("value"));
     $(this).addClass('selected').siblings().removeClass('selected');
     $('#viewPlanName').text(Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanName);
     $('#viewPlanWidth').text("Width : "+Plandata.find(item => item.PlanName === this.getAttribute("value")).PlanWidth+" m.");
