@@ -1,6 +1,7 @@
 var theater;
 var branchName;
 var schedule_list =[];
+var schedule_list_add =[];
 var Schedule_select;
 var test;
 var Movies;
@@ -141,19 +142,6 @@ function showmovie(data) {
              
             })  
         });
-        //  $(document).on('change','#his',function(){
-        //     let str = this.data(("+stu"))            })   
-        // });
-         
-        //  $(document).on('change', '#Now',function(){
-        //         $("[data-st="+History+"]").hide()
-        //         $("[data-st="+Now+"]").show()
-        //  });
-        //  $(document).on('change', '#History', function(){
-        //     console.log("ok")
-        //     $("[data-st="+History+"]").show()
-        //         $("[data-st="+Now+"]").hide()
-        // });
     }
 
 function EditMovie (cl,data){
@@ -195,22 +183,6 @@ function addScheduleTable(){
     // updateSchedule_list(schedule_list);
 }
 
-function findDiffDate(Start,End){
-    end = new Date(End)
-    start = new Date(Start)
-    diffTime = Math.abs(end.getTime() - start.getTime());
-    return (start<end) ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : -1; 
-}
-
-function deleteSchedule_list(){
-        //$(this).addClass('selected').siblings().removeClass('selected')
-        //console.log(this.innerHTML);
-        //console.log($(this).attr('value'));
-        console.log($(this).getAttribute("data-st"))
-        delete schedule_list[$(this).getAttribute("data-st")];
-        updateSchedule_list(schedule_list);
-}
-
 function updateSchedule_list(data){
     $("#schedule-list").find("td").remove();
     data.forEach((value,key)=>{
@@ -219,8 +191,35 @@ function updateSchedule_list(data){
     })
 }
 
+
+function findDiffDate(Start,End){
+    end = new Date(End)
+    start = new Date(Start)
+    diffTime = Math.abs(end.getTime() - start.getTime());
+    return (start<end) ? Math.ceil(diffTime / (1000 * 60 * 60 * 24)) : -1; 
+}
+
+function delete_schedule_list(){
+        //$(this).addClass('selected').siblings().removeClass('selected')
+        //console.log(this.innerHTML);
+        //console.log($(this).attr('value'));
+        console.log((this).getAttribute("data-st"))
+        delete schedule_list[(this).getAttribute("data-st")];
+        updateSchedule_list(schedule_list);
+}
+
+function delete_schedule_list_add(){
+    //$(this).addClass('selected').siblings().removeClass('selected')
+    //console.log(this.innerHTML);
+    //console.log($(this).attr('value'));
+    console.log((this).getAttribute("data-st"))
+    delete schedule_list[(this).getAttribute("data-st")];
+    updateSchedule_list_add(schedule_list);
+}
+
+
+
 function addScheduleTable_add(){
-    console.log("ok")
 
     if($('#DateStart_add').val()!="" && theater != undefined ){
         var diff = ($('#DateEnd_add').val()=="") ? 0 : findDiffDate($('#DateStart_add').val(),$('#DateEnd_add').val());
@@ -247,21 +246,25 @@ function addScheduleTable_add(){
 }
 
 
-function deleteSchedule_list(){
-        //$(this).addClass('selected').siblings().removeClass('selected')
-        //console.log(this.innerHTML);
-        //console.log($(this).attr('value'));
-        console.log(this.getAttribute("data-st"));
-        console.log(this.innerHTML)
-        delete schedule_list[$(this).getAttribute(["data-st"])];
-        updateSchedule_list(schedule_list);
-}
+// function deleteSchedule_list(){
+//         //$(this).addClass('selected').siblings().removeClass('selected')
+//         //console.log(this.innerHTML);
+//         //console.log($(this).attr('value'));
+//         console("come Func")
+//         console.log(this.getAttribute("data-st"));
+//         console.log(this.innerHTML)
+//         delete schedule_list[(this.getAttribute("data-st"))];
+//         updateSchedule_list(schedule_list);
+// }
+
 
 function updateSchedule_list_add(data){
     $("#schedule-list-add").find("td").remove();
+    console.log('okkk')
+    console.log(data)
     // $("#schedule-list-add").append('<li>theaterCode &emsp;&emsp;&emsp;&emsp; Date &emsp;&emsp;&emsp; Audio &emsp;&emsp;&emsp; StartTime &emsp;&emsp;&emsp;Subtitle &emsp;Dimension </li>');
     data.forEach((value,key)=>{
-        $("#schedule-list-add").append('<tr class="clickSchedule" data-st='+key+'><td class="table-center">'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+'-'+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td class="table-center">'+value.Audio+'</td><td class="table-center"><span class="badge head-text-badge">'+value.Dimension+'</span></td><td class="table-center">'+value.Subtitle+'</td></tr>'); 
+    $("#schedule-list-add").append('<tr class="clickSchedule" data-st='+key+'><td class="table-center">'+value.TheatreCode+'</td><td>'+new Date(value.Date).getDate()+'-'+(new Date(value.Date).getMonth()+1)+'-'+new Date(value.Date).getFullYear()+'</td><td>'+value.Time+'</td><td class="table-center">'+value.Audio+'</td><td class="table-center"><span class="badge head-text-badge">'+value.Dimension+'</span></td><td class="table-center">'+value.Subtitle+'</td></tr>'); 
     })
 }
 
@@ -454,9 +457,7 @@ function addAllSchedule(){
 
 }
 
-function addScheduleTable1(){
-    addScheduleTable_add();
-}
+
 
 function CancelNewSchedule(){
     $('#EditScheduleForm').hide();
@@ -471,12 +472,13 @@ function CancelNewSchedule(){
 $(document).on('click',".clickTable", select_theater);
 $(document).on('click',".clickTableBranch", branch);
 $(document).on('click',"#addSchedule",addScheduleTable);
-$(document).on('click',"#addSchedule1",addScheduleTable1);
+$(document).on('click',"#addSchedule1",addScheduleTable_add);
 $(document).on("click","#backToAdmin", callBackFromShow);
-$(document).on("click",".deleteSchedule",deleteSchedule_list);
+// $(document).on("click",".deleteSchedule",delete_schedule_list);
 $(document).on("click","#createAllSchedule", createAllSchedules);   
 $(document).on("click","#cancelAllSchedule", cancelAllSchedule);  
-
+$(document).on("click",".clickSchedule",delete_schedule_list); //delete onclick at create 
+$(document).on("click","#schedule-list-add",delete_schedule_list_add);//delete onclick at add
 // -------admin page-----------
 $(document).on("click","#createMovie", callMovieForm);
 $(document).on("click","#EditMovie", UpdateDataMovie);
