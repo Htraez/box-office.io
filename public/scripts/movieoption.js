@@ -347,23 +347,14 @@ function EditCoupon(data){
     data.BranchInput.length>0) {
     
     console.log('Valid Update');
-    var deleteCoupon = data.Coupon.CouponCode;
-    $.get('/coupon/delete/'+deleteCoupon,(res)=>{
+    $.get('/coupon/delete/'+data.Coupon.CouponCode,(res)=>{
+        $.post('/coupon',data,(res)=>{
         
-    });
-    $.post('/coupon',data,(res)=>{
-        iziToast.destroy();
-        iziToast.show({
-            position: "topCenter", 
-            icon: "far fa-thumbs-up",
-            title: 'Save!', 
-            color: 'green',
-            timeout: 2000,
-            message: 'You Coupon is update successfully.',
         });
+        cancelCoupon();
+        pageRedirect();
     });
-    cancelCoupon();
-    pageRedirect();
+    
 }else{
     console.log(data.Coupon.CouponCode!='' );
     console.log(data.Coupon.CouponCode.length );
