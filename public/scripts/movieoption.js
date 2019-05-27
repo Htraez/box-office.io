@@ -1,5 +1,9 @@
 $(this).addClass('selected').siblings().removeClass('selected');
 
+$(document).on("click","#callDeleteCouponForm",function(e){e.stopPropagation();});
+$(document).on("click","#showMovieCoupon",function(e){e.stopPropagation();});
+$(document).on("click","#showBranchCoupon",function(e){e.stopPropagation();});
+
 function callCouponForm(err,CouponCode = null) {
     
     //Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
@@ -168,6 +172,7 @@ $(document).on("click",".couponTable",function (event){
     $('#viewMinSpend').text("Min Spend :  Baht");
     $('#viewExpireDate').text("Expire Date :  ");
     $('#viewNumberAvialable').text("NumberAvialable :  ");
+    $('#fromBottom').show();
     $('#detailCoupon').show();
     $(this).addClass('selected').siblings().removeClass('selected');
     $.get('/fetchData/coupon/CouponCode='+this.innerHTML,(data)=>{
