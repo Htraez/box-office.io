@@ -906,5 +906,55 @@ router.post('/AddNewSchedule', (req,res) => {
          console.log('error',err);
      });
 });
+
+router.post('/coupon',(req, res) => {
+    var data = req.body;
+    console.log(data);
+    
+    var sql = "INSERT INTO `coupon` (`CouponCode`, `Discount`, `MaxDiscount`, `EXPDate`, `MinSpend`, `MinSeat`, `MinAge`, `MaxAge`,`NoAvailable`) VALUES ('"+
+                data.Coupon.CouponCode+"','"+ data.Coupon.DiscountRate/100 +"','"+data.Coupon.MaxDiscount+"','"+data.Coupon.ExpireDate+"','"+data.Coupon.MinSpend+"','"+data.Coupon.MinSeat+"','"+data.Coupon.MinAge+"','"+data.Coupon.MaxAge+"','"+data.Coupon.Number+"')";
+    mysql.connect(sql).then((resp)=>{
+            console.log(resp);
+            //let CouponBranchNo =resp.insertId;
+            //var BranchId = data.BranchInput;
+            var sql2 = "INSERT INTO `coupon_branch` (`BranchNo`, `CouponCode`) VALUES"
+                data.BranchInput.forEach((value)=>{
+                sql2 += "('"+ value+"','"+data.Coupon.CouponCode+"'),";
+               });
+            sql2 = sql2.substring(0,sql2.length-1);
+                console.log(sql2)
+                  mysql.connect(sql2).then((resp)=>{
+                      //let CouponMovieNo =resp.insertId;
+                      //var MovieId = data.MovieInput;
+                      var sql3 = "INSERT INTO `coupon_movie` ( `MovieNo`, `CouponCode`) VALUES"
+                data.MovieInput.forEach((value)=>{
+                sql3 += "('"+ value+"','"+data.Coupon.CouponCode+"'),";
+               });
+            sql3 = sql3.substring(0,sql3.length-1);
+                console.log(sql3)
+                  mysql.connect(sql3).then((resp)=>{
+                      console.log("success")
+                     })
+                    .catch((err)=>{
+                         console.log('error',err);
+                     });
+            });
+    });     
+});
+
+router.get('/coupon/delete/:coupon',(req,res)=>{
+    var sql = "DELETE FROM `coupon` WHERE `coupon`.`CouponCode` = '"+req.params.coupon+"'";
+    console.log(sql);
+    mysql.connect(sql)
+        .then((resp)=>{
+            res.sendStatus(200);
+        })
+        .catch((err)=>{
+            console.log('update plan ERROR',err);
+            res.sendStatus(500);
+        });
+})
+
+
 module.exports = router;
 
