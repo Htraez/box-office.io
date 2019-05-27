@@ -113,7 +113,7 @@ function toggle(source) {
 
 function addListMovieTable(data) {
     data.forEach((value, key) => {
-        var tableRowappend = '<label class="container text-left"><input class="form-check-input" type="checkbox" name="movieInput" value = "'+value.MovieNo+'" /> '+value.MovieName+'<br/></label>'
+        var tableRowappend = '<li><label><input class="form-check-input" type="checkbox" name="movieInput" value = "'+value.MovieNo+'"/><div>'+value.MovieName+'</div></label></li>'
         $("#listMovieTable").append(tableRowappend);
     });
 }
@@ -136,7 +136,7 @@ function toggle1(source) {
 function addBranchList(){
     $.get('/fetchData/branch/none',(data)=>{
             data.forEach((value,key)=>{
-            $("#TheatreBranchTable").append('<label class="container text-left"><input class="form-check-input" type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /> '+value.BranchName+'<br/></label>');
+            $("#TheatreBranchTable").append('<li><label><input class="form-check-input" type="checkbox" name="branchInput" value = "'+value.BranchNo+'" /><div>'+value.BranchName+'</div></label></li>');
         })
     });
 }
