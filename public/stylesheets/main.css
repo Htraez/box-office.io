@@ -1038,12 +1038,7 @@ input:read-only, textarea:read-only{
     padding: 2px;
 }
 
-#m-schedule-table.non-select li:hover{
-    background: transparent;
-    cursor: unset;
-}
-
 #m-schedule-table table tr.selected{
-    background: white;
-    color: black;
+    background:white;
+    color: #000
 }
