@@ -25,7 +25,7 @@
                 <ul class="open-list mb-0" id="listPlanTable" style="overflow: auto; height: 160px;"></ul>
             </div>
             <div class="col-8">
-                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Plan Information</div>
+                <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Plan Information</br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Plan or Theatre to See This Section)</i></div>
                 <div class="open-list" style="padding: 0;font-size:.75rem;min-height:160px;">
                     <div class="container-fluid" id="detailPlan" style="display: none;">
                         <div class="pt-2">Name : <span id="viewPlanName"></span></div>
@@ -67,8 +67,10 @@
             <div class="col-6">
                 <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Movie Info. </br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Schedule to See This Section)</i></div>
                 <ul class='open-list' id='MovieInfo' style="overflow: auto; height: 160px;" ></ul>
-                <button class="btn-white btn-sm" id="EditMovie">Edit</button>
-                <button class="btn-white btn-sm" id="DeleteMovie">Delete</button>
+                <div class="changeMovie">
+                    <button class="btn-white btn-sm" id="EditMovie">Edit</button>
+                    <button class="btn-white btn-sm" id="DeleteMovie">Delete</button>
+                </div>
             </div>
             <div class="col-12" style='padding: 0;'>
                 <div class="head-text level1" style='margin-bottom:5px;font-size: .85rem;font-weight: 900;'>Movie Schedule </br><i style='font-weight:500;font-size: .7rem;opacity:.75;'>(Select Schedule to See This Section)</i></div>
@@ -93,8 +95,12 @@
                         </tbody>
                     </table>
                 </div>
-                <button class="btn-white btn-sm" id="AddSchedule" style='margin-top: 8px;'>Add</button>
-                <button class="btn-white btn-sm" id="DeleteSchedule" style='margin-top: 8px;'>Delete</button>
+                <div class="AddSch">
+                    <button class="btn-white btn-sm" id="AddSchedule" style='margin-top: 8px;'>Add</button>
+                </div>
+                <div class="DeleteSch">
+                    <button class="btn-white btn-sm" id="DeleteSchedule" style='margin-top: 8px;'>Delete</button>
+                </div>
             </div>
             
         </div>              

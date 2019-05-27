@@ -1,4 +1,4 @@
-var Theatre = [];
+var Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
 var Plandata = [];
 var oldBranchName=null, noweditP;
 var SeatClass,PlanHeight=0,PlanWidth=0;
@@ -13,7 +13,8 @@ var Theatredata = [];
 function addTable(data) {
     data.forEach((value, key) => {
         var tableRowappend = '<tr id="Th'+Thcount+'" class="default-mouse" ><th onclick="editTh('+Thcount+')" class="text-white pl-3" scope="col">'+value.Name+'</th>'
-         tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
+        if(Thcount>0) tableRowappend += '<th class="text-white" onclick="removeTh('+Thcount+')" scope="col">X</th>';
+        else tableRowappend += '<th onclick="editTh(0)"></th>';
         tableRowappend += '</tr>';
         Thcount++;
         if(value.Detail.Type!='Delete')$("#MyTableTr").append(tableRowappend);
@@ -130,12 +131,15 @@ function addBranchOption(){
 
 function planH(){
     PlanHeight = parseFloat(document.getElementById("PlanHeight").value);
+    if(PlanHeight<0) PlanHeight = 0;
     $('#showH')[0].childNodes[0].data = 'Plan Height '+PlanHeight+' m.';
     document.getElementById("PlanHeight").value = PlanHeight;
 }
 
 function planW(){
     PlanWidth = parseFloat(document.getElementById("PlanWidth").value);
+    if(PlanWidth>30) PlanWidth = 30;
+    else if(PlanWidth<0) PlanWidth = 0;
     $('#showW')[0].childNodes[0].data = 'Plan Width '+PlanWidth+' m.';
     document.getElementById("PlanWidth").value = PlanWidth;
     reRenderSeat();
@@ -197,7 +201,7 @@ function appendSeatTH(num){
         }
         var SeatClassData = SeatClass.find((val)=>{ return val.ClassName==$('#SeatClass'+num).val()});
         if(PlanHeight-use>=SeatClassData.Height && SeatClassData.Width<=PlanWidth){
-            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-between" >'
+            var seat = '<div id="render'+num+'R'+renderCount[num-1]+'" class="container-fluid pl-0 pr-0 mt-3 mb-3 d-flex justify-content-center" >'
             for (let i = 0; i < PlanWidth/SeatClassData.Width; i++) {
                 seat += '<span class="dot ml-1 mr-1"></span>';
             }
@@ -206,6 +210,8 @@ function appendSeatTH(num){
             $('#render'+num).append(seat);
             renderCount[num-1]++;
             changeValR(1,num);
+            let a = $('#render').offset().left + $('#render').width() / 2;
+            $('#RenderHeight').scrollLeft(a);
         }
     }
     return 1;
@@ -397,7 +403,7 @@ function LoadDataEditForm(PlanName){
     });
     $.get('/fetchData/theatre/PlanName='+PlanName,(data)=>{
         //console.log(data);
-        Theatre = [];
+        Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
         data.forEach((value)=>{
             Theatre.push({Name: value.TheatreCode, Branch: ''+value.BranchNo+'', Detail:{Type:'Load',Old:''}});
         });
@@ -431,7 +437,7 @@ function callPlanForm(event,PlanName = null) {
         overlay: true,
         close: false
     });
-    Theatre = [];
+    Theatre = [{Name:'Add New Theatre',Branch:'NULL',Detail:{Type:'Create',Old:''}}];
     reRenderTHTable();
     PlanHeight=0;PlanWidth=0;OpSeatCount=1;Thcount=0;nowTH=0;renderCount = [1,1,1,1];
     $('#PlanName').val('');
@@ -459,7 +465,8 @@ function callPlanForm(event,PlanName = null) {
 
 $(document).on("click","#createPlan", callPlanForm);
 
-$('#SelectPlanOrTheatre').on("change", function(){
+$('#SelectPlanOrTheatre').on("change", function(e){
+    e.stopPropagation();
     if(this.value != "Plan"){
         $(".planTable").hide();
         $(".planTheatre").show();
