@@ -72,7 +72,7 @@ function savedata(){
             ImageURL:$("#imageURL").val(),
             DateEmployed:$("#dateEmployed").val(),
             Address:$("#address").val(),
-            PhoneNumber:$("#phone").val(),
+            PhoneNumber:$("#phonestaff").val(),
             Marital:$("#marital").val(),
             Position:$("#position").val(),
             BranchNo:$("#branchNo").val(),
@@ -147,8 +147,21 @@ function assignshiftforstaff(){
             console.log("ERROR");
         }
         else{
-        console.log("OK");
-        addshiftshow.push(temp);
+            if(temp.StartHH>temp.EndHH||(temp.StartHH==temp.EndHH&&temp.StartMM>temp.EndMM)||(temp.StartHH==temp.EndHH&&temp.StartMM==temp.EndMM&&temp.StartSS>=temp.EndSS)){
+                iziToast.destroy();
+                iziToast.show({
+                    position: "topCenter", 
+                    icon: "fas fa-exclamation-triangle",
+                    title: 'Warning!', 
+                    color: 'orange',
+                    timeout: 2000,
+                    message: 'Start Time should start before End Time',
+                });
+            }
+            else{
+                console.log("OK");
+                addshiftshow.push(temp);
+            }
         }
     }
     else{
@@ -272,7 +285,33 @@ $(document).on("click","#deleteshift",function(event){
     console.log(SelectStaffElement[1]);
 });
 
+$(".n24").on("change", function(params) {
+    var time = $(this).val();
+    if(time>23){
+        $(this).val(23);
+    }
+    else if(time<0){
+        $(this).val(00);
+    }
+    else if(time<10){
+        var newtime = "0"+parseInt(time);
+        $(this).val(newtime);
+    }
+})
 
+$(".n60").on("change", function(){
+    var time = $(this).val();
+    if(time>60){
+        $(this).val(60);
+    }
+    else if(time<0){
+        $(this).val(0);
+    }
+    else if(time<10){
+        var newtime = "0"+parseInt(time);
+        $(this).val(newtime);
+    }
+})
 
 function editshift(e){
     staffForm(e,1);
@@ -294,7 +333,7 @@ function editshift(e){
     currentDate = date.toISOString().slice(0,10);
     $("#dateEmployed").val(currentDate);
     $("#address").val(getdata[0].Address);
-    $("#phone").val(getdata[0].PhoneNumber);
+    $("#phonestaff").val(getdata[0].PhoneNumber);
     $("#marital").val(getdata[0].Marital);
     $("#position").val(getdata[0].Position);
     $("#branchNo").val(getdata[0].BranchNo);

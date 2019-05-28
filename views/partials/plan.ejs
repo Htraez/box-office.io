@@ -19,14 +19,14 @@
                             <input type="text" autocomplete="off" class="form-control" id="PlanName" name="PlanName">
                         </div>
                         <div class="form-group">
-                            <label for="PlanHeight">Plan Height</label>
+                            <label for="PlanHeight">Plan Height (>0 Meter)</label>
                             
                             <input type="number" onchange="planH()" class="form-control" value="0" min="0" id="PlanHeight" name="PlanHeight">
                             <label style='display: inline;' for="PlanHeight">(Meter)</label>
                             
                         </div>
                         <div class="form-group">
-                            <label for="PlanWidth">Plan Width (0-30 Meter)</label>
+                            <label for="PlanWidth">Plan Width (Max 30 Meter)</label>
                             <input type="number" onchange="planW()" class="form-control" value="0" min="0" id="PlanWidth" name="PlanWidth">
                             <label for="PlanWidth">(Meter)</label>
                             
@@ -73,9 +73,9 @@
                         <div class="step-group col-12">
                             <div class='row'>
                                 <div class='col-12' style='justify-content:center;'>
-                                    <div style='width:100%;height:20px;align-item:center;text-align:center;font-size:.7rem;border:1px solid white;border-radius:.4rem;'>Screen</div>    
+                                    <div style='width:100%;min-height:20px;align-item:center;text-align:center;font-size:.7rem;border:1px solid white;border-radius:.4rem;'>Screen</div>    
                                 </div> 
-                                <div class='col-12' style='overflow:auto; height: 280px;' id="RenderHeight">
+                                <div class='col-12' style='overflow:auto; min-height: 280px;' id="RenderHeight">
                                     <div id="render" class="mt-3 mb-3" >
                                         <div id="render1" class="renderSeatPlan"></div>
                                         <div id="render2" class="renderSeatPlan"></div>
