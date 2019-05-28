@@ -1,6 +1,6 @@
 var analysisData = [];
 var weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-var unit = ["Person","Person","Year","Year","Baht","Baht","Baht","Baht","Person","Person","Showtime","Showtime","Coupon","Coupon","Minute"]
+var unit = ["Person","Person","Year","Year","Baht","Baht","Baht","Baht","Person","Person","Showtime","Showtime","Coupon","Coupon","Hour"]
 var analysisUse;
 function addAnalysisTable() {
     analysisUse = this.getAttribute('value');
