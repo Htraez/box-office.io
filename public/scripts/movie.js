@@ -278,7 +278,7 @@ function DeleteMovie(data) {
 
  function DeleteSchedule(data) {
     console.log(Schedule_select)
-    var payload = {ScheduleNo : Schedule_select}
+    var payload = {ScheduleNo : Schedule_select,MovieNo : Movies}
     console.log(payload)
     $.ajax({
         type:"DELETE",
