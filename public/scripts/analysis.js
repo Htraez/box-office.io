@@ -21,7 +21,7 @@ function addAnalysisTable() {
 
 function insertAnalysis(data){
     $('#AnalyMin').text(data.min);
-    $('#AnalyAvg').text(data.avg);
+    $('#AnalyAvg').text(Number((data.avg).toFixed(3)));
     $('#AnalyMax').text(data.max);
     $('#unit1').text(unit[analysisUse]);
     $('#unit2').text(unit[analysisUse]);
